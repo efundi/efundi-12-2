@@ -1,0 +1,3 @@
+/opt/sakai-12/login/login-render-engine-impl/impl/src/java/org/sakaiproject/login/impl/velocity/LoginRenderEngineContextListener.java
+/opt/sakai-12/login/login-render-engine-impl/impl/src/java/org/sakaiproject/login/impl/velocity/VelocityLoginRenderEngine.java
+/opt/sakai-12/login/login-render-engine-impl/impl/src/java/org/sakaiproject/login/impl/velocity/VelocityLoginRenderContext.java

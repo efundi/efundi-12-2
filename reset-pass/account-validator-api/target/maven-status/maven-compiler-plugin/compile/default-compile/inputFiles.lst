@@ -1,0 +1,5 @@
+/opt/sakai-12/reset-pass/account-validator-api/src/java/org/sakaiproject/accountvalidator/logic/ValidationException.java
+/opt/sakai-12/reset-pass/account-validator-api/src/java/org/sakaiproject/accountvalidator/model/ValidationAccount.java
+/opt/sakai-12/reset-pass/account-validator-api/src/java/org/sakaiproject/accountvalidator/entity/ValidationEntityProvider.java
+/opt/sakai-12/reset-pass/account-validator-api/src/java/org/sakaiproject/accountvalidator/logic/ValidationLogic.java
+/opt/sakai-12/reset-pass/account-validator-api/src/java/org/sakaiproject/accountvalidator/model/ValidationClaim.java

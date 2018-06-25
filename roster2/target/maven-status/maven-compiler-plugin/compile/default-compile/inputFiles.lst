@@ -1,0 +1,12 @@
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/api/RosterSite.java
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/impl/SakaiProxyImpl.java
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/tool/entityprovider/RosterPOIEntityProvider.java
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/api/RosterEnrollment.java
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/api/RosterData.java
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/tool/entityprovider/RosterSiteEntityProvider.java
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/tool/RosterTool.java
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/api/RosterMemberComparator.java
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/api/SakaiProxy.java
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/api/RosterFunctions.java
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/api/RosterGroup.java
+/opt/sakai-12/roster2/src/java/org/sakaiproject/roster/api/RosterMember.java

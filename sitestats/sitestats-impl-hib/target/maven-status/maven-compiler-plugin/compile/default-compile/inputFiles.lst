@@ -1,0 +1,11 @@
+/opt/sakai-12/sitestats/sitestats-impl-hib/src/java/org/sakaiproject/sitestats/impl/JobRunImpl.java
+/opt/sakai-12/sitestats/sitestats-impl-hib/src/java/org/sakaiproject/sitestats/impl/PrefsImpl.java
+/opt/sakai-12/sitestats/sitestats-impl-hib/src/java/org/sakaiproject/sitestats/impl/LessonBuilderStatImpl.java
+/opt/sakai-12/sitestats/sitestats-impl-hib/src/java/org/sakaiproject/sitestats/impl/EventStatImpl.java
+/opt/sakai-12/sitestats/sitestats-impl-hib/src/java/org/sakaiproject/sitestats/impl/ResourceStatImpl.java
+/opt/sakai-12/sitestats/sitestats-impl-hib/src/java/org/sakaiproject/sitestats/impl/SiteActivityImpl.java
+/opt/sakai-12/sitestats/sitestats-impl-hib/src/java/org/sakaiproject/sitestats/impl/SiteVisitsImpl.java
+/opt/sakai-12/sitestats/sitestats-impl-hib/src/java/org/sakaiproject/sitestats/impl/SitePresenceImpl.java
+/opt/sakai-12/sitestats/sitestats-impl-hib/src/java/org/sakaiproject/sitestats/impl/ServerStatImpl.java
+/opt/sakai-12/sitestats/sitestats-impl-hib/src/java/org/sakaiproject/sitestats/impl/SitePresenceTotalImpl.java
+/opt/sakai-12/sitestats/sitestats-impl-hib/src/java/org/sakaiproject/sitestats/impl/UserStatImpl.java

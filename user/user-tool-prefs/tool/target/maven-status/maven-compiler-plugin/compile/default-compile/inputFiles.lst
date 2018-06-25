@@ -1,0 +1,7 @@
+/opt/sakai-12/user/user-tool-prefs/tool/src/java/org/sakaiproject/user/tool/UserPrefsTool.java
+/opt/sakai-12/user/user-tool-prefs/tool/src/java/org/sakaiproject/user/tool/PrivacyBean.java
+/opt/sakai-12/user/user-tool-prefs/tool/src/java/org/sakaiproject/user/tool/PreferenceServlet.java
+/opt/sakai-12/user/user-tool-prefs/tool/src/java/org/sakaiproject/user/jsf/HideDivisionComponent.java
+/opt/sakai-12/user/user-tool-prefs/tool/src/java/org/sakaiproject/user/jsf/HideDivisionRenderer.java
+/opt/sakai-12/user/user-tool-prefs/tool/src/java/org/sakaiproject/user/tool/entity/UserPrefsEntityProvider.java
+/opt/sakai-12/user/user-tool-prefs/tool/src/java/org/sakaiproject/user/jsf/HideDivisionTag.java

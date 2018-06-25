@@ -1,0 +1,15 @@
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/domain/Accessor.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/exception/OAuthException.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/service/OAuthAdminService.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/service/OAuthHttpService.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/dao/ConsumerDao.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/exception/ExpiredAccessorException.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/exception/InvalidAccessorException.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/exception/InvalidConsumerException.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/dao/AccessorDao.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/exception/InvalidVerifierException.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/service/OAuthService.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/domain/Consumer.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/exception/RevokedAccessorException.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/filter/OAuthPostFilter.java
+/opt/sakai-12/oauth/api/src/java/org/sakaiproject/oauth/filter/OAuthPreFilter.java

@@ -1,0 +1,12 @@
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/jsf/SubBackingBean.java
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/ui/bean/evaluation/ExportResponsesBeanTest.java
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/jsf/TestBackingBean.java
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/jsf/LinksModelBean.java
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/jsf/TestLink.java
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/business/entity/helper/AuthoringHelperTest.java
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/business/entity/helper/QTITester.java
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/jsf/TestLinksBean.java
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/ui/listener/TestActionListener.java
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/ui/servelet/delivery/DownLoadMediaZipTest.java
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/jsf/TestWSBean.java
+/opt/sakai-12/samigo/samigo-app/src/test/org/sakaiproject/tool/assessment/ui/listener/FakeBeginDeliveryActionListener.java

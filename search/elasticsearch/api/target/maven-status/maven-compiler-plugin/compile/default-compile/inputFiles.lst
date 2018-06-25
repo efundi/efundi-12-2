@@ -1,0 +1,4 @@
+/opt/sakai-12/search/elasticsearch/api/src/java/org/sakaiproject/search/elasticsearch/ElasticSearchIndexBuilderEventRegistrar.java
+/opt/sakai-12/search/elasticsearch/api/src/java/org/sakaiproject/search/elasticsearch/ElasticSearchConstants.java
+/opt/sakai-12/search/elasticsearch/api/src/java/org/sakaiproject/search/elasticsearch/ElasticSearchIndexBuilder.java
+/opt/sakai-12/search/elasticsearch/api/src/java/org/sakaiproject/search/elasticsearch/filter/SearchItemFilter.java

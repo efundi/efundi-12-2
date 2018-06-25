@@ -1,0 +1,15 @@
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/SakaiScriptGetParentSiteTest.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/SakaiScriptCheckSessionTest.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/SakaiScriptRemoveMemberFromSiteBatchTest.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/ContentHostingSiteHideResources.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/MockingAbstractWebService.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/SakaiScriptChangeSiteMemberStatusTest.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/MethodGenerator.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/SakaiScriptSetUserPropertyTest.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/SakaiLoginLoginTest.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/TestsAndQuizzesPoolAttachmentReportTest.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/AbstractCXFTest.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/RemoteHostMatcherTest.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/SakaiScriptAddMemberToSiteWithRoleBatchTest.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/SakaiScriptGetPlacementIdTest.java
+/opt/sakai-12/webservices/cxf/src/test/java/org/sakaiproject/webservices/SakaiScriptSetUserTimeZoneTest.java

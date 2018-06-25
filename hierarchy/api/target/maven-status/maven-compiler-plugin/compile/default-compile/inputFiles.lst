@@ -1,0 +1,11 @@
+/opt/sakai-12/hierarchy/api/src/java/org/sakaiproject/hierarchy/dao/model/HierarchyPersistentNode.java
+/opt/sakai-12/hierarchy/api/src/java/org/sakaiproject/hierarchy/model/HierarchyNode.java
+/opt/sakai-12/hierarchy/api/src/java/org/sakaiproject/hierarchy/HierarchyNodeWriter.java
+/opt/sakai-12/hierarchy/api/src/java/org/sakaiproject/hierarchy/HierarchyService.java
+/opt/sakai-12/hierarchy/api/src/java/org/sakaiproject/hierarchy/HierarchyTokens.java
+/opt/sakai-12/hierarchy/api/src/java/org/sakaiproject/hierarchy/utils/HierarchyUtils.java
+/opt/sakai-12/hierarchy/api/src/java/org/sakaiproject/hierarchy/HierarchyNodeReader.java
+/opt/sakai-12/hierarchy/api/src/java/org/sakaiproject/hierarchy/dao/model/HierarchyNodeMetaData.java
+/opt/sakai-12/hierarchy/api/src/java/org/sakaiproject/hierarchy/HierarchyPermissions.java
+/opt/sakai-12/hierarchy/api/src/java/org/sakaiproject/hierarchy/HierarchyProvider.java
+/opt/sakai-12/hierarchy/api/src/java/org/sakaiproject/hierarchy/dao/model/HierarchyNodePermission.java

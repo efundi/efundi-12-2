@@ -1,0 +1,3 @@
+/opt/sakai-12/lessonbuilder/components/src/java/org/sakaiproject/lessonbuildertool/service/SimplePageToolService.java
+/opt/sakai-12/lessonbuilder/components/src/java/org/sakaiproject/lessonbuildertool/model/SimplePageToolDaoImpl.java
+/opt/sakai-12/lessonbuilder/components/src/java/org/sakaiproject/lessonbuildertool/util/LessonsSubNavBuilder.java

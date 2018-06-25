@@ -1,0 +1,6 @@
+/opt/sakai-12/gradebook/app/business/src/java/org/sakaiproject/tool/gradebook/business/impl/GradebookCalculationImpl.java
+/opt/sakai-12/gradebook/app/business/src/java/org/sakaiproject/tool/gradebook/business/impl/GradebookManagerHibernateImpl.java
+/opt/sakai-12/gradebook/app/business/src/java/org/sakaiproject/tool/gradebook/business/GradebookManager.java
+/opt/sakai-12/gradebook/app/business/src/java/org/sakaiproject/tool/gradebook/business/GbSynchronizer.java
+/opt/sakai-12/gradebook/app/business/src/java/org/sakaiproject/tool/gradebook/business/impl/GradebookScoringAgentManagerImpl.java
+/opt/sakai-12/gradebook/app/business/src/java/org/sakaiproject/tool/gradebook/business/GradebookScoringAgentManager.java

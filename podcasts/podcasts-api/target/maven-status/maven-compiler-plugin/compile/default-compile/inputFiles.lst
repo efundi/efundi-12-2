@@ -1,0 +1,5 @@
+/opt/sakai-12/podcasts/podcasts-api/src/java/org/sakaiproject/api/app/podcasts/PodcastEmailService.java
+/opt/sakai-12/podcasts/podcasts-api/src/java/org/sakaiproject/api/app/podcasts/PodcastPermissionsService.java
+/opt/sakai-12/podcasts/podcasts-api/src/java/org/sakaiproject/api/app/podcasts/PodfeedService.java
+/opt/sakai-12/podcasts/podcasts-api/src/java/org/sakaiproject/api/app/podcasts/PodcastService.java
+/opt/sakai-12/podcasts/podcasts-api/src/java/org/sakaiproject/api/app/podcasts/exception/PodcastException.java

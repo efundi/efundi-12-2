@@ -1,0 +1,10 @@
+/opt/sakai-12/samigo/samigo-services/src/test/org/sakaiproject/spring/SpringBeanLocatorTest.java
+/opt/sakai-12/samigo/samigo-services/src/test/org/sakaiproject/tool/assessment/facade/AssessmentGradingFacadeQueriesTest.java
+/opt/sakai-12/samigo/samigo-services/src/test/org/sakaiproject/assessment/facade/test/ItemFacadeTest.java
+/opt/sakai-12/samigo/samigo-services/src/test/org/sakaiproject/assesment/service/GradingServiceTest.java
+/opt/sakai-12/samigo/samigo-services/src/test/org/sakaiproject/tool/assessment/services/GradingServiceTest.java
+/opt/sakai-12/samigo/samigo-services/src/test/org/sakaiproject/tool/assessment/facade/PublishedAssesmentFacadeTest.java
+/opt/sakai-12/samigo/samigo-services/src/test/org/sakaiproject/tool/assessment/facade/ItemHashUtilTest.java
+/opt/sakai-12/samigo/samigo-services/src/test/org/sakaiproject/tool/assessment/facade/AssesmentFacadeTest.java
+/opt/sakai-12/samigo/samigo-services/src/test/org/sakaiproject/assessment/integration/helper/integrated/TagSyncEventHandlerImplTest.java
+/opt/sakai-12/samigo/samigo-services/src/test/org/sakaiproject/assessment/test/MatcherUtils.java

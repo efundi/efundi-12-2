@@ -1,0 +1,2 @@
+/opt/sakai-12/oauth/dao-hbm/src/java/org/sakaiproject/oauth/dao/HibernateAccessorDao.java
+/opt/sakai-12/oauth/dao-hbm/src/java/org/sakaiproject/oauth/dao/HibernateConsumerDao.java

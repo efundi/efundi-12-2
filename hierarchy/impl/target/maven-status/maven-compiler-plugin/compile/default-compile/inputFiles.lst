@@ -1,0 +1,5 @@
+/opt/sakai-12/hierarchy/impl/src/java/org/sakaiproject/hierarchy/impl/HierarchyServiceImpl.java
+/opt/sakai-12/hierarchy/impl/src/java/org/sakaiproject/hierarchy/dao/HierarchyDaoImpl.java
+/opt/sakai-12/hierarchy/impl/src/java/org/sakaiproject/hierarchy/impl/utils/HierarchyImplUtils.java
+/opt/sakai-12/hierarchy/impl/src/java/org/sakaiproject/hierarchy/dao/ResourceFinder.java
+/opt/sakai-12/hierarchy/impl/src/java/org/sakaiproject/hierarchy/dao/HierarchyDao.java

@@ -1,0 +1,10 @@
+/opt/sakai-12/gradebook/grades-rest/src/main/java/org/sakaiproject/gradebook/entity/Category.java
+/opt/sakai-12/gradebook/grades-rest/src/main/java/org/sakaiproject/gradebook/entity/GradesEntityProvider.java
+/opt/sakai-12/gradebook/grades-rest/src/main/java/org/sakaiproject/gradebook/entity/Student.java
+/opt/sakai-12/gradebook/grades-rest/src/main/java/org/sakaiproject/gradebook/entity/GradebookItemScore.java
+/opt/sakai-12/gradebook/grades-rest/src/main/java/org/sakaiproject/gradebook/entity/GradebookItem.java
+/opt/sakai-12/gradebook/grades-rest/src/main/java/org/sakaiproject/gradebook/entity/User.java
+/opt/sakai-12/gradebook/grades-rest/src/main/java/org/sakaiproject/gradebook/entity/SparseGradebookItem.java
+/opt/sakai-12/gradebook/grades-rest/src/main/java/org/sakaiproject/gradebook/entity/Course.java
+/opt/sakai-12/gradebook/grades-rest/src/main/java/org/sakaiproject/gradebook/entity/Gradebook.java
+/opt/sakai-12/gradebook/grades-rest/src/main/java/org/sakaiproject/gradebook/logic/ExternalLogic.java

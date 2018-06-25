@@ -1,0 +1,15 @@
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/AbstractPersistentCourseManagementObjectCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/SectionCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/AbstractNamedCourseManagementObjectCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/MeetingCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/CanonicalCourseCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/CrossListingCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/EnrollmentSetCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/AbstractMembershipContainerCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/EnrollmentCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/AcademicSessionCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/CrossListableCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/MembershipCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/SectionCategoryCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/CourseOfferingCmImpl.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/hibernate/src/java/org/sakaiproject/coursemanagement/impl/CourseSetCmImpl.java

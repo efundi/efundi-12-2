@@ -1,0 +1,15 @@
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/manager/Persistable.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/edu/person/OrganizationalPerson.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/edu/person/Person.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/manager/LifeCycleAware.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/edu/person/PhotoService.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/type/Typeable.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/edu/person/SakaiPerson.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/type/UnsupportedTypeException.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/edu/person/InetOrgPerson.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/edu/person/BasePhotoService.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/type/UuidTypeResolvable.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/edu/person/SakaiPersonManager.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/edu/person/EduPerson.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/type/Type.java
+/opt/sakai-12/common/common-api/src/java/org/sakaiproject/api/common/type/TypeManager.java

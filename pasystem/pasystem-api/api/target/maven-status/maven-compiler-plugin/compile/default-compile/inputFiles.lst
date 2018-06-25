@@ -1,0 +1,13 @@
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/Acknowledger.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/AcknowledgementType.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/PASystem.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/Banner.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/ValidationHelper.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/MissingUuidException.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/TemplateStream.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/Errors.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/PASystemException.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/Popup.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/Popups.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/I18n.java
+/opt/sakai-12/pasystem/pasystem-api/api/src/java/org/sakaiproject/pasystem/api/Banners.java

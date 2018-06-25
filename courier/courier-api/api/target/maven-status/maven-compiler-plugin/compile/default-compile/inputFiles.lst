@@ -1,0 +1,8 @@
+/opt/sakai-12/courier/courier-api/api/src/java/org/sakaiproject/courier/api/CourierService.java
+/opt/sakai-12/courier/courier-api/api/src/java/org/sakaiproject/courier/api/ObservingCourier.java
+/opt/sakai-12/courier/courier-api/api/src/java/org/sakaiproject/courier/cover/PresenceUpdater.java
+/opt/sakai-12/courier/courier-api/api/src/java/org/sakaiproject/courier/api/DeliveryProvider.java
+/opt/sakai-12/courier/courier-api/api/src/java/org/sakaiproject/courier/api/Expirable.java
+/opt/sakai-12/courier/courier-api/api/src/java/org/sakaiproject/courier/api/PresenceUpdater.java
+/opt/sakai-12/courier/courier-api/api/src/java/org/sakaiproject/courier/api/Delivery.java
+/opt/sakai-12/courier/courier-api/api/src/java/org/sakaiproject/courier/cover/CourierService.java

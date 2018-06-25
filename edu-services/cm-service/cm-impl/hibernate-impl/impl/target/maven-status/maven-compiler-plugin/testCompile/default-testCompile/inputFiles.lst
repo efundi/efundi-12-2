@@ -1,0 +1,7 @@
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/impl/src/test/org/sakaiproject/coursemanagement/test/CourseManagementAdministrationDataLoader.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/impl/src/test/org/sakaiproject/coursemanagement/test/CourseManagementAdministrationTest.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/impl/src/test/org/sakaiproject/coursemanagement/test/CourseManagementTestBase.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/impl/src/test/org/sakaiproject/coursemanagement/test/HibernateTestDataLoader.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/impl/src/test/org/sakaiproject/coursemanagement/test/CourseManagementServiceTest.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/impl/src/test/org/sakaiproject/coursemanagement/test/performance/IndexPerformance.java
+/opt/sakai-12/edu-services/cm-service/cm-impl/hibernate-impl/impl/src/test/org/sakaiproject/coursemanagement/test/ClassPathCMSyncJobTest.java

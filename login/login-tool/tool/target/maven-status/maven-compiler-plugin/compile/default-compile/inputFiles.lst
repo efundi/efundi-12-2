@@ -1,0 +1,8 @@
+/opt/sakai-12/login/login-tool/tool/src/java/org/sakaiproject/login/tool/ContainerLogout.java
+/opt/sakai-12/login/login-tool/tool/src/java/org/sakaiproject/login/filter/EppnSamlFilter.java
+/opt/sakai-12/login/login-tool/tool/src/java/org/sakaiproject/login/tool/ContainerLogin.java
+/opt/sakai-12/login/login-tool/tool/src/java/org/sakaiproject/login/tool/SkinnableLogin.java
+/opt/sakai-12/login/login-tool/tool/src/java/org/sakaiproject/login/springframework/SafeDelegatingFilterProxy.java
+/opt/sakai-12/login/login-tool/tool/src/java/org/sakaiproject/login/filter/UpnSamlFilter.java
+/opt/sakai-12/login/login-tool/tool/src/java/org/sakaiproject/login/filter/SakaiCasAuthenticationFilter.java
+/opt/sakai-12/login/login-tool/tool/src/java/org/sakaiproject/login/filter/SakaiLogoutSamlFilter.java

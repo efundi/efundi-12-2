@@ -1,0 +1,8 @@
+/opt/sakai-12/announcement/announcement-api/api/src/java/org/sakaiproject/announcement/api/AnnouncementChannel.java
+/opt/sakai-12/announcement/announcement-api/api/src/java/org/sakaiproject/announcement/cover/AnnouncementService.java
+/opt/sakai-12/announcement/announcement-api/api/src/java/org/sakaiproject/announcement/api/AnnouncementService.java
+/opt/sakai-12/announcement/announcement-api/api/src/java/org/sakaiproject/announcement/api/AnnouncementMessageHeader.java
+/opt/sakai-12/announcement/announcement-api/api/src/java/org/sakaiproject/announcement/api/AnnouncementMessageEdit.java
+/opt/sakai-12/announcement/announcement-api/api/src/java/org/sakaiproject/announcement/api/AnnouncementChannelEdit.java
+/opt/sakai-12/announcement/announcement-api/api/src/java/org/sakaiproject/announcement/api/AnnouncementMessageHeaderEdit.java
+/opt/sakai-12/announcement/announcement-api/api/src/java/org/sakaiproject/announcement/api/AnnouncementMessage.java

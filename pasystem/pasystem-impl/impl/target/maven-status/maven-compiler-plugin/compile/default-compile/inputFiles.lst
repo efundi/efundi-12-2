@@ -1,0 +1,14 @@
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/handlebars/ForeverTemplateCache.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/rest/PASystemAdminEntityProvider.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/common/DBAction.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/PASystemImpl.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/banners/BannerStorage.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/common/DBConnection.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/common/SakaiI18n.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/common/DBResults.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/popups/PopupForUser.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/common/DB.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/common/DBPreparedStatement.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/rest/PASystemEntityProvider.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/popups/PopupStorage.java
+/opt/sakai-12/pasystem/pasystem-impl/impl/src/java/org/sakaiproject/pasystem/impl/acknowledgements/AcknowledgementStorage.java

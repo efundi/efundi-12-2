@@ -1,0 +1,8 @@
+/opt/sakai-12/site-manage/site-manage-participant-helper/src/java/org/sakaiproject/site/tool/helper/participant/rsf/EmailNotiProducer.java
+/opt/sakai-12/site-manage/site-manage-participant-helper/src/java/org/sakaiproject/site/tool/helper/participant/rsf/AddProducer.java
+/opt/sakai-12/site-manage/site-manage-participant-helper/src/java/org/sakaiproject/site/tool/helper/participant/rsf/SameRoleProducer.java
+/opt/sakai-12/site-manage/site-manage-participant-helper/src/java/org/sakaiproject/site/tool/helper/participant/rsf/ConfirmProducer.java
+/opt/sakai-12/site-manage/site-manage-participant-helper/src/java/org/sakaiproject/site/tool/helper/participant/impl/UserRoleEntry.java
+/opt/sakai-12/site-manage/site-manage-participant-helper/src/java/org/sakaiproject/site/tool/helper/participant/rsf/AddViewParameters.java
+/opt/sakai-12/site-manage/site-manage-participant-helper/src/java/org/sakaiproject/site/tool/helper/participant/impl/SiteAddParticipantHandler.java
+/opt/sakai-12/site-manage/site-manage-participant-helper/src/java/org/sakaiproject/site/tool/helper/participant/rsf/DifferentRoleProducer.java

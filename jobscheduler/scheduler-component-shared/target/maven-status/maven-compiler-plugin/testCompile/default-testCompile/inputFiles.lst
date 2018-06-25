@@ -1,0 +1,8 @@
+/opt/sakai-12/jobscheduler/scheduler-component-shared/src/test/java/org/sakaiproject/component/app/scheduler/jobs/LongTestJob.java
+/opt/sakai-12/jobscheduler/scheduler-component-shared/src/test/java/org/sakaiproject/component/app/scheduler/jobs/TestBeanJob.java
+/opt/sakai-12/jobscheduler/scheduler-component-shared/src/test/java/org/sakaiproject/component/app/scheduler/ContextMappingDAOTest.java
+/opt/sakai-12/jobscheduler/scheduler-component-shared/src/test/java/org/sakaiproject/component/app/scheduler/ContextMappingConfiguration.java
+/opt/sakai-12/jobscheduler/scheduler-component-shared/src/test/java/org/sakaiproject/component/app/scheduler/jobs/TestJob2.java
+/opt/sakai-12/jobscheduler/scheduler-component-shared/src/test/java/org/sakaiproject/component/app/scheduler/ScheduledInvocationTest.java
+/opt/sakai-12/jobscheduler/scheduler-component-shared/src/test/java/org/sakaiproject/component/app/scheduler/events/hibernate/TestTriggerEventManagerHibernateImpl.java
+/opt/sakai-12/jobscheduler/scheduler-component-shared/src/test/java/org/sakaiproject/component/app/scheduler/jobs/TestJob.java

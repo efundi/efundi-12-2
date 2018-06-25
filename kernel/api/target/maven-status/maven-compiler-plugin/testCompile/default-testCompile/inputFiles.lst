@@ -1,0 +1,4 @@
+/opt/sakai-12/kernel/api/src/test/java/org/sakaiproject/exception/PermissionExceptionTest.java
+/opt/sakai-12/kernel/api/src/test/java/org/sakaiproject/util/ToolListenerTest.java
+/opt/sakai-12/kernel/api/src/test/java/org/sakaiproject/util/TrustedLoginTokenTest.java
+/opt/sakai-12/kernel/api/src/test/java/org/sakaiproject/util/RequestFilterTest.java

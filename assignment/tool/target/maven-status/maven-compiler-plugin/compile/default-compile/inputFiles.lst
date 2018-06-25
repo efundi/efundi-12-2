@@ -1,0 +1,4 @@
+/opt/sakai-12/assignment/tool/src/java/org/sakaiproject/assignment/tool/RedirectingAssignmentEntityServlet.java
+/opt/sakai-12/assignment/tool/src/java/org/sakaiproject/assignment/tool/AssignmentAction.java
+/opt/sakai-12/assignment/tool/src/java/org/sakaiproject/assignment/taggable/tool/DecoratedTaggingProvider.java
+/opt/sakai-12/assignment/tool/src/java/org/sakaiproject/assignment/entityproviders/AssignmentEntityProvider.java

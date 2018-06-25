@@ -1,0 +1,17 @@
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/model/NodeModel.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/model/AccessNode.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/logic/SakaiProxy.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/model/SelectOption.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/util/SearchResultComparator.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/logic/ProjectLogic.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/model/SearchResult.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/util/DelegatedAccessMutableTreeNode.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/model/HierarchyNodeSerialized.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/model/SiteSearchResult.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/model/AccessSearchResult.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/model/ListOptionSerialized.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/util/SiteSearchResultComparator.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/util/AccessSearchResultComparator.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/util/DelegatedAccessConstants.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/model/SiteSerialized.java
+/opt/sakai-12/delegatedaccess/api/src/java/org/sakaiproject/delegatedaccess/entity/DelegatedAccessEntityProvider.java

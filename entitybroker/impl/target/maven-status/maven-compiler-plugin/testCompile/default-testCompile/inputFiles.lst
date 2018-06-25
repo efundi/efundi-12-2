@@ -1,0 +1,10 @@
+/opt/sakai-12/entitybroker/impl/src/test/org/sakaiproject/entitybroker/impl/EntityBrokerManagerTest.java
+/opt/sakai-12/entitybroker/impl/src/test/org/sakaiproject/entitybroker/impl/dao/EntityPropertyTest.java
+/opt/sakai-12/entitybroker/impl/src/test/org/sakaiproject/entitybroker/impl/EntityBrokerTransactionalTest.java
+/opt/sakai-12/entitybroker/impl/src/test/org/sakaiproject/entitybroker/impl/EntityTaggingServiceTest.java
+/opt/sakai-12/entitybroker/impl/src/test/org/sakaiproject/entitybroker/impl/EntityMetaPropertiesServiceTest.java
+/opt/sakai-12/entitybroker/impl/src/test/org/sakaiproject/entitybroker/impl/EntityProviderMethodStoreImplTest.java
+/opt/sakai-12/entitybroker/impl/src/test/org/sakaiproject/entitybroker/impl/EntityProviderManagerImplTest.java
+/opt/sakai-12/entitybroker/impl/src/test/org/sakaiproject/entitybroker/impl/dao/EntityBrokerDaoImplTest.java
+/opt/sakai-12/entitybroker/impl/src/test/org/sakaiproject/entitybroker/impl/ServiceTestManager.java
+/opt/sakai-12/entitybroker/impl/src/test/org/sakaiproject/entitybroker/impl/data/TestDataPreload.java

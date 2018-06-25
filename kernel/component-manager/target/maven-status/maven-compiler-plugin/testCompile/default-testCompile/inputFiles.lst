@@ -1,0 +1,5 @@
+/opt/sakai-12/kernel/component-manager/src/test/java/org/sakaiproject/util/Component.java
+/opt/sakai-12/kernel/component-manager/src/test/java/org/sakaiproject/util/JarBuilder.java
+/opt/sakai-12/kernel/component-manager/src/test/java/org/sakaiproject/util/ComponentBuilder.java
+/opt/sakai-12/kernel/component-manager/src/test/java/org/sakaiproject/util/ComponentsLoaderTest.java
+/opt/sakai-12/kernel/component-manager/src/test/java/org/sakaiproject/util/Compiler.java

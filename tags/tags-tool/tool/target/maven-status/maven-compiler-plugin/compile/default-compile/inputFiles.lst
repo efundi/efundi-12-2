@@ -1,0 +1,11 @@
+/opt/sakai-12/tags/tags-tool/tool/src/java/org/sakaiproject/tags/tool/handlers/Handler.java
+/opt/sakai-12/tags/tags-tool/tool/src/java/org/sakaiproject/tags/tool/handlers/TagsHandler.java
+/opt/sakai-12/tags/tags-tool/tool/src/java/org/sakaiproject/tags/tool/TagServiceServlet.java
+/opt/sakai-12/tags/tags-tool/tool/src/java/org/sakaiproject/tags/tool/handlers/BaseHandler.java
+/opt/sakai-12/tags/tags-tool/tool/src/java/org/sakaiproject/tags/tool/handlers/IndexHandler.java
+/opt/sakai-12/tags/tags-tool/tool/src/java/org/sakaiproject/tags/tool/handlers/TagCollectionsHandler.java
+/opt/sakai-12/tags/tags-tool/tool/src/java/org/sakaiproject/tags/tool/handlers/TagsInTagCollectionsHandler.java
+/opt/sakai-12/tags/tags-tool/tool/src/java/org/sakaiproject/tags/tool/forms/BaseForm.java
+/opt/sakai-12/tags/tags-tool/tool/src/java/org/sakaiproject/tags/tool/forms/TagForm.java
+/opt/sakai-12/tags/tags-tool/tool/src/java/org/sakaiproject/tags/tool/forms/TagCollectionForm.java
+/opt/sakai-12/tags/tags-tool/tool/src/java/org/sakaiproject/tags/tool/handlers/CrudHandler.java

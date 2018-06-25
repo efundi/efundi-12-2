@@ -1,0 +1,4 @@
+/opt/sakai-12/jobscheduler/scheduler-events-model/src/java/org/sakaiproject/scheduler/events/hibernate/TriggerEventHibernateImpl.java
+/opt/sakai-12/jobscheduler/scheduler-events-model/src/java/org/sakaiproject/scheduler/events/hibernate/DelayedInvocation.java
+/opt/sakai-12/jobscheduler/scheduler-events-model/src/java/org/sakaiproject/scheduler/events/hibernate/ContextMapping.java
+/opt/sakai-12/jobscheduler/scheduler-events-model/src/java/org/sakaiproject/scheduler/events/hibernate/TriggerEventEnumUserType.java

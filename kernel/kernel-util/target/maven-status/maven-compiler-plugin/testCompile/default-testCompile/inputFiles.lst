@@ -1,0 +1,8 @@
+/opt/sakai-12/kernel/kernel-util/src/test/java/org/sakaiproject/util/WebTest.java
+/opt/sakai-12/kernel/kernel-util/src/test/java/org/sakaiproject/util/EntityCollectionsTest.java
+/opt/sakai-12/kernel/kernel-util/src/test/java/org/sakaiproject/util/MapResourceBundleTest.java
+/opt/sakai-12/kernel/kernel-util/src/test/java/org/sakaiproject/util/ZipContentUtilTest.java
+/opt/sakai-12/kernel/kernel-util/src/test/java/org/sakaiproject/util/DateFormatterUtilTest.java
+/opt/sakai-12/kernel/kernel-util/src/test/java/org/sakaiproject/util/IPAddrUtilTest.java
+/opt/sakai-12/kernel/kernel-util/src/test/java/org/sakaiproject/util/UTF8Test.java
+/opt/sakai-12/kernel/kernel-util/src/test/java/org/sakaiproject/util/PasswordCheckTest.java

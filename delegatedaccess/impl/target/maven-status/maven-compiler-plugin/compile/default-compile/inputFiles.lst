@@ -1,0 +1,10 @@
+/opt/sakai-12/delegatedaccess/impl/src/java/org/sakaiproject/delegatedaccess/dao/impl/DelegatedAccessDaoImpl.java
+/opt/sakai-12/delegatedaccess/impl/src/java/org/sakaiproject/delegatedaccess/jobs/DelegatedAccessAddToolToMyWorkspacesJob.java
+/opt/sakai-12/delegatedaccess/impl/src/java/org/sakaiproject/delegatedaccess/dao/DelegatedAccessDao.java
+/opt/sakai-12/delegatedaccess/impl/src/java/org/sakaiproject/delegatedaccess/entity/DelegatedAccessEntityProviderImpl.java
+/opt/sakai-12/delegatedaccess/impl/src/java/org/sakaiproject/delegatedaccess/jobs/DelegatedAccessSiteHierarchyJob.java
+/opt/sakai-12/delegatedaccess/impl/src/java/org/sakaiproject/delegatedaccess/jobs/DelegatedAccessShoppingPeriodJob.java
+/opt/sakai-12/delegatedaccess/impl/src/java/org/sakaiproject/delegatedaccess/logic/SakaiProxyImpl.java
+/opt/sakai-12/delegatedaccess/impl/src/java/org/sakaiproject/delegatedaccess/logic/DelegatedAccessObserver.java
+/opt/sakai-12/delegatedaccess/impl/src/java/org/sakaiproject/delegatedaccess/logic/ProjectLogicImpl.java
+/opt/sakai-12/delegatedaccess/impl/src/java/org/sakaiproject/delegatedaccess/dao/impl/DelegatedAccessSampleDataLoader.java

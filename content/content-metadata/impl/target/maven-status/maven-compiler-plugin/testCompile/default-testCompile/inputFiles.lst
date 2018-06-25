@@ -1,0 +1,3 @@
+/opt/sakai-12/content/content-metadata/impl/src/test/org/sakaiproject/content/metadata/logic/BooleanMetadataTest.java
+/opt/sakai-12/content/content-metadata/impl/src/test/org/sakaiproject/content/metadata/logic/JsonMetadataParserTest.java
+/opt/sakai-12/content/content-metadata/impl/src/test/org/sakaiproject/content/metadata/logic/ListMetadataTest.java

@@ -1,0 +1,4 @@
+/opt/sakai-12/entitybroker/core-providers/src/test/org/sakaiproject/entitybroker/providers/UserEntityProviderGetUserByIdEidTest.java
+/opt/sakai-12/entitybroker/core-providers/src/test/org/sakaiproject/entitybroker/providers/MembershipEntityProviderTest.java
+/opt/sakai-12/entitybroker/core-providers/src/test/org/sakaiproject/entitybroker/providers/UserEntityProviderRestrictedViewTest.java
+/opt/sakai-12/entitybroker/core-providers/src/test/org/sakaiproject/entitybroker/providers/UserEntityProviderFindAndCheckUserId.java

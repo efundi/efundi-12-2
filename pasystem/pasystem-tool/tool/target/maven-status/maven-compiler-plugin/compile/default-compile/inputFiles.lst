@@ -1,0 +1,10 @@
+/opt/sakai-12/pasystem/pasystem-tool/tool/src/java/org/sakaiproject/pasystem/tool/handlers/Handler.java
+/opt/sakai-12/pasystem/pasystem-tool/tool/src/java/org/sakaiproject/pasystem/tool/forms/PopupForm.java
+/opt/sakai-12/pasystem/pasystem-tool/tool/src/java/org/sakaiproject/pasystem/tool/handlers/BaseHandler.java
+/opt/sakai-12/pasystem/pasystem-tool/tool/src/java/org/sakaiproject/pasystem/tool/forms/BannerForm.java
+/opt/sakai-12/pasystem/pasystem-tool/tool/src/java/org/sakaiproject/pasystem/tool/handlers/BannersHandler.java
+/opt/sakai-12/pasystem/pasystem-tool/tool/src/java/org/sakaiproject/pasystem/tool/handlers/CrudHandler.java
+/opt/sakai-12/pasystem/pasystem-tool/tool/src/java/org/sakaiproject/pasystem/tool/PASystemServlet.java
+/opt/sakai-12/pasystem/pasystem-tool/tool/src/java/org/sakaiproject/pasystem/tool/forms/BaseForm.java
+/opt/sakai-12/pasystem/pasystem-tool/tool/src/java/org/sakaiproject/pasystem/tool/handlers/IndexHandler.java
+/opt/sakai-12/pasystem/pasystem-tool/tool/src/java/org/sakaiproject/pasystem/tool/handlers/PopupsHandler.java

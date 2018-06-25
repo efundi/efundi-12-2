@@ -1,0 +1,11 @@
+/opt/sakai-12/taggable/taggable-api/api/src/java/org/sakaiproject/taggable/api/TaggingManager.java
+/opt/sakai-12/taggable/taggable-api/api/src/java/org/sakaiproject/taggable/api/Tag.java
+/opt/sakai-12/taggable/taggable-api/api/src/java/org/sakaiproject/taggable/api/TagList.java
+/opt/sakai-12/taggable/taggable-api/api/src/java/org/sakaiproject/taggable/api/TagColumn.java
+/opt/sakai-12/taggable/taggable-api/api/src/java/org/sakaiproject/taggable/api/TaggableActivityProducer.java
+/opt/sakai-12/taggable/taggable-api/api/src/java/org/sakaiproject/taggable/api/TaggableItem.java
+/opt/sakai-12/taggable/taggable-api/api/src/java/org/sakaiproject/taggable/api/TaggingProvider.java
+/opt/sakai-12/taggable/taggable-api/api/src/java/org/sakaiproject/taggable/api/Link.java
+/opt/sakai-12/taggable/taggable-api/api/src/java/org/sakaiproject/taggable/api/LinkManager.java
+/opt/sakai-12/taggable/taggable-api/api/src/java/org/sakaiproject/taggable/api/TaggableActivity.java
+/opt/sakai-12/taggable/taggable-api/api/src/java/org/sakaiproject/taggable/api/TaggingHelperInfo.java

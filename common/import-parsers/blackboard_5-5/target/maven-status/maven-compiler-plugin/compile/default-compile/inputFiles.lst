@@ -1,0 +1,8 @@
+/opt/sakai-12/common/import-parsers/blackboard_5-5/src/java/org/sakaiproject/importer/impl/translators/Bb55StaffInfoTranslator.java
+/opt/sakai-12/common/import-parsers/blackboard_5-5/src/java/org/sakaiproject/importer/impl/translators/Bb55SurveyTranslator.java
+/opt/sakai-12/common/import-parsers/blackboard_5-5/src/java/org/sakaiproject/importer/impl/translators/Bb55ExternalLinkTranslator.java
+/opt/sakai-12/common/import-parsers/blackboard_5-5/src/java/org/sakaiproject/importer/impl/translators/Bb55AnnouncementTranslator.java
+/opt/sakai-12/common/import-parsers/blackboard_5-5/src/java/org/sakaiproject/importer/impl/translators/Bb55DocumentTranslator.java
+/opt/sakai-12/common/import-parsers/blackboard_5-5/src/java/org/sakaiproject/importer/impl/translators/Bb55QuestionPoolTranslator.java
+/opt/sakai-12/common/import-parsers/blackboard_5-5/src/java/org/sakaiproject/importer/impl/translators/Bb55AssessmentTranslator.java
+/opt/sakai-12/common/import-parsers/blackboard_5-5/src/java/org/sakaiproject/importer/impl/Blackboard55FileParser.java

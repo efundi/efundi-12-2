@@ -1,0 +1,10 @@
+/opt/sakai-12/help/help-component-shared/src/java/org/sakaiproject/component/app/help/model/GlossaryEntryBean.java
+/opt/sakai-12/help/help-component-shared/src/java/org/sakaiproject/component/app/help/model/CategoryBean.java
+/opt/sakai-12/help/help-component-shared/src/java/org/sakaiproject/component/app/help/model/TableOfContentsBean.java
+/opt/sakai-12/help/help-component-shared/src/java/org/sakaiproject/component/app/help/model/HelpContextConfig.java
+/opt/sakai-12/help/help-component-shared/src/java/org/sakaiproject/component/app/help/model/SearchRequest.java
+/opt/sakai-12/help/help-component-shared/src/java/org/sakaiproject/component/app/help/model/SourceBean.java
+/opt/sakai-12/help/help-component-shared/src/java/org/sakaiproject/component/app/help/model/ContextBean.java
+/opt/sakai-12/help/help-component-shared/src/java/org/sakaiproject/component/app/help/model/HelpRegistration.java
+/opt/sakai-12/help/help-component-shared/src/java/org/sakaiproject/component/app/help/model/RegistrationFile.java
+/opt/sakai-12/help/help-component-shared/src/java/org/sakaiproject/component/app/help/model/ResourceBean.java

@@ -1,0 +1,5 @@
+/opt/sakai-12/search/elasticsearch/impl/src/java/org/sakaiproject/search/elasticsearch/ElasticSearchIndexBuilderAutoRegistrar.java
+/opt/sakai-12/search/elasticsearch/impl/src/java/org/sakaiproject/search/elasticsearch/ElasticSearchService.java
+/opt/sakai-12/search/elasticsearch/impl/src/java/org/sakaiproject/search/elasticsearch/ElasticSearchResult.java
+/opt/sakai-12/search/elasticsearch/impl/src/java/org/sakaiproject/search/elasticsearch/SearchNotificationAction.java
+/opt/sakai-12/search/elasticsearch/impl/src/java/org/sakaiproject/search/elasticsearch/ElasticSearchList.java

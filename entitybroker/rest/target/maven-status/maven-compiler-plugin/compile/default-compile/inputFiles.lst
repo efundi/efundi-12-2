@@ -1,0 +1,9 @@
+/opt/sakai-12/entitybroker/rest/src/java/org/sakaiproject/entitybroker/rest/EntityRedirectsManager.java
+/opt/sakai-12/entitybroker/rest/src/java/org/sakaiproject/entitybroker/rest/caps/BatchProvider.java
+/opt/sakai-12/entitybroker/rest/src/java/org/sakaiproject/entitybroker/rest/EntityEncodingManager.java
+/opt/sakai-12/entitybroker/rest/src/java/org/sakaiproject/entitybroker/rest/EntityRESTProviderBase.java
+/opt/sakai-12/entitybroker/rest/src/java/org/sakaiproject/entitybroker/rest/EntityActionsManager.java
+/opt/sakai-12/entitybroker/rest/src/java/org/sakaiproject/entitybroker/rest/EntityDescriptionManager.java
+/opt/sakai-12/entitybroker/rest/src/java/org/sakaiproject/entitybroker/rest/EntityBatchHandler.java
+/opt/sakai-12/entitybroker/rest/src/java/org/sakaiproject/entitybroker/rest/EntityHandlerImpl.java
+/opt/sakai-12/entitybroker/rest/src/java/org/sakaiproject/entitybroker/rest/EntityBrokerRESTServiceManager.java

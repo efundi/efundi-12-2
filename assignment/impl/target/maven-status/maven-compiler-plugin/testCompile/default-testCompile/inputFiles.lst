@@ -1,0 +1,8 @@
+/opt/sakai-12/assignment/impl/src/test/org/sakaiproject/assignment/impl/AssignmentTestConfiguration.java
+/opt/sakai-12/assignment/impl/src/test/org/sakaiproject/assignment/impl/AssignmentReferenceTest.java
+/opt/sakai-12/assignment/impl/src/test/org/sakaiproject/assignment/impl/AssignmentConversionTest.java
+/opt/sakai-12/assignment/impl/src/test/org/sakaiproject/assignment/impl/AssignmentComparatorTest.java
+/opt/sakai-12/assignment/impl/src/test/org/sakaiproject/assignment/impl/AssignmentServiceTest.java
+/opt/sakai-12/assignment/impl/src/test/org/sakaiproject/assignment/impl/FakeReference.java
+/opt/sakai-12/assignment/impl/src/test/org/sakaiproject/assignment/impl/SpreadsheetExporterTest.java
+/opt/sakai-12/assignment/impl/src/test/org/sakaiproject/assignment/impl/AssignmentIdentityTest.java

@@ -1,5 +1,0 @@
-/opt/sakai-12/signup/impl/src/test/org/sakaiproject/signup/logic/messages/AllUsersEmailTest.java
-/opt/sakai-12/signup/impl/src/test/org/sakaiproject/signup/logic/messages/CancellationEmailTest.java
-/opt/sakai-12/signup/impl/src/test/org/sakaiproject/signup/logic/messages/OrganizerEmailTest.java
-/opt/sakai-12/signup/impl/src/test/org/sakaiproject/signup/logic/messages/TransferEmailTest.java
-/opt/sakai-12/signup/impl/src/test/org/sakaiproject/signup/logic/messages/AttendeeEmailTest.java

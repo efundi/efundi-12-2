@@ -1,6 +1,0 @@
-/opt/sakai-12/portal/portal-render-impl/impl/src/test/org/sakaiproject/portal/render/portlet/services/state/EnhancedPortletStateEncoderTest.java
-/opt/sakai-12/portal/portal-render-impl/impl/src/test/org/sakaiproject/portal/render/portlet/services/state/BasicWebRecoderTest.java
-/opt/sakai-12/portal/portal-render-impl/impl/src/test/org/sakaiproject/portal/render/portlet/PortletToolRenderServiceTest.java
-/opt/sakai-12/portal/portal-render-impl/impl/src/test/org/sakaiproject/portal/render/portlet/services/state/Base64RecoderTest.java
-/opt/sakai-12/portal/portal-render-impl/impl/src/test/org/sakaiproject/portal/render/portlet/services/state/PortletStateTest.java
-/opt/sakai-12/portal/portal-render-impl/impl/src/test/org/sakaiproject/portal/render/portlet/services/state/SimplePortletStateEncoderTest.java

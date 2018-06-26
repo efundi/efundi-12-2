@@ -1,8 +1,0 @@
-/opt/sakai-12/content-review/impl/service/src/main/java/org/sakaiproject/contentreview/service/advisors/DefaultSiteAdvisor.java
-/opt/sakai-12/content-review/impl/service/src/main/java/org/sakaiproject/contentreview/service/NoOpContentReviewService.java
-/opt/sakai-12/content-review/impl/service/src/main/java/org/sakaiproject/contentreview/service/advisors/SitePropertyAdvisor.java
-/opt/sakai-12/content-review/impl/service/src/main/java/org/sakaiproject/contentreview/service/ContentReviewQueueServiceImpl.java
-/opt/sakai-12/content-review/impl/service/src/main/java/org/sakaiproject/contentreview/service/advisors/SiteCourseTypeAdvisor.java
-/opt/sakai-12/content-review/impl/service/src/main/java/org/sakaiproject/contentreview/service/jobs/ContentReviewQueue.java
-/opt/sakai-12/content-review/impl/service/src/main/java/org/sakaiproject/contentreview/service/jobs/ContentReviewReports.java
-/opt/sakai-12/content-review/impl/service/src/main/java/org/sakaiproject/contentreview/service/ContentReviewFederatedServiceImpl.java

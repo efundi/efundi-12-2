@@ -1,6 +1,0 @@
-/opt/sakai-12/reset-pass/account-validator-impl/src/java/org/sakaiproject/accountvalidator/entity/impl/ValidationEntityProviderImpl.java
-/opt/sakai-12/reset-pass/account-validator-impl/src/java/org/sakaiproject/accountvalidator/logic/impl/ValidationLogicImpl.java
-/opt/sakai-12/reset-pass/account-validator-impl/src/java/org/sakaiproject/accountvalidator/impl/jobs/CheckAccountsJob.java
-/opt/sakai-12/reset-pass/account-validator-impl/src/java/org/sakaiproject/accountvalidator/impl/jobs/CheckValidations.java
-/opt/sakai-12/reset-pass/account-validator-impl/src/java/org/sakaiproject/accountvalidator/dao/impl/ValidationLogicDao.java
-/opt/sakai-12/reset-pass/account-validator-impl/src/java/org/sakaiproject/accountvalidator/logic/dao/ValidationDao.java

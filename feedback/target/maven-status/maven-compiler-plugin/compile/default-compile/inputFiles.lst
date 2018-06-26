@@ -1,7 +1,0 @@
-/opt/sakai-12/feedback/src/java/org/sakaiproject/feedback/exception/AttachmentsTooBigException.java
-/opt/sakai-12/feedback/src/java/org/sakaiproject/feedback/tool/entityproviders/FeedbackEntityProvider.java
-/opt/sakai-12/feedback/src/java/org/sakaiproject/feedback/util/Constants.java
-/opt/sakai-12/feedback/src/java/org/sakaiproject/feedback/util/FileItemDataSource.java
-/opt/sakai-12/feedback/src/java/org/sakaiproject/feedback/util/SakaiProxy.java
-/opt/sakai-12/feedback/src/java/org/sakaiproject/feedback/tool/FeedbackTool.java
-/opt/sakai-12/feedback/src/java/org/sakaiproject/feedback/db/Database.java

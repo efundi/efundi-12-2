@@ -1,6 +1,0 @@
-/opt/sakai-12/site/sakai-message-bundle-manager-tool/src/main/java/org/sakaiproject/mbm/tool/MainController.java
-/opt/sakai-12/site/sakai-message-bundle-manager-tool/src/main/java/org/sakaiproject/mbm/tool/entities/MessageEntity.java
-/opt/sakai-12/site/sakai-message-bundle-manager-tool/src/main/java/org/sakaiproject/mbm/tool/entities/ModulesFilterEntity.java
-/opt/sakai-12/site/sakai-message-bundle-manager-tool/src/main/java/org/sakaiproject/mbm/tool/entities/SearchEntity.java
-/opt/sakai-12/site/sakai-message-bundle-manager-tool/src/main/java/org/sakaiproject/mbm/servlet/SakaiToolServlet.java
-/opt/sakai-12/site/sakai-message-bundle-manager-tool/src/main/java/org/sakaiproject/mbm/tool/ResourceLoaderMessageSource.java

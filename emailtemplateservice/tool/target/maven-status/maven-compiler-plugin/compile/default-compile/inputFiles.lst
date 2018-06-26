@@ -1,5 +1,0 @@
-/opt/sakai-12/emailtemplateservice/tool/src/java/org/sakaiproject/emailtemplateservice/tool/params/EmailTemplateViewParams.java
-/opt/sakai-12/emailtemplateservice/tool/src/java/org/sakaiproject/emailtemplateservice/tool/handler/ModifyEmailHandler.java
-/opt/sakai-12/emailtemplateservice/tool/src/java/org/sakaiproject/emailtemplateservice/tool/producers/MainViewProducer.java
-/opt/sakai-12/emailtemplateservice/tool/src/java/org/sakaiproject/emailtemplateservice/tool/producers/ModifyEmailProducer.java
-/opt/sakai-12/emailtemplateservice/tool/src/java/org/sakaiproject/emailtemplateservice/tool/locators/EmailTemplateLocator.java

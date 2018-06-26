@@ -1,9 +1,0 @@
-/opt/sakai-12/content/content-impl-providers/impl/src/java/org/sakaiproject/content/providers/BaseEventDelayHandlerSqlHSql.java
-/opt/sakai-12/content/content-impl-providers/impl/src/java/org/sakaiproject/content/providers/SimpleSiteContentAdvisorProvider.java
-/opt/sakai-12/content/content-impl-providers/impl/src/java/org/sakaiproject/content/providers/cm/CourseManagementSiteContentAdvisor.java
-/opt/sakai-12/content/content-impl-providers/impl/src/java/org/sakaiproject/content/providers/BaseEventDelayHandlerSqlDefault.java
-/opt/sakai-12/content/content-impl-providers/impl/src/java/org/sakaiproject/content/providers/BaseEventDelayHandlerSqlMySql.java
-/opt/sakai-12/content/content-impl-providers/impl/src/java/org/sakaiproject/content/providers/BaseEventDelayHandlerSql.java
-/opt/sakai-12/content/content-impl-providers/impl/src/java/org/sakaiproject/content/providers/BaseEventDelayHandlerSqlMsSql.java
-/opt/sakai-12/content/content-impl-providers/impl/src/java/org/sakaiproject/content/providers/BaseEventDelayHandler.java
-/opt/sakai-12/content/content-impl-providers/impl/src/java/org/sakaiproject/content/providers/BaseEventDelayHandlerSqlOracle.java

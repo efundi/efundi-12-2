@@ -1,7 +1,0 @@
-/opt/sakai-12/entitybroker/utils/src/test/org/sakaiproject/entitybroker/util/reflect/ReflectUtilTest.java
-/opt/sakai-12/entitybroker/utils/src/test/org/sakaiproject/entitybroker/util/request/RequestUtilsTest.java
-/opt/sakai-12/entitybroker/utils/src/test/org/sakaiproject/entitybroker/util/HttpRESTUtilsTest.java
-/opt/sakai-12/entitybroker/utils/src/test/org/sakaiproject/entitybroker/util/request/RequestStorageImplTest.java
-/opt/sakai-12/entitybroker/utils/src/test/org/sakaiproject/entitybroker/util/reflect/TestInterfaceFour.java
-/opt/sakai-12/entitybroker/utils/src/test/org/sakaiproject/entitybroker/util/reflect/TestInterfaceOne.java
-/opt/sakai-12/entitybroker/utils/src/test/org/sakaiproject/entitybroker/util/reflect/TestAnnote.java

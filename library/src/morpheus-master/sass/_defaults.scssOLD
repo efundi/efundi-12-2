@@ -32,7 +32,7 @@ $header-font-weight: 700 !default;										// 400 or 700 as you wish
 
 /* Color palette */
 $background-color: 			 #FFFFFF !default;
-$background-color-secondary: #6f327a !default;
+$background-color-secondary: #3949AB !default;
 
 $primary-color:    			 #265b81 !default;
 $primary-color-highContrast: darken( $primary-color, 4% ) !default;	// for use of primary on non-white light backgrounds, such as greys
@@ -49,7 +49,7 @@ $portal-background-color: $background-color !default;
 /* Tool tabs */
 $tool-background-color:		 $background-color !default;
 $tool-menu-background-color:			 $body-background-color !default;
-$tool-menu-color: 	#6f327a	!default;
+$tool-menu-color: 	#6f327a	/*	 #424242*/ !default;
 $tool-border-color:			 #E5E5E5 !default;
 
 $tool-tab-height:                                         32px !default;
@@ -337,7 +337,7 @@ $banner-height: 52px !default;
 /* Logo location */
 $logo: 'images/logo.png' !default;
 $logo-height: 36px !default;
-$logo-width: 100px !default;
+$logo-width: 60px !default;
 
 /* Tool icons */
 $skin-with-icons: true !default;

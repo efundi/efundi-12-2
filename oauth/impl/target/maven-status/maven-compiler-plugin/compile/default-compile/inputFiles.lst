@@ -1,9 +1,0 @@
-/opt/sakai-12/oauth/impl/src/java/org/sakaiproject/oauth/dao/ServerConfigConsumerDao.java
-/opt/sakai-12/oauth/impl/src/java/org/sakaiproject/oauth/service/OAuthAdminServiceImpl.java
-/opt/sakai-12/oauth/impl/src/java/org/sakaiproject/oauth/service/OAuthServiceImpl.java
-/opt/sakai-12/oauth/impl/src/java/org/sakaiproject/oauth/dao/MemoryConsumerDao.java
-/opt/sakai-12/oauth/impl/src/java/org/sakaiproject/oauth/advisor/CollectingPermissionsAdvisor.java
-/opt/sakai-12/oauth/impl/src/java/org/sakaiproject/oauth/dao/MemoryAccessorDao.java
-/opt/sakai-12/oauth/impl/src/java/org/sakaiproject/oauth/service/Util.java
-/opt/sakai-12/oauth/impl/src/java/org/sakaiproject/oauth/service/OAuthHttpServiceImpl.java
-/opt/sakai-12/oauth/impl/src/java/org/sakaiproject/oauth/advisor/LimitedPermissionsAdvisor.java

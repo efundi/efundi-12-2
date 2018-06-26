@@ -1,4 +1,0 @@
-org/sakaiproject/scheduler/events/hibernate/ContextMapping.class
-org/sakaiproject/scheduler/events/hibernate/DelayedInvocation.class
-org/sakaiproject/scheduler/events/hibernate/TriggerEventEnumUserType.class
-org/sakaiproject/scheduler/events/hibernate/TriggerEventHibernateImpl.class

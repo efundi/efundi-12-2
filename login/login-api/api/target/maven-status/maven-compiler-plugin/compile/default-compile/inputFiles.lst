@@ -1,9 +1,0 @@
-/opt/sakai-12/login/login-api/api/src/java/org/sakaiproject/login/api/LoginRenderEngine.java
-/opt/sakai-12/login/login-api/api/src/java/org/sakaiproject/login/exceptions/LoginPenaltyNotConfiguredException.java
-/opt/sakai-12/login/login-api/api/src/java/org/sakaiproject/login/api/LoginCredentials.java
-/opt/sakai-12/login/login-api/api/src/java/org/sakaiproject/login/api/LoginRenderContext.java
-/opt/sakai-12/login/login-api/api/src/java/org/sakaiproject/login/api/LoginService.java
-/opt/sakai-12/login/login-api/api/src/java/org/sakaiproject/login/api/Login.java
-/opt/sakai-12/login/login-api/api/src/java/org/sakaiproject/login/api/LoginAdvisor.java
-/opt/sakai-12/login/login-api/api/src/java/org/sakaiproject/login/cover/LoginService.java
-/opt/sakai-12/login/login-api/api/src/java/org/sakaiproject/login/exceptions/LoginCredentialsNotDefinedException.java

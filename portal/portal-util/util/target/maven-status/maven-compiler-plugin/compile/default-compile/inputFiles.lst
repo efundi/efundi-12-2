@@ -1,9 +1,0 @@
-/opt/sakai-12/portal/portal-util/util/src/java/org/sakaiproject/portal/util/PortalBean.java
-/opt/sakai-12/portal/portal-util/util/src/java/org/sakaiproject/portal/util/BufferedServletResponse.java
-/opt/sakai-12/portal/portal-util/util/src/java/org/sakaiproject/portal/util/ToolUtils.java
-/opt/sakai-12/portal/portal-util/util/src/java/org/sakaiproject/portal/util/ByteArrayServletResponse.java
-/opt/sakai-12/portal/portal-util/util/src/java/org/sakaiproject/portal/util/ErrorReporter.java
-/opt/sakai-12/portal/portal-util/util/src/java/org/sakaiproject/portal/util/CSSUtils.java
-/opt/sakai-12/portal/portal-util/util/src/java/org/sakaiproject/portal/util/URLUtils.java
-/opt/sakai-12/portal/portal-util/util/src/java/org/sakaiproject/portal/util/PortalUtils.java
-/opt/sakai-12/portal/portal-util/util/src/java/org/sakaiproject/portal/util/ToolURLManagerImpl.java

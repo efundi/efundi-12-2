@@ -1,8 +1,0 @@
-/opt/sakai-12/chat/chat-api/api/src/java/org/sakaiproject/chat2/model/ChatFunctions.java
-/opt/sakai-12/chat/chat-api/api/src/java/org/sakaiproject/chat2/model/DeleteMessage.java
-/opt/sakai-12/chat/chat-api/api/src/java/org/sakaiproject/chat2/model/SimpleUser.java
-/opt/sakai-12/chat/chat-api/api/src/java/org/sakaiproject/chat2/model/ChatChannel.java
-/opt/sakai-12/chat/chat-api/api/src/java/org/sakaiproject/chat2/model/TransferableChatMessage.java
-/opt/sakai-12/chat/chat-api/api/src/java/org/sakaiproject/chat2/model/MessageDateString.java
-/opt/sakai-12/chat/chat-api/api/src/java/org/sakaiproject/chat2/model/ChatMessage.java
-/opt/sakai-12/chat/chat-api/api/src/java/org/sakaiproject/chat2/model/ChatManager.java

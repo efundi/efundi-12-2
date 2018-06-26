@@ -1,5 +1,0 @@
-/opt/sakai-12/emailtemplateservice/impl/logic/src/java/org/sakaiproject/emailtemplateservice/dao/impl/EmailTemplateServiceDao.java
-/opt/sakai-12/emailtemplateservice/impl/logic/src/java/org/sakaiproject/emailtemplateservice/service/external/impl/ExternalLogicImpl.java
-/opt/sakai-12/emailtemplateservice/impl/logic/src/java/org/sakaiproject/emailtemplateservice/service/impl/EmailTemplateServiceImpl.java
-/opt/sakai-12/emailtemplateservice/impl/logic/src/java/org/sakaiproject/emailtemplateservice/util/TextTemplateLogicUtils.java
-/opt/sakai-12/emailtemplateservice/impl/logic/src/java/org/sakaiproject/emailtemplateservice/dao/impl/EmailTemplateServiceDaoImpl.java

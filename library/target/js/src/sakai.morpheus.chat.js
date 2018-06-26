@@ -1,1 +1,0 @@
-$PBJQ("#footerAppPresence").on("click",function(){$PBJQ("#presenceArea").toggleClass("is-hidden")});

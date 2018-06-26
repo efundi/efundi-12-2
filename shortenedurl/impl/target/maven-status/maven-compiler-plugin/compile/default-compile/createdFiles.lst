@@ -1,5 +1,0 @@
-org/sakaiproject/shortenedurl/entityprovider/ShortenedUrlServiceEntityProviderImpl.class
-org/sakaiproject/shortenedurl/impl/RandomisedUrlService.class
-org/sakaiproject/shortenedurl/impl/BitlyUrlService.class
-org/sakaiproject/shortenedurl/impl/BaseShortenedUrlService.class
-org/sakaiproject/shortenedurl/impl/NoOpUrlService.class

@@ -1,4 +1,0 @@
-org/sakaiproject/search/elasticsearch/filter/SearchItemFilter.class
-org/sakaiproject/search/elasticsearch/ElasticSearchIndexBuilder.class
-org/sakaiproject/search/elasticsearch/ElasticSearchIndexBuilderEventRegistrar.class
-org/sakaiproject/search/elasticsearch/ElasticSearchConstants.class

@@ -1,8 +1,0 @@
-/opt/sakai-12/basiclti/basiclti-common/src/test/org/sakaiproject/basiclti/util/SakaiBLTIUtilTest.java
-/opt/sakai-12/basiclti/basiclti-common/src/test/org/sakaiproject/basiclti/util/ByteToHexAndBack.java
-/opt/sakai-12/basiclti/basiclti-common/src/test/org/sakaiproject/basiclti/util/SimpleEncryptionTest.java
-/opt/sakai-12/basiclti/basiclti-common/src/test/org/sakaiproject/basiclti/util/LegacyShaUtilTest.java
-/opt/sakai-12/basiclti/basiclti-common/src/test/org/sakaiproject/basiclti/util/PortableShaUtilTest.java
-/opt/sakai-12/basiclti/basiclti-common/src/test/org/sakaiproject/util/foorm/TestFoormJUnit.java
-/opt/sakai-12/basiclti/basiclti-common/src/test/org/sakaiproject/basiclti/util/BlowFishTest.java
-/opt/sakai-12/basiclti/basiclti-common/src/test/org/sakaiproject/util/foorm/FoormTest.java

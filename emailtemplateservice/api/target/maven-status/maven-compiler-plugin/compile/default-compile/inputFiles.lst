@@ -1,6 +1,0 @@
-/opt/sakai-12/emailtemplateservice/api/src/java/org/sakaiproject/emailtemplateservice/service/external/ExternalLogic.java
-/opt/sakai-12/emailtemplateservice/api/src/java/org/sakaiproject/emailtemplateservice/logic/EmailTemplateServiceLogic.java
-/opt/sakai-12/emailtemplateservice/api/src/java/org/sakaiproject/emailtemplateservice/service/EmailTemplateService.java
-/opt/sakai-12/emailtemplateservice/api/src/java/org/sakaiproject/emailtemplateservice/model/EmailTemplateLocaleUsers.java
-/opt/sakai-12/emailtemplateservice/api/src/java/org/sakaiproject/emailtemplateservice/model/RenderedTemplate.java
-/opt/sakai-12/emailtemplateservice/api/src/java/org/sakaiproject/emailtemplateservice/model/EmailTemplate.java

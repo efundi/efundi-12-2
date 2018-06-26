@@ -1,6 +1,0 @@
-/opt/sakai-12/endorsed/i18n/src/main/java/org/sakaiproject/endorsed/i18n/spi/SakaiLocaleNameProvider.java
-/opt/sakai-12/endorsed/i18n/src/main/java/org/sakaiproject/endorsed/i18n/spi/SakaiDateFormatSymbolsProvider.java
-/opt/sakai-12/endorsed/i18n/src/main/java/org/sakaiproject/endorsed/i18n/spi/SakaiNumberFormatProvider.java
-/opt/sakai-12/endorsed/i18n/src/main/java/org/sakaiproject/endorsed/i18n/spi/SakaiDecimalFormatSymbolsProvider.java
-/opt/sakai-12/endorsed/i18n/src/main/java/org/sakaiproject/endorsed/i18n/spi/SakaiDateFormatProvider.java
-/opt/sakai-12/endorsed/i18n/src/main/java/org/sakaiproject/endorsed/i18n/spi/SakaiLocaleServiceProviderUtil.java

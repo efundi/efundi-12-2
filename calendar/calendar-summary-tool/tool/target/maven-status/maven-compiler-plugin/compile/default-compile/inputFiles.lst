@@ -1,9 +1,0 @@
-/opt/sakai-12/calendar/calendar-summary-tool/tool/src/java/org/sakaiproject/tool/summarycalendar/ui/EventSummary.java
-/opt/sakai-12/calendar/calendar-summary-tool/tool/src/java/org/sakaiproject/tool/summarycalendar/ui/CalendarBean.java
-/opt/sakai-12/calendar/calendar-summary-tool/tool/src/java/org/sakaiproject/tool/summarycalendar/ui/AttachmentWrapper.java
-/opt/sakai-12/calendar/calendar-summary-tool/tool/src/java/org/sakaiproject/tool/summarycalendar/ui/MonthWeek.java
-/opt/sakai-12/calendar/calendar-summary-tool/tool/src/java/org/sakaiproject/tool/summarycalendar/ui/Day.java
-/opt/sakai-12/calendar/calendar-summary-tool/tool/src/java/org/sakaiproject/util/ResourceLoaderWrapper.java
-/opt/sakai-12/calendar/calendar-summary-tool/tool/src/java/org/sakaiproject/tool/summarycalendar/ui/MenuBean.java
-/opt/sakai-12/calendar/calendar-summary-tool/tool/src/java/org/sakaiproject/tool/summarycalendar/ui/PrefsBean.java
-/opt/sakai-12/calendar/calendar-summary-tool/tool/src/java/org/sakaiproject/tool/summarycalendar/ui/SubscribeBean.java

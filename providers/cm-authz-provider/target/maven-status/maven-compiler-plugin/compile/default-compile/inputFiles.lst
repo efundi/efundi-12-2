@@ -1,6 +1,0 @@
-/opt/sakai-12/providers/cm-authz-provider/src/java/org/sakaiproject/coursemanagement/impl/provider/SectionRoleResolver.java
-/opt/sakai-12/providers/cm-authz-provider/src/java/org/sakaiproject/coursemanagement/impl/provider/BaseRoleResolver.java
-/opt/sakai-12/providers/cm-authz-provider/src/java/org/sakaiproject/coursemanagement/impl/provider/CourseSetRoleResolver.java
-/opt/sakai-12/providers/cm-authz-provider/src/java/org/sakaiproject/coursemanagement/impl/provider/CourseManagementGroupProvider.java
-/opt/sakai-12/providers/cm-authz-provider/src/java/org/sakaiproject/coursemanagement/impl/provider/CourseOfferingRoleResolver.java
-/opt/sakai-12/providers/cm-authz-provider/src/java/org/sakaiproject/coursemanagement/impl/provider/RoleResolver.java

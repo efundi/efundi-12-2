@@ -179,7 +179,7 @@
 	}
 
 	&:active{
-		outline: 0;
+		outline: 0 !important;
 		color: $button-hover-text-color !important;
 		text-decoration: none;
 		background: $button-hover-background-color;

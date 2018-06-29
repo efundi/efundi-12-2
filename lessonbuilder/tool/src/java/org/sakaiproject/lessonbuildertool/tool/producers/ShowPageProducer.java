@@ -39,6 +39,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -53,18 +54,77 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
+import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.crypto.Cipher;
 import javax.xml.bind.DatatypeConverter;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang.StringUtils;
+import org.sakaiproject.authz.api.AuthzGroup;
+import org.sakaiproject.authz.api.AuthzGroupService;
+import org.sakaiproject.authz.api.Member;
+import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.component.cover.ComponentManager;
+import org.sakaiproject.component.cover.ServerConfigurationService;
+import org.sakaiproject.content.api.ContentHostingService;
+import org.sakaiproject.content.api.ContentResource;
+import org.sakaiproject.entity.api.ResourceProperties;
+import org.sakaiproject.event.api.UsageSession;
+import org.sakaiproject.event.cover.UsageSessionService;
+import org.sakaiproject.exception.IdUnusedException;
+import org.sakaiproject.lessonbuildertool.ChecklistItemStatus;
+import org.sakaiproject.lessonbuildertool.ChecklistItemStatusImpl;
+import org.sakaiproject.lessonbuildertool.SimpleChecklistItem;
+import org.sakaiproject.lessonbuildertool.SimplePage;
+import org.sakaiproject.lessonbuildertool.SimplePageComment;
+import org.sakaiproject.lessonbuildertool.SimplePageItem;
+import org.sakaiproject.lessonbuildertool.SimplePageLogEntry;
+import org.sakaiproject.lessonbuildertool.SimplePagePeerEvalResult;
+import org.sakaiproject.lessonbuildertool.SimplePageQuestionAnswer;
+import org.sakaiproject.lessonbuildertool.SimplePageQuestionResponse;
+import org.sakaiproject.lessonbuildertool.SimplePageQuestionResponseTotals;
+import org.sakaiproject.lessonbuildertool.SimpleStudentPage;
+import org.sakaiproject.lessonbuildertool.model.SimplePageToolDao;
+import org.sakaiproject.lessonbuildertool.service.BltiInterface;
+import org.sakaiproject.lessonbuildertool.service.LessonBuilderAccessService;
+import org.sakaiproject.lessonbuildertool.service.LessonEntity;
+import org.sakaiproject.lessonbuildertool.tool.beans.SimplePageBean;
+import org.sakaiproject.lessonbuildertool.tool.beans.SimplePageBean.BltiTool;
+import org.sakaiproject.lessonbuildertool.tool.beans.SimplePageBean.GroupEntry;
+import org.sakaiproject.lessonbuildertool.tool.beans.SimplePageBean.Status;
+import org.sakaiproject.lessonbuildertool.tool.evolvers.SakaiFCKTextEvolver;
+import org.sakaiproject.lessonbuildertool.tool.view.CommentsGradingPaneViewParameters;
+import org.sakaiproject.lessonbuildertool.tool.view.CommentsViewParameters;
+import org.sakaiproject.lessonbuildertool.tool.view.ExportCCViewParameters;
+import org.sakaiproject.lessonbuildertool.tool.view.ExportDocxViewParameters;
+import org.sakaiproject.lessonbuildertool.tool.view.ExportEpubViewParameters;
+import org.sakaiproject.lessonbuildertool.tool.view.FilePickerViewParameters;
+import org.sakaiproject.lessonbuildertool.tool.view.GeneralViewParameters;
+import org.sakaiproject.lessonbuildertool.tool.view.ImportDocxViewParameters;
+import org.sakaiproject.lessonbuildertool.tool.view.ImportPdfViewParameters;
+import org.sakaiproject.lessonbuildertool.tool.view.QuestionGradingPaneViewParameters;
+import org.sakaiproject.lessonbuildertool.util.SimplePageItemUtilities;
+import org.sakaiproject.memory.api.Cache;
+import org.sakaiproject.memory.api.MemoryService;
+import org.sakaiproject.portal.util.CSSUtils;
+import org.sakaiproject.portal.util.PortalUtils;
+import org.sakaiproject.site.api.SiteService;
+import org.sakaiproject.time.api.TimeService;
+import org.sakaiproject.tool.api.Placement;
+import org.sakaiproject.tool.api.Session;
+import org.sakaiproject.tool.api.ToolManager;
+import org.sakaiproject.tool.api.ToolSession;
+import org.sakaiproject.tool.cover.SessionManager;
+import org.sakaiproject.user.api.User;
+import org.sakaiproject.user.api.UserNotDefinedException;
+import org.sakaiproject.user.cover.UserDirectoryService;
+import org.sakaiproject.util.FormattedText;
+import org.sakaiproject.util.ResourceLoader;
+import org.sakaiproject.util.Web;
 
+import lombok.extern.slf4j.Slf4j;
 import uk.org.ponder.localeutil.LocaleGetter;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.builtin.UVBProducer;
@@ -97,64 +157,6 @@ import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
-
-import org.sakaiproject.component.cover.ComponentManager;
-import org.sakaiproject.component.cover.ServerConfigurationService;
-import org.sakaiproject.content.api.ContentHostingService;
-import org.sakaiproject.content.api.ContentResource;
-import org.sakaiproject.entity.api.ResourceProperties;
-import org.sakaiproject.event.api.UsageSession;
-import org.sakaiproject.event.cover.UsageSessionService;
-import org.sakaiproject.authz.api.AuthzGroup;
-import org.sakaiproject.authz.api.AuthzGroupService;
-import org.sakaiproject.authz.api.SecurityService;
-import org.sakaiproject.authz.api.Member;
-import org.sakaiproject.exception.IdUnusedException;
-import org.sakaiproject.lessonbuildertool.ChecklistItemStatus;
-import org.sakaiproject.lessonbuildertool.ChecklistItemStatusImpl;
-import org.sakaiproject.lessonbuildertool.SimplePage;
-import org.sakaiproject.lessonbuildertool.SimplePageComment;
-import org.sakaiproject.lessonbuildertool.SimplePageItem;
-import org.sakaiproject.lessonbuildertool.SimplePageLogEntry;
-import org.sakaiproject.lessonbuildertool.SimplePageQuestionAnswer;
-import org.sakaiproject.lessonbuildertool.SimplePageQuestionResponse;
-import org.sakaiproject.lessonbuildertool.SimplePageQuestionResponseTotals;
-import org.sakaiproject.lessonbuildertool.SimplePagePeerEvalResult;
-import org.sakaiproject.lessonbuildertool.SimpleStudentPage;
-import org.sakaiproject.lessonbuildertool.SimpleChecklistItem;
-import org.sakaiproject.lessonbuildertool.model.SimplePageToolDao;
-import org.sakaiproject.lessonbuildertool.service.BltiInterface;
-import org.sakaiproject.lessonbuildertool.service.LessonBuilderAccessService;
-import org.sakaiproject.lessonbuildertool.service.LessonEntity;
-import org.sakaiproject.lessonbuildertool.tool.beans.SimplePageBean;
-import org.sakaiproject.lessonbuildertool.tool.beans.SimplePageBean.GroupEntry;
-import org.sakaiproject.lessonbuildertool.tool.beans.SimplePageBean.Status;
-import org.sakaiproject.lessonbuildertool.tool.beans.SimplePageBean.BltiTool;
-import org.sakaiproject.lessonbuildertool.tool.evolvers.SakaiFCKTextEvolver;
-import org.sakaiproject.lessonbuildertool.tool.view.CommentsGradingPaneViewParameters;
-import org.sakaiproject.lessonbuildertool.tool.view.CommentsViewParameters;
-import org.sakaiproject.lessonbuildertool.tool.view.FilePickerViewParameters;
-import org.sakaiproject.lessonbuildertool.tool.view.GeneralViewParameters;
-import org.sakaiproject.lessonbuildertool.tool.view.QuestionGradingPaneViewParameters;
-import org.sakaiproject.lessonbuildertool.tool.view.ExportCCViewParameters;
-import org.sakaiproject.lessonbuildertool.util.SimplePageItemUtilities;
-import org.sakaiproject.memory.api.Cache;
-import org.sakaiproject.memory.api.MemoryService;
-import org.sakaiproject.portal.util.CSSUtils;
-import org.sakaiproject.portal.util.PortalUtils;
-import org.sakaiproject.site.api.SiteService;
-import org.sakaiproject.time.api.TimeService;
-import org.sakaiproject.tool.api.Placement;
-import org.sakaiproject.tool.api.Session;
-import org.sakaiproject.tool.api.ToolManager;
-import org.sakaiproject.tool.api.ToolSession;
-import org.sakaiproject.tool.cover.SessionManager;
-import org.sakaiproject.user.api.User;
-import org.sakaiproject.user.api.UserNotDefinedException;
-import org.sakaiproject.user.cover.UserDirectoryService;
-import org.sakaiproject.util.FormattedText;
-import org.sakaiproject.util.ResourceLoader;
-import org.sakaiproject.util.Web;
 
 /**
  * This produces the primary view of the page. It also handles the editing of
@@ -753,7 +755,11 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 				createToolBarLink(PermissionsHelperProducer.VIEW_ID, tofill, "permissions", "simplepage.permissions", currentPage, "simplepage.permissions.tooltip");
 				UIOutput.make(tofill, "import-cc").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.import_cc.tooltip")));
 				UIOutput.make(tofill, "export-cc").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.export_cc.tooltip")));
-
+				UIOutput.make(tofill, "import-docx").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.import_docx.tooltip")));
+                UIOutput.make(tofill, "import-pdf").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.import_pdf.tooltip")));
+                UIOutput.make(tofill, "export-epub").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.export_epub.tooltip")));
+                UIOutput.make(tofill, "export-docx").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.export_docx.tooltip")));
+                UIOutput.make(tofill, "export-error").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.export_docx.tooltip")));
 				// Check to see if we have tools registered for external import
 				List<Map<String, Object>> toolsImportItem = simplePageBean.getToolsImportItem();
 				if ( toolsImportItem.size() > 0 ) {
@@ -3515,6 +3521,11 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		createRemovePageDialog(tofill, currentPage, pageItem);
 		createImportCcDialog(tofill);
 		createExportCcDialog(tofill);
+		// OC addition of additional Dialogs
+                createImportPdfDialog(tofill,currentPage);
+                createImportDocxDialog(tofill,currentPage);
+                createExportEpubDialog(tofill,currentPage);
+                createExportDocxDialog(tofill,currentPage);
 		createYoutubeDialog(tofill, currentPage);
 		createMovieDialog(tofill, currentPage);
 		createCommentsDialog(tofill);
@@ -4667,6 +4678,78 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		UIInternalLink.make(form, "export-cc-link", "export cc link", view);
 
 	}
+
+	/**
+        * Create the RSF form for the Epub export dialog
+        * @param tofill
+        */
+        private void createExportEpubDialog(UIContainer tofill,SimplePage page) {
+           UIOutput.make(tofill, "export-epub-dialog").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.export-epub-title")));
+
+           UIForm form = UIForm.make(tofill, "export-epub-form");
+           UICommand.make(form, "export-epub-ok", messageLocator.getMessage("simplepage.export-epub-ok"), null);
+
+           ExportEpubViewParameters view = new ExportEpubViewParameters("exportEpub");
+           view.setPageId(page.getPageId());
+           view.setUrl(myUrl());
+           UIInternalLink.make(form, "export-epub-link", "export epub link", view);                
+        }  
+
+       /**
+        * Create the RSF form for the PDF import dialog
+        *
+        * @param tofill
+        */
+        private void createImportPdfDialog(UIContainer tofill, SimplePage page) {
+           UIOutput.make(tofill, "import-pdf-dialog").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.import-pdf-title")));
+
+           UIForm form = UIForm.make(tofill, "import-pdf-form");
+           UICommand.make(form, "import-pdf-ok", messageLocator.getMessage("simplepage.import-pdf-ok"), null);
+
+           ImportPdfViewParameters view = new ImportPdfViewParameters("importPdf");
+           view.setPageId(page.getPageId());
+           view.setUrl(myUrl());
+           UIInternalLink.make(form, "import-pdf-link", "import pdf link", view);
+        }
+
+
+
+       /**
+        * Create the RSF form for the Docx export dialog
+        *
+        * @param tofill
+        */
+        private void createImportDocxDialog(UIContainer tofill, SimplePage page) {
+           UIOutput.make(tofill, "import-docx-dialog").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.import_docx-title")));
+
+           UIForm form = UIForm.make(tofill, "import-docx-form");
+           // UICommand.make(form, "import-docx-ok", messageLocator.getMessage("simplepage.import-docx-ok"), null);
+
+           UICommand.make(form, "import-docx-submit", messageLocator.getMessage("simplepage.save_message"), "#{simplePageBean.importDocx}");
+           UICommand.make(form, "mm-cancel", messageLocator.getMessage("simplepage.cancel"), null);
+
+           ImportDocxViewParameters view = new ImportDocxViewParameters("importDocx");
+           view.setPageId(page.getPageId());
+           view.setUrl(myUrl());
+           UIInternalLink.make(form, "import-docx-link", "import docx link", view);
+        }
+
+       /**
+        * Create the RSF form for the DocX export dialog
+        * @param tofill
+        */
+        private void createExportDocxDialog(UIContainer tofill, SimplePage page) {
+           UIOutput.make(tofill, "export-docx-dialog").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.export-docx-title")));
+
+           UIForm form = UIForm.make(tofill, "export-docx-form");
+
+           ExportDocxViewParameters view = new ExportDocxViewParameters("exportDocx");
+           view.setExportDocx(true);
+           view.setToolId(httpServletRequest.getQueryString());
+           view.setPageId(page.getPageId());
+           view.setUrl(myUrl());
+           UIInternalLink.make(form, "export-docx-link", "export docx link", view);
+        }
 
 	private void createEditMultimediaDialog(UIContainer tofill, SimplePage currentPage) {
 		UIOutput.make(tofill, "edit-multimedia-dialog").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.editMultimedia")));

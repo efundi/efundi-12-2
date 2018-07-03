@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-	<bean id="applicationContextProvder" class="org.sakaiproject.lessonbuildertool.util.ApplicationContextProvider"/>
+<bean id="applicationContextProvder" class="org.sakaiproject.lessonbuildertool.util.ApplicationContextProvider"/>
    <!-- Use the Sakai session factory, pre-configured, instead of one local to TaskList
         we are adding our HBM files to the Sakai session factory instead of creating
         our own copy of it -->
@@ -368,7 +368,7 @@ simplePageBean.addForumSummary
     	</constructor-arg>
     	</bean>
 
-	<bean id="org.sakaiproject.lessonbuildertool.service.DataExportService"
+<bean id="org.sakaiproject.lessonbuildertool.service.DataExportService"
 	      class="org.sakaiproject.lessonbuildertool.service.DataExportServiceImpl">
             <property name="contentHostingService"><ref bean="org.sakaiproject.content.api.ContentHostingService"/></property>
             <property name="simplePageToolDao" ref="org.sakaiproject.lessonbuildertool.model.SimplePageToolDao" />

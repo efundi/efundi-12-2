@@ -118,7 +118,7 @@ public class ReportHandlerHook {
           PdfImport pdfImport = (PdfImport) ApplicationContextProvider.getApplicationContext().getBean("org.sakaiproject.lessonbuildertool.pdfimport.PdfImport");
           pdfImport.doImport(siteId, response, (ImportPdfViewParameters)viewparams);
           return true;
-          }
+      }
       return false;
    }
 

@@ -8778,7 +8778,9 @@ public class SimplePageBean {
 		return status;
 	}
 	
-	public void importDocx() {
+	    
+
+    public void importDocx() {
         if (!canEditPage()) {
             return;
         }

@@ -755,7 +755,8 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 				createToolBarLink(PermissionsHelperProducer.VIEW_ID, tofill, "permissions", "simplepage.permissions", currentPage, "simplepage.permissions.tooltip");
 				UIOutput.make(tofill, "import-cc").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.import_cc.tooltip")));
 				UIOutput.make(tofill, "export-cc").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.export_cc.tooltip")));
-				UIOutput.make(tofill, "import-docx").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.import_docx.tooltip")));
+				// OC Adding additional export options
+                UIOutput.make(tofill, "import-docx").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.import_docx.tooltip")));
                 UIOutput.make(tofill, "import-pdf").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.import_pdf.tooltip")));
                 UIOutput.make(tofill, "export-epub").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.export_epub.tooltip")));
                 UIOutput.make(tofill, "export-docx").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.export_docx.tooltip")));
@@ -4750,7 +4751,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
            view.setUrl(myUrl());
            UIInternalLink.make(form, "export-docx-link", "export docx link", view);
         }
-
+	
 	private void createEditMultimediaDialog(UIContainer tofill, SimplePage currentPage) {
 		UIOutput.make(tofill, "edit-multimedia-dialog").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.editMultimedia")));
 

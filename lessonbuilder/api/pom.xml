@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.sakaiproject.lessonbuilder</groupId>
         <artifactId>lessonbuilder</artifactId>
-        <version>12.2</version>
+        <version>12.1</version>
     </parent>
 
     <name>sakai-lessonbuildertool-api</name>
@@ -33,19 +33,19 @@
         <dependency>
             <groupId>org.sakaiproject.msgcntr</groupId>
             <artifactId>messageforums-api</artifactId>
-            <version>12.2</version>
+            <version>12.1</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.sakaiproject.assignment</groupId>
             <artifactId>sakai-assignment-api</artifactId>
-            <version>12.2</version>
+            <version>12.1</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.sakaiproject.samigo</groupId>
             <artifactId>samigo-api</artifactId>
-            <version>12.2</version>
+            <version>12.1</version>
             <type>jar</type>
         </dependency>
     </dependencies>

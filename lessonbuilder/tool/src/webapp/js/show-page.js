@@ -254,7 +254,6 @@ $(document).ready(function() {
 			resizable: false,
 			draggable: false
 		});
-		
 		$('#import-docx-dialog').dialog({
             autoOpen: false,
             width: 600,
@@ -286,7 +285,6 @@ $(document).ready(function() {
             resizable: false,
             draggable: false
         });
-		
 		//Only number allowed for twitter height
 		$("#widget-height").keypress(function (e) {
 			 //if the letter is not digit then display error
@@ -449,7 +447,7 @@ $(document).ready(function() {
 			'#add-multimedia-dialog', '#edit-title-dialog', '#new-page-dialog', '#remove-page-dialog',
 			'#youtube-dialog', '#movie-dialog', '#import-cc-dialog', '#export-cc-dialog',
 		        '#comments-dialog', '#student-dialog', '#question-dialog', '#delete-confirm', '#import-docx-dialog', 
-                '#export-epub-dialog', '#export-docx-dialog'];
+                '#export-epub-dialog', '#export-docx-dialog',];
 			for (var i = 0; i < modalDialogList.length; i++) {
 				$(modalDialogList[i]).dialog("option", "width", modalDialogWidth());
 			}
@@ -644,7 +642,7 @@ $(document).ready(function() {
 			closeExportCcDialog();
 			return false;
 		    });
-
+		
 		$('#import-docx').click(function () {
             oldloc = $(".dropdown a");
             closeDropdowns();
@@ -657,7 +655,7 @@ $(document).ready(function() {
             importDocx();
         });
 
-		$('#import-pdf').click(function () {
+        $('#import-pdf').click(function () {
             closeDropdowns();
             var position = $(this).position();
             $("#import-pdf-dialog").dialog("option", "position", [position.left, position.top]);
@@ -3804,7 +3802,6 @@ function fixStatus(here,itemId) {
 	return;
     };
 }
-
 
 /**
  * Export to epub function. 

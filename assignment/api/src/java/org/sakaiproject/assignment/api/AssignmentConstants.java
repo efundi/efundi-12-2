@@ -147,6 +147,7 @@ public final class AssignmentConstants {
     public static final String ASSN_SUBMISSION_TYPE_NON_ELECTRONIC_PROP = "nonelec";
     public static final String ASSN_SUBMISSION_TYPE_SINGLE_ATTACHMENT_PROP = "singleatt";
     public static final String ASSN_SUBMISSION_TYPE_UNKNOWN_PROP = "submission.type.unknown";
+    public static final String ASSN_SUBMISSION_TYPE_PDF_ONLY_PROP = "pdfonly"; //NAM-26 (2)
     /**
      * Ungraded grade type string
      */

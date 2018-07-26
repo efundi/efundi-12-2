@@ -109,14 +109,11 @@ $(document).ready(function(){
 			## TEXT_AND_ATTACHMENT_ASSIGNMENT_SUBMISSION = 3;
 			## NON_ELECTRONIC_ASSIGNMENT_SUBMISSION = 4;
 			## SINGLE_ATTACHMENT_SUBMISSION = 5
-			## PDF_ONLY_SUBMISSION = 6
 			<p class="instruction">
 				#if (($submissionType==1) || ($submissionType==3))
 					 $tlang.getString("stuviewsubm.asshasnot")
 				#elseif ($submissionType==2)
 				 	$tlang.getString("stuviewsubm.assattonly")
-				#elseif ($submissionType==6)
-					$tlang.getString("stuviewsubm.pdfonly") ##NAM-26 (6)
 				#end
 				#if($assignment.AllowPeerAssessment)
 					<div class="highlight">
@@ -680,7 +677,7 @@ $(document).ready(function(){
 						#end
 					</p>
 				#end	
-				#if (($submissionType == 2) || ($submissionType == 5) || $submissionType == 6)
+				#if (($submissionType == 2) || ($submissionType == 5))
 					#if ($plagiarismNote)
 						<p>
 							<img alt="$reviewIndicator" title="$reviewIndicator" src="/library/image/silk/rosette.png" class="assignmentRosette"/>
@@ -706,10 +703,10 @@ $(document).ready(function(){
 					#end
 				#end
 			#end
-			#if (($submissionType==2) || ($submissionType==3) || ($submissionType==5 && $size < 2) || $submissionType==6) ##NAM-26 (8)
+			#if (($submissionType==2) || ($submissionType==3) || ($submissionType==5 && $size < 2))
 				<div id="attachmentspanel" class="highlightPanel" style="background:#ffe">
 					<h3 style="margin-top:0;margin-bottom:.5em">
-						#if ($submissionType == 5 || $submissionType == 6)
+						#if ($submissionType == 5)
 							$tlang.getString("gen.att.single")
 						#else
 							$tlang.getString("gen.att")
@@ -717,12 +714,12 @@ $(document).ready(function(){
 					</h3>	
 					#if ($size == 0)
 						<p class="instruction">
-                        #if ($submissionType == 5 || $submissionType == 6)
-                        	$tlang.getString("gen.noatt.single")
-                        #else
-                            $tlang.getString("gen.noatt")
-                        #end
-                        </p>
+                                                    #if ($submissionType == 5)
+                                                        $tlang.getString("gen.noatt.single")
+                                                    #else
+                                                        $tlang.getString("gen.noatt")
+                                                    #end
+                                                </p>
 					#else
 						<table class="attachList listHier indnt1 centerLines" style="margin-bottom:.5em;margin-top:0; width:auto" summary="$tlang.getString("stuviewsubm.listsummary")">
 							#foreach ($attachment in $attachments) 
@@ -801,7 +798,7 @@ $(document).ready(function(){
 						</div>
 					#end
 					## for single file upload case
-					#if (($submissionType==5 || $submissionType==6) && $attachments && $attachments.size() == 0) ##NAM-26 (8)
+					#if ($submissionType==5 && $attachments && $attachments.size() == 0)
 						<div class="highlightPanel">
 							<table border="0" cellpadding="0" cellspacing="0" class="listHier centerLines" style="width:auto;margin:0;">
 								<tbody>
@@ -811,12 +808,7 @@ $(document).ready(function(){
 										</td>
 										<td>
 											<div class="spinnerBesideContainer">
-											##NAM-27 (1)
-											#if ($submissionType == 5)
 												<input type="file" name="upload" class="upload" id="clonableUpload" #if($content_review_acceptedMimeTypes) accept="$content_review_acceptedMimeTypes" #end onchange="SPNR.insertSpinnerAfter( this, null, null ); document.getElementById('addSubmissionForm').action='#toolLinkParam("AssignmentAction" "doAttachUploadSingle" "sakai_csrf_token=$validator.escapeUrl($sakai_csrf_token)")';ASN.submitForm( 'addSubmissionForm', null, null, null, 'attachmentspanel' );"/>
-											#else
-												<input type="file" name="upload" class="upload" id="clonableUpload" #if($content_review_acceptedMimeTypes) accept="$content_review_acceptedMimeTypes" #end onchange="SPNR.insertSpinnerAfter( this, null, null ); document.getElementById('addSubmissionForm').action='#toolLinkParam("AssignmentAction" "doAttachUploadSinglePDF" "sakai_csrf_token=$validator.escapeUrl($sakai_csrf_token)")';ASN.submitForm( 'addSubmissionForm', null, null, null, 'attachmentspanel' );"/>
-											#end
 											</div>
 											<input type="hidden" name="submissionFileCount" id="submissionFileCount" value="1"/>
 										</td>

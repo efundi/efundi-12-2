@@ -211,6 +211,8 @@ public abstract class BaseAnnouncementService extends BaseMessage implements Ann
 			functionManager.registerFunction(eventId(SECURE_UPDATE_ANY));
 			functionManager.registerFunction(eventId(SECURE_UPDATE_OWN));
 			functionManager.registerFunction(eventId(SECURE_ALL_GROUPS));
+			//NAM-24 Marker Permission
+			functionManager.registerFunction(eventId(SECURE_ASSIGNMENT_MARKER));
 
 			// Sakai v2.4: UI end says hidden, 'under the covers' says draft
 			// Done so import from old sites causes drafts to 'become' hidden in new sites

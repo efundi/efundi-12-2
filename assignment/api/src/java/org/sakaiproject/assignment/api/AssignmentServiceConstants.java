@@ -112,6 +112,9 @@ public final class AssignmentServiceConstants {
     // and the prop name
     public static final String PROP_ASSIGNMENT_ASSOCIATE_GRADEBOOK_ASSIGNMENT = "prop_new_assignment_add_to_gradebook";
     public static final String NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING = "new_assignment_check_anonymous_grading";
+    
+    //NAM-24 Marker Permission
+    public static final String SECURE_ASSIGNMENT_MARKER = "asn.marker";
 
     public static final Set<String> PROPERTIES_EXCLUDED_FROM_DUPLICATE_ASSIGNMENTS =
             Collections.unmodifiableSet(new HashSet<>(Arrays.asList(

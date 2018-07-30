@@ -13912,7 +13912,7 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String max_file_size_mb = serverConfigurationService.getString("content.upload.max", "1");
-        
+
         String mode = (String) state.getAttribute(STATE_MODE);
         List<Reference> attachments;
 
@@ -13945,7 +13945,7 @@ public class AssignmentAction extends PagedResourceActionII {
             String filename = Validator.getFileName(fileitem.getFileName());
             InputStream fileContentStream = fileitem.getInputStream();
             String contentType = fileitem.getContentType();
-            
+
             InputStreamReader reader = new InputStreamReader(fileContentStream);
 
             try {
@@ -13953,7 +13953,6 @@ public class AssignmentAction extends PagedResourceActionII {
                 if (!reader.ready()) {
                     addAlert(state, rb.getFormattedMessage("attempty", filename));
                 } else {
-                	
                     // we just want the file name part - strip off any drive and path stuff
                     String name = Validator.getFileName(filename);
                     String resourceId = Validator.escapeResourceName(name);

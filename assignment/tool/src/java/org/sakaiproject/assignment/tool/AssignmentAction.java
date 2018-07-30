@@ -13899,7 +13899,7 @@ public class AssignmentAction extends PagedResourceActionII {
      * @param data
      */
     public void doAttachUploadSingle(RunData data) {
-        doAttachUpload(data, true, false);
+        doAttachUpload(data, true);
     }
 
     /**

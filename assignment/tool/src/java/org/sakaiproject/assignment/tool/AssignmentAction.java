@@ -13967,7 +13967,6 @@ public class AssignmentAction extends PagedResourceActionII {
                 if (!reader.ready()) {
                     addAlert(state, rb.getFormattedMessage("attempty", filename));
                 } else if (upload) { //NAM-27
-                	
                     // we just want the file name part - strip off any drive and path stuff
                     String name = Validator.getFileName(filename);
                     String resourceId = Validator.escapeResourceName(name);

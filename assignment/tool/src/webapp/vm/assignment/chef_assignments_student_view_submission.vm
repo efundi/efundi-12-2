@@ -716,12 +716,12 @@ $(document).ready(function(){
 					</h3>	
 					#if ($size == 0)
 						<p class="instruction">
-                                                    #if ($submissionType == 5)
-                                                        $tlang.getString("gen.noatt.single")
-                                                    #else
-                                                        $tlang.getString("gen.noatt")
-                                                    #end
-                                                </p>
+                        #if ($submissionType == 5)
+                        	$tlang.getString("gen.noatt.single")
+                        #else
+                            $tlang.getString("gen.noatt")
+                        #end
+                        </p>
 					#else
 						<table class="attachList listHier indnt1 centerLines" style="margin-bottom:.5em;margin-top:0; width:auto" summary="$tlang.getString("stuviewsubm.listsummary")">
 							#foreach ($attachment in $attachments) 

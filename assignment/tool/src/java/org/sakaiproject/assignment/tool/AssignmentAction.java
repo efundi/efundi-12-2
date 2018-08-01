@@ -1686,6 +1686,9 @@ public class AssignmentAction extends PagedResourceActionII {
         if (submissionType == Assignment.SubmissionType.SINGLE_ATTACHMENT_SUBMISSION) {
             return true;
         }
+        if (submissionType == Assignment.SubmissionType.PDF_ONLY_SUBMISSION) { //NAM-26 check if that submission type exists
+            return true;
+        }
 
         return false;
     }
@@ -11414,6 +11417,7 @@ public class AssignmentAction extends PagedResourceActionII {
         submissionTypeTable.put(3, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_INLINE_AND_ATTACHMENTS_PROP));
         submissionTypeTable.put(4, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_NON_ELECTRONIC_PROP));
         submissionTypeTable.put(5, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_SINGLE_ATTACHMENT_PROP));
+        submissionTypeTable.put(6, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_PDF_ONLY_PROP)); //NAM-26 adding new submission type to table data
 
         return submissionTypeTable;
     } // submissionTypeTable
@@ -13874,6 +13878,15 @@ public class AssignmentAction extends PagedResourceActionII {
         }
     }
 
+    /**
+     * single PDF file upload
+     *
+     * @param data
+     */
+    public void doAttachUploadSinglePDF(RunData data) {
+        doAttachUpload(data, true);
+    }
+    
     /**
      * single file upload
      *

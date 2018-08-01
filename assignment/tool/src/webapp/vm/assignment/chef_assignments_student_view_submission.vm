@@ -114,6 +114,8 @@ $(document).ready(function(){
 					 $tlang.getString("stuviewsubm.asshasnot")
 				#elseif ($submissionType==2)
 				 	$tlang.getString("stuviewsubm.assattonly")
+				#elseif ($submissionType==6)
+					$tlang.getString("stuviewsubm.pdfonly") ##NAM-26
 				#end
 				#if($assignment.AllowPeerAssessment)
 					<div class="highlight">
@@ -714,12 +716,12 @@ $(document).ready(function(){
 					</h3>	
 					#if ($size == 0)
 						<p class="instruction">
-                                                    #if ($submissionType == 5)
-                                                        $tlang.getString("gen.noatt.single")
-                                                    #else
-                                                        $tlang.getString("gen.noatt")
-                                                    #end
-                                                </p>
+                        #if ($submissionType == 5)
+                        	$tlang.getString("gen.noatt.single")
+                        #else
+                            $tlang.getString("gen.noatt")
+                        #end
+                        </p>
 					#else
 						<table class="attachList listHier indnt1 centerLines" style="margin-bottom:.5em;margin-top:0; width:auto" summary="$tlang.getString("stuviewsubm.listsummary")">
 							#foreach ($attachment in $attachments) 
@@ -798,7 +800,7 @@ $(document).ready(function(){
 						</div>
 					#end
 					## for single file upload case
-					#if ($submissionType==5 && $attachments && $attachments.size() == 0)
+					#if ($submissionType==5 && $attachments && $attachments.size() == 0) ##NAM-26
 						<div class="highlightPanel">
 							<table border="0" cellpadding="0" cellspacing="0" class="listHier centerLines" style="width:auto;margin:0;">
 								<tbody>
@@ -808,7 +810,9 @@ $(document).ready(function(){
 										</td>
 										<td>
 											<div class="spinnerBesideContainer">
+											
 												<input type="file" name="upload" class="upload" id="clonableUpload" #if($content_review_acceptedMimeTypes) accept="$content_review_acceptedMimeTypes" #end onchange="SPNR.insertSpinnerAfter( this, null, null ); document.getElementById('addSubmissionForm').action='#toolLinkParam("AssignmentAction" "doAttachUploadSingle" "sakai_csrf_token=$validator.escapeUrl($sakai_csrf_token)")';ASN.submitForm( 'addSubmissionForm', null, null, null, 'attachmentspanel' );"/>
+											
 											</div>
 											<input type="hidden" name="submissionFileCount" id="submissionFileCount" value="1"/>
 										</td>

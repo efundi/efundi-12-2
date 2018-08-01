@@ -250,7 +250,8 @@ public class Assignment {
         ATTACHMENT_ONLY_ASSIGNMENT_SUBMISSION,     // 2
         TEXT_AND_ATTACHMENT_ASSIGNMENT_SUBMISSION, // 3
         NON_ELECTRONIC_ASSIGNMENT_SUBMISSION,      // 4
-        SINGLE_ATTACHMENT_SUBMISSION               // 5
+        SINGLE_ATTACHMENT_SUBMISSION,              // 5
+        PDF_ONLY_SUBMISSION						   // 6 NAM-26 new submission type enum
     }
 
     public enum GradeType {

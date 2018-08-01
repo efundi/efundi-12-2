@@ -6375,6 +6375,12 @@ public class AssignmentAction extends PagedResourceActionII {
                 if ((v == null) || (v.size() != 1)) {
                     addAlert(state, rb.getString("youmust8"));
                 }
+            } else if (submissionType == Assignment.SubmissionType.PDF_ONLY_SUBMISSION) { //NAM-27
+                // for the single PDF uploaded file only submission
+                List v = getNonInlineAttachments(state, a);
+                if ((v == null) || (v.size() != 1)) {
+                    addAlert(state, rb.getString("youmust3"));
+                }
             } else {
                 // for the inline and attachment submission / other submission types
                 // There must be at least one thing submitted: inline text or at least one attachment
@@ -10255,7 +10261,7 @@ public class AssignmentAction extends PagedResourceActionII {
             }
 
             // need also to upload local file if any
-            doAttachUpload(data, false);
+            doAttachUpload(data, false, false); //NAM-27
 
             // TODO: file picker to save in dropbox? -ggolden
             // User[] users = { userDirectoryService.getCurrentUser() };
@@ -12412,10 +12418,10 @@ public class AssignmentAction extends PagedResourceActionII {
             doRemove_newSingleUploadedFile(data);
         } else if ("upload".equals(option)) {
             // upload local file
-            doAttachUpload(data, true);
+        	doAttachUpload(data, true, false); //NAM-27
         } else if ("uploadSingleFile".equals(option)) {
             // upload single local file
-            doAttachUpload(data, false);
+        	doAttachUpload(data, false, false); //NAM-27
         }
     }
 
@@ -13872,7 +13878,7 @@ public class AssignmentAction extends PagedResourceActionII {
         // save the current input before leaving the page
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
         saveSubmitInputs(state, data.getParameters());
-        doAttachUpload(data, false);
+        doAttachUpload(data, false, false); //NAM-27
         if (MODE_STUDENT_REVIEW_EDIT.equals(state.getAttribute(STATE_MODE))) {
             saveReviewGradeForm(data, state, "save");
         }
@@ -13883,8 +13889,8 @@ public class AssignmentAction extends PagedResourceActionII {
      *
      * @param data
      */
-    public void doAttachUploadSinglePDF(RunData data) {
-        doAttachUpload(data, true);
+    public void doAttachUploadSinglePDF(RunData data) { //NAM-27
+        doAttachUpload(data, true, true);
     }
     
     /**
@@ -13893,7 +13899,7 @@ public class AssignmentAction extends PagedResourceActionII {
      * @param data
      */
     public void doAttachUploadSingle(RunData data) {
-        doAttachUpload(data, true);
+        doAttachUpload(data, true, false);
     }
 
     /**
@@ -13902,7 +13908,7 @@ public class AssignmentAction extends PagedResourceActionII {
      * @param data
      * @param singleFileUpload
      */
-    public void doAttachUpload(RunData data, boolean singleFileUpload) {
+    public void doAttachUpload(RunData data, boolean singleFileUpload, boolean pdfFileUpload) { //NAM-27
         if (!"POST".equals(data.getRequest().getMethod())) {
             return;
         }
@@ -13912,7 +13918,9 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String max_file_size_mb = serverConfigurationService.getString("content.upload.max", "1");
-
+        
+        Boolean upload = true; //NAM-27 default value
+        
         String mode = (String) state.getAttribute(STATE_MODE);
         List<Reference> attachments;
 
@@ -13945,14 +13953,20 @@ public class AssignmentAction extends PagedResourceActionII {
             String filename = Validator.getFileName(fileitem.getFileName());
             InputStream fileContentStream = fileitem.getInputStream();
             String contentType = fileitem.getContentType();
-
+            
+            if (pdfFileUpload) { //NAM-27
+        		if (!contentType.equals("application/pdf")) {
+        			upload = false;
+        		}
+        	}
+            
             InputStreamReader reader = new InputStreamReader(fileContentStream);
 
             try {
                 //check the InputStreamReader to see if the file is 0kb aka empty
                 if (!reader.ready()) {
                     addAlert(state, rb.getFormattedMessage("attempty", filename));
-                } else {
+                } else if (upload) { //NAM-27
                     // we just want the file name part - strip off any drive and path stuff
                     String name = Validator.getFileName(filename);
                     String resourceId = Validator.escapeResourceName(name);
@@ -14034,6 +14048,8 @@ public class AssignmentAction extends PagedResourceActionII {
                     } finally {
                         securityService.popAdvisor(sa);
                     }
+                } else {
+                	addAlert(state, rb.getFormattedMessage("attnotpdf", filename)); //NAM-27
                 }
             } catch (IOException e) {
                 log.debug(this + ".doAttachupload ***** IOException ***** " + e.getMessage());

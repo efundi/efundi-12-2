@@ -11411,6 +11411,40 @@ public class AssignmentAction extends PagedResourceActionII {
 
         return gradeTypeTable;
     } // gradeTypeTable
+    
+    /**
+     * Internal method to get a value from the SCS directly
+     * @param name the config name
+     * @return the value of null if none found
+     */
+    private Object getConfigValue(String name) {
+        Object value = serverConfigurationService.getString(name);
+        if (value == null || "".equals(value)) { // oddly this returns empty string if the item is an array
+            // could not find it so get the array instead
+            String[] array = serverConfigurationService.getStrings(name);
+            if (array != null && array.length > 0) {
+                value = array;
+            }
+        } else {
+            String sValue = (String) value;
+            if (sValue.length() > 0) {
+                // try to convert this to an integer first
+                try {
+                    Integer i = Integer.parseInt(sValue);
+                    value = i.intValue();
+                } catch (NumberFormatException e) {
+                    // next try to convert it to a boolean
+                    if (sValue.equalsIgnoreCase("true")) {
+                        value = true;
+                    } else if (sValue.equalsIgnoreCase("false")) {
+                        value = false;
+                    }
+                }
+                // otherwise leave it as a string
+            }
+        }
+        return value;
+    }
 
     /**
      * construct a HashMap using the integer as the key and submission type String as the value
@@ -11423,7 +11457,12 @@ public class AssignmentAction extends PagedResourceActionII {
         submissionTypeTable.put(3, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_INLINE_AND_ATTACHMENTS_PROP));
         submissionTypeTable.put(4, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_NON_ELECTRONIC_PROP));
         submissionTypeTable.put(5, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_SINGLE_ATTACHMENT_PROP));
-        submissionTypeTable.put(6, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_PDF_ONLY_PROP)); //NAM-26 adding new submission type to table data
+        
+        //NAM-28 Checks if the pdf marker tool should be displayed or not
+        Object o = getConfigValue("usePDFMarker");
+        if (o != null && o.toString().equals("true")) {
+        	submissionTypeTable.put(6, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_PDF_ONLY_PROP)); //NAM-26 adding new submission type to table data
+        }
 
         return submissionTypeTable;
     } // submissionTypeTable

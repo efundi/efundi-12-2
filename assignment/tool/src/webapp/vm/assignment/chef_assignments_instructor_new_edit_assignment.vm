@@ -596,11 +596,13 @@
 			<div class="col-sm-6">
 				<select name="$name_SubmissionType" id="subType" onchange="switchAssignmentSubmissionType();" class="assignment-submission-type">
 				#foreach ($i in [1..$!value_totalSubmissionTypes])
-					#if ($i == $value_SubmissionType)
-						<option value="$i" selected="selected">$submissionTypeTable.get($i)</option>
-					#else
-						<option value="$i">$submissionTypeTable.get($i)</option>
-					#end
+					#if("$!submissionTypeTable.get($i)" != "") ##NAM-28
+						#if ($i == $value_SubmissionType)
+							<option value="$i" selected="selected">$!submissionTypeTable.get($i)</option>
+						#else
+							<option value="$i">$!submissionTypeTable.get($i)</option>
+						#end
+					#end	
 				#end
 				</select>
 			</div>

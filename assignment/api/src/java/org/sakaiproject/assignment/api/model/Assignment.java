@@ -180,6 +180,10 @@ public class Assignment {
     @Column(name = "GROUP_ID")
     private Set<String> groups = new HashSet<>();
 
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<AssignmentMarker> markers = new HashSet<>();
+
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @ElementCollection
     @CollectionTable(name = "ASN_ASSIGNMENT_ATTACHMENTS", joinColumns = @JoinColumn(name = "ASSIGNMENT_ID"))

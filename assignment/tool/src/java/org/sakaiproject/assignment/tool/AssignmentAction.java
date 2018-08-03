@@ -11459,7 +11459,7 @@ public class AssignmentAction extends PagedResourceActionII {
         submissionTypeTable.put(5, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_SINGLE_ATTACHMENT_PROP));
         
         //NAM-28 Checks if the pdf marker tool should be displayed or not
-        Object o = getConfigValue("usePDFMarker");
+        Object o = getConfigValue("assignment.useMarker");
         if (o != null && o.toString().equals("true")) {
         	submissionTypeTable.put(6, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_PDF_ONLY_PROP)); //NAM-26 adding new submission type to table data
         }

@@ -154,4 +154,6 @@ public interface DbAuthzGroupSql
 	String getSelectRealmUsersInGroupsSql( String inClause);
 
     String getMaintainRolesSql();
+    
+    String checkAssignedMarkersForSite();
 }

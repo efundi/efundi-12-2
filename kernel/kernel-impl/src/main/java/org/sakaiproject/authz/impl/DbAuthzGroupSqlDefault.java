@@ -536,4 +536,11 @@ public class DbAuthzGroupSqlDefault implements DbAuthzGroupSql
     public String getMaintainRolesSql() {
         return "SELECT ROLE_NAME FROM SAKAI_REALM_ROLE WHERE ROLE_KEY IN (SELECT DISTINCT MAINTAIN_ROLE FROM SAKAI_REALM WHERE MAINTAIN_ROLE IS NOT NULL)";
     }
+    
+    // NAM-23 TODO
+    
+    public String checkAssignedMarkersForSite()
+	{
+    	throw new java.lang.UnsupportedOperationException("Not supported yet - checkAssignedMarkersForSite - DbAuthzGroupSqlMySql.java");
+	}
 }

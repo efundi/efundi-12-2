@@ -53,6 +53,7 @@
 	## handles the Student Submissions dropdown
 	function switchAssignmentSubmissionType()
 	{
+		var useTool = document.getElementById('allowMarkerToggle');
 		var useReview = document.getElementById('$name_UseReviewService');
 		var lblUseReview=document.getElementById('lblReviewService');
 		var reviewSwitchNe1 = document.getElementById('review.switch.ne.1');
@@ -66,6 +67,10 @@
 				useReview.disabled=false;
 				lblUseReview.style.display = 'block';
 			#end
+			if (document.getElementById('subType').value == 6) 
+			{
+				document.getElementById('allowPdfMarker').style.display = 'block';
+			}
 			document.getElementById('tempAllowRes').parentNode.parentNode.style.display = 'block';
 			if (document.getElementById('allowResToggle').checked)
 			{
@@ -74,6 +79,19 @@
 				document.getElementById('resubmitNotification').style.display = 'block';
 				ASN.resizeFrame();
 			}
+			if (document.getElementById('subType').value == 6) 
+			{
+				if (document.getElementById('allowMarkerToggle').checked)
+				{
+					document.getElementById('pdfMarkerSettings').style.display = 'block';
+					ASN.resizeFrame();
+				}
+			} else {
+				document.getElementById('allowPdfMarker').style.display = 'none';
+				document.getElementById('pdfMarkerSettings').style.display = 'none';
+				useTool.checked=false;
+			}
+			
 		}
 		else
 		{
@@ -89,10 +107,14 @@
 				reviewSwitchNe1.style.removeProperty('display');
 				lblUseReview.style.display = 'none';
 			#end
+			useTool.checked=false;
 			document.getElementById('tempAllowRes').parentNode.parentNode.style.display = 'none';
 			document.getElementById('allowResubmitNumber').style.display = 'none';
 			document.getElementById('allowResubmitTime').style.display = 'none';
 			document.getElementById('resubmitNotification').style.display = 'none';
+			document.getElementById('pdfMarkerSettings').style.display = 'none';
+			document.getElementById('allowPdfMarker').style.display = 'none';
+			document.getElementById('pdfMarkerSettings').style.display = 'none';
 		}
 	}
 	focus_path = [ '$fField' ];
@@ -615,6 +637,12 @@
 		#else
 			#set($resubmitStyle="display:none")
 		#end
+		
+		#if ($value_SubmissionType != 6)
+			#set($markerSetupStyle="display:none")
+		#else
+			#set($markerSetupStyle="display:block")
+		#end
 
 		<div class="form-group row">
 			<label class="col-sm-2 control-label" for="allowResToggle">
@@ -685,6 +713,86 @@
 					<input type="radio" name="$!name_assignment_releasereturn_notification" id="sendreleasereturnnotif" value="$!value_assignment_releasereturn_notification_each" #if($!value_assignment_releasereturn_notification.equals($!value_assignment_releasereturn_notification_each))checked="checked" #end />
 					$tlang.getString('send.submission.releasereturn.email')
 				</label>
+			</div>
+		</div>
+
+		##NAM-29 PDF marker settings checkbox
+		<div class="form-group row" id="allowPdfMarker" style = "display:none">
+			<label class="col-sm-2 control-label" for="allowMarkToggle">
+				$tlang.getString("allowMarkingTool")
+			</label>
+			<div class="col-sm-10">
+				<div id="tempAllowMarker" #if ($value_SubmissionType == 4) style = "display:none"#end>
+					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!value_SubmissionType == 6) checked="checked"#end onclick="if(checked){document.getElementById('pdfMarkerSettings').style.display = 'block';ASN.resizeFrame();}else{document.getElementById('pdfMarkerSettings').style.display = 'none';}" />
+				</div>
+			</div>
+		</div>
+
+		##NAM-29 PDF marker settings that will be displayed when the tool is selected
+		<div class="col-sm-offset-1 row" id="pdfMarkerSettings" style="$!markerSetupStyle">
+			<label>
+				$tlang.getString("tool.marker.quota.options.display")
+			</label>
+			<div class="radio">
+				<label><input type="radio" name="quotaRatioType" value="" checked="checked"/>$tlang.getString("tool.marker.quota.percentage")</label><br>
+				<label><input type="radio" name="quotaRatioType" value="" />$tlang.getString("tool.marker.quota.number")</label>
+			</div>
+			<div class="col-sm-12 row table-reponsive">
+				<table class="table table-striped" id="extraNodeLinkList">
+					<caption style="border-bottom:1px solid #ccc;text-align:left; margin-top:1em;padding-bottom:.3em">$tlang.getString("supplement")</caption>
+					<tr>
+						<td>
+							$tlang.getString("modelAnswer")
+						</td>
+						<td class="itemAction" style="white-space:nowrap">
+							<div id="nomodelanswer"  #if(!$!modelanswer) style="display:block"#else style="display:none" #end>
+								<a id="modelanswer_add" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("new")<span class="skip"> $tlang.getString("modelAnswer")</span></a>
+							</div>
+							<div id="hasmodelanswer"  #if($!modelanswer) style="display:block"#else style="display:none" #end>
+								<a id="modelanswer_edit" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("gen.revi")<span class="skip"> $tlang.getString("modelAnswer")</span></a> | <a id="modelanswer_delete" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("delet")<span class="skip"> $tlang.getString("modelAnswer")</span></a>
+								<input id = "modelanswer_to_delete" name = "modelanswer_to_delete" type= "hidden" value = "false" />
+							</div>
+						</td>
+					</tr>
+					## show the private note section if only the user can view or edit the item
+					#if ($!allowEditAssignmentNoteItem || $!allowReadAssignmentNoteItem)
+						<tr>
+							<td>
+								$tlang.getString("note")
+							</td>
+							<td class="itemAction" style="white-space:nowrap">
+								<div id="nonote"  #if(!$!note) style="display:block"#else style="display:none" #end>
+									<a id="note_add" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("new")<span class="skip"> $tlang.getString("note")</span></a>
+								</div>
+								<div id="hasnote"  #if($!note) style="display:block"#else style="display:none" #end>
+									#if ($!allowEditAssignmentNoteItem)
+										<a id="note_edit" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("gen.revi")<span class="skip"> $tlang.getString("note")</span></a> | <a id="note_delete" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("delet")<span class="skip"> $tlang.getString("note")</span></a>
+									#else
+										#if ($!allowReadAssignmentNoteItem)
+											<a id="note_edit" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("gen.view2")</a>
+										#end
+									#end
+								</div>
+								<input id = "note_to_delete" name = "note_to_delete" type= "hidden" value = "false" />
+							</td>
+						</tr>
+					#end
+					<tr>
+						<td>
+							$tlang.getString("allPurpose")
+						</td>
+						<td class="itemAction" style="white-space:nowrap">
+							<div id="noallPurpose" #if(!$!allPurpose) style="display:block"#else style="display:none" #end>
+								<a id="allPurpose_add" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("new")<span class="skip"> $tlang.getString("allPurpose")</span></a>
+							</div>
+							<div id="hasallPurpose" #if($!allPurpose) style="display:block"#else style="display:none" #end>
+								<a id="allPurpose_edit" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("gen.revi")<span class="skip"> $tlang.getString("allPurpose")</span></a> | <a id="allPurpose_delete" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("delet")<span class="skip"> $tlang.getString("allPurpose")</span></a>
+							</div>
+							<input type="hidden" name="value_allPurpose" #if($!allPurpose) value="true" #else value="false" #end />
+							<input id = "allPurpose_to_delete" name = "allPurpose_to_delete" type= "hidden" value = "false" />
+						</td>
+					</tr>
+				</table>
 			</div>
 		</div>
 

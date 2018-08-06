@@ -698,20 +698,20 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 				{
 					String curMarker = lock;
 					
-					if ((newMarker == "false") AND (curMarker == "true"))
+					if ((newMarker == "false") && (curMarker == "true"))
 					{
 						try
 						{
 							if (authzGroupService.checkAssignedMarkersForSite())
 								{	//not sure if this is right here?						
-									throw  new AuthzPermissionException e;
+									throw new Exception("Marker");
 								}
 						}
-						catch(AuthzPermissionException e) //not sure if this is right here?		
+						catch(Exception e) //not sure if this is right here?		
 							{
 								log.warn("PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission.", role.getId(), e);
-								addAlert(state, rb.getFormattedMessage("alert_marker", new Object[]{realmId}));
-								return null;
+								addAlert(state, rb.getFormattedMessage("alert_marker"));
+								return;
 							}				
 					}
 					

@@ -1737,6 +1737,12 @@ public abstract class BaseAuthzGroupService implements AuthzGroupService
      *
      * @return boolean true there are assignments to a marker.
      */
-    public boolean checkAssignedMarkersForSite();    
+    public boolean checkAssignedMarkersForSite()
+    {
+    	//NAM-23 TODO
+    	
+    	
+    	return false;
+    }
  	
 }

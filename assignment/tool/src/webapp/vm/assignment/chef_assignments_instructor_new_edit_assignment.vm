@@ -747,23 +747,20 @@
 					##temp data to check if UI changes are correct
 					##loop will be replaced by actual database values loop
 					#set($max = 100)
-					#set($start = 0)
-					#set($end = 2)
-					#set($range = [$start..$end])
-					#foreach($i in $range)
+					#foreach ($i in [1..$!value_totalMarkers])
 					<tr>	
 						<td>
-							<label value="$i" id="Name$i">Name$i</label>
+							<label value="$i" id="$!submissionTypeTable.get($i)">$!tool_MarkerList.get($i)</label>
 						</td>
 						<td>
 							<input type="number" name="quota$i" min="0" max=$max required="Please enter a value between 0 and $max">
 						</td>
 						<td>
 							<select>
-							<option value="" id="default">None</option>
-								#foreach($a in $range)
-									#if("Name$a" != "Name$i")
-										<option value="$a" id=""> Name$a </option>
+								<option value="" id="default">None</option>
+								#foreach($a in [1..$!value_totalMarkers])
+									#if("$!tool_MarkerList.get($a)" != "$!tool_MarkerList.get($i)")
+										<option value="$a" id=""> $tool_MarkerList.get($a) </option>
 									#end
 								#end
 							</select>

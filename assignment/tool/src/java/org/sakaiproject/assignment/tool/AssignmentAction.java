@@ -909,6 +909,9 @@ public class AssignmentAction extends PagedResourceActionII {
     private String nextUngradedWithSubmissionRef = "";
     private String prevUngradedWithSubmissionRef = "";
 
+    /******** NAM-29 *********/
+    private int markerTableSize;
+    
     private AnnouncementService announcementService;
     private AssignmentActivityProducer assignmentActivityProducer;
     private AssignmentPeerAssessmentService assignmentPeerAssessmentService;
@@ -2478,6 +2481,10 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("name_OpenDateNotification", AssignmentConstants.ASSIGNMENT_OPENDATE_NOTIFICATION);
         }
         context.put("name_CheckAddHonorPledge", NEW_ASSIGNMENT_CHECK_ADD_HONOR_PLEDGE);
+        
+        //NAM-29
+        context.put("tool_MarkerList", markerTable());
+        context.put("value_totalMarkers", markerTableSize);
 
         // SAK-17606
         context.put("name_CheckAnonymousGrading", NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING);
@@ -2513,7 +2520,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
         // information related to gradebook categories
         putGradebookCategoryInfoIntoContext(state, context);
-
+        
         context.put("value_totalSubmissionTypes", Assignment.SubmissionType.values().length - 1);
         context.put("value_GradeType", state.getAttribute(NEW_ASSIGNMENT_GRADE_TYPE));
         // format to show one decimal place
@@ -11466,6 +11473,31 @@ public class AssignmentAction extends PagedResourceActionII {
 
         return submissionTypeTable;
     } // submissionTypeTable
+    
+    /**
+     * construct a HashMap using the integer as the key and marker name String as the value
+     */
+    private Map<Integer, String> markerTable() {
+
+        Map<Integer, String> markerTable = new HashMap<>();
+        markerTable.put(1, "Name 1");
+        markerTable.put(2, "Name 2");
+        markerTable.put(3, "Name 3");
+        
+        markerTableSize(markerTable);
+
+        return markerTable;
+    } // markerTable
+    
+    /**
+     * get map size emthod that returns the marker map size
+     */
+    private void markerTableSize(Map markerTableTemp) {
+
+    	int size = markerTableTemp.size();
+
+    	markerTableSize = size;
+    } // markerTableSize
 
     /**
      * Add the list of categories from the gradebook tool

@@ -738,60 +738,38 @@
 				<label><input type="radio" name="quotaRatioType" value="" />$tlang.getString("tool.marker.quota.number")</label>
 			</div>
 			<div class="col-sm-12 row table-reponsive">
-				<table class="table table-striped" id="extraNodeLinkList">
-					<caption style="border-bottom:1px solid #ccc;text-align:left; margin-top:1em;padding-bottom:.3em">$tlang.getString("supplement")</caption>
+				<table class="table table-striped" id="quotaAssignmentTable">
 					<tr>
-						<td>
-							$tlang.getString("modelAnswer")
-						</td>
-						<td class="itemAction" style="white-space:nowrap">
-							<div id="nomodelanswer"  #if(!$!modelanswer) style="display:block"#else style="display:none" #end>
-								<a id="modelanswer_add" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("new")<span class="skip"> $tlang.getString("modelAnswer")</span></a>
-							</div>
-							<div id="hasmodelanswer"  #if($!modelanswer) style="display:block"#else style="display:none" #end>
-								<a id="modelanswer_edit" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("gen.revi")<span class="skip"> $tlang.getString("modelAnswer")</span></a> | <a id="modelanswer_delete" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("delet")<span class="skip"> $tlang.getString("modelAnswer")</span></a>
-								<input id = "modelanswer_to_delete" name = "modelanswer_to_delete" type= "hidden" value = "false" />
-							</div>
-						</td>
+						<th>$tlang.getString("quota.assignment.table.column.name")</th>
+						<th>$tlang.getString("quota.assignment.table.column.quota")</th>
+						<th>$tlang.getString("quota.assignment.table.column.reassign")</th>
 					</tr>
-					## show the private note section if only the user can view or edit the item
-					#if ($!allowEditAssignmentNoteItem || $!allowReadAssignmentNoteItem)
-						<tr>
-							<td>
-								$tlang.getString("note")
-							</td>
-							<td class="itemAction" style="white-space:nowrap">
-								<div id="nonote"  #if(!$!note) style="display:block"#else style="display:none" #end>
-									<a id="note_add" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("new")<span class="skip"> $tlang.getString("note")</span></a>
-								</div>
-								<div id="hasnote"  #if($!note) style="display:block"#else style="display:none" #end>
-									#if ($!allowEditAssignmentNoteItem)
-										<a id="note_edit" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("gen.revi")<span class="skip"> $tlang.getString("note")</span></a> | <a id="note_delete" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("delet")<span class="skip"> $tlang.getString("note")</span></a>
-									#else
-										#if ($!allowReadAssignmentNoteItem)
-											<a id="note_edit" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("gen.view2")</a>
-										#end
+					##temp data to check if UI changes are correct
+					##loop will be replaced by actual database values loop
+					#set($max = 100)
+					#set($start = 0)
+					#set($end = 2)
+					#set($range = [$start..$end])
+					#foreach($i in $range)
+					<tr>	
+						<td>
+							<label value="$i" id="Name$i">Name$i</label>
+						</td>
+						<td>
+							<input type="number" name="quota$i" min="0" max=$max required="Please enter a value between 0 and $max">
+						</td>
+						<td>
+							<select>
+							<option value="" id="default">None</option>
+								#foreach($a in $range)
+									#if("Name$a" != "Name$i")
+										<option value="$a" id=""> Name$a </option>
 									#end
-								</div>
-								<input id = "note_to_delete" name = "note_to_delete" type= "hidden" value = "false" />
-							</td>
-						</tr>
-					#end
-					<tr>
-						<td>
-							$tlang.getString("allPurpose")
-						</td>
-						<td class="itemAction" style="white-space:nowrap">
-							<div id="noallPurpose" #if(!$!allPurpose) style="display:block"#else style="display:none" #end>
-								<a id="allPurpose_add" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("new")<span class="skip"> $tlang.getString("allPurpose")</span></a>
-							</div>
-							<div id="hasallPurpose" #if($!allPurpose) style="display:block"#else style="display:none" #end>
-								<a id="allPurpose_edit" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("gen.revi")<span class="skip"> $tlang.getString("allPurpose")</span></a> | <a id="allPurpose_delete" class="extraNodeLink" href="javascript:void(0)">$tlang.getString("delet")<span class="skip"> $tlang.getString("allPurpose")</span></a>
-							</div>
-							<input type="hidden" name="value_allPurpose" #if($!allPurpose) value="true" #else value="false" #end />
-							<input id = "allPurpose_to_delete" name = "allPurpose_to_delete" type= "hidden" value = "false" />
+								#end
+							</select>
 						</td>
 					</tr>
+					#end
 				</table>
 			</div>
 		</div>

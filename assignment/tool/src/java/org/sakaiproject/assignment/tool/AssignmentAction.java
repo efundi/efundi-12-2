@@ -6498,6 +6498,15 @@ public class AssignmentAction extends PagedResourceActionII {
     } // doReorder
 
     /**
+     * Checks and saves the assigned quota's
+     *
+     * @param form info
+     */
+    private void check_save_quotas(RunData data, SessionState state) {
+    	addAlert(state, "Works");
+    }
+    
+    /**
      * Action is to save the input infos for assignment fields
      *
      * @param validify Need to validify the inputs or not
@@ -6508,7 +6517,24 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String assignmentRef = params.getString("assignmentId");
-
+        String validTotal = params.getString("quotaValidTotal");
+        String validValues = params.getString("quotaValidValue");
+        String quotaTotal = params.getString("quotaTotal");
+        
+        if (validTotal.equals("false")) {
+        	addAlert(state, rb.getString("quota.assignment.table.input.error3"));
+        }
+        
+		if (validValues.equals("false")) {
+			addAlert(state, rb.getString("quota.assignment.table.input.error4"));    	
+		}
+		
+		String markingToolEnabled = params.getString("allowMarkerToggle");
+        
+        if (markingToolEnabled.equals("true")) {
+        	addAlert(state, rb.getString("plespethe1"));
+        }
+		
         // put the input value into the state attributes
         String title = params.getString(NEW_ASSIGNMENT_TITLE);
         state.setAttribute(NEW_ASSIGNMENT_TITLE, title);
@@ -7433,7 +7459,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 addAlert(state, rb.getFormattedMessage("group.editsite.nopermission"));
             }
         }
-
+        
         String assignmentId = params.getString("assignmentId");
 
         // whether this is an editing which changes non-point graded assignment to point graded assignment?

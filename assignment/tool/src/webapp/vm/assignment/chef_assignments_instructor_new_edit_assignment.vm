@@ -118,7 +118,66 @@
 		}
 	}
 	focus_path = [ '$fField' ];
+	
+	var countDecimals = function(value) {
+	    if (Math.floor(value) !== value)
+	        return value.toString().split(".")[1].length || 0;
+	    return 0;
+	}
+	
+	function enableMarkingTool() {
+		if (document.getElementById("allowMarkerToggle").checked) {
+			document.getElementById("useMarkingTool").value="true";
+		} else {
+			document.getElementById("useMarkingTool").value="false";
+		}
+	}
+	
+	function quotaCalculation()
+	{
+		var sum = 0;
+		
+		#foreach($i in [1..$!value_totalMarkers])
+			var value$i = document.getElementById("quota$i").value;
+			document.getElementById("quota$i").title="";
+			document.getElementById("quota$i").alt="";
+			document.getElementById("quota$i").style.backgroundColor="white";
+			document.getElementById("quotaValidValue").value="true";
+			if (countDecimals(Number(value$i)) > 1) {
+				document.getElementById("quota$i").title="$tlang.getString('quota.assignment.table.input.error2')";
+				document.getElementById("quota$i").alt="$tlang.getString('quota.assignment.table.input.error2')";
+				document.getElementById("quota$i").style.backgroundColor="red";
+				document.getElementById("quotaValidValue").value="false";
+			}
+			sum = Number(value$i) + Number(sum);
+			if (Number(sum) > 100) {
+				document.getElementById("quota$i").title="$tlang.getString('quota.assignment.table.input.error')";
+				document.getElementById("quota$i").alt="$tlang.getString('quota.assignment.table.input.error')";
+				document.getElementById("quota$i").style.backgroundColor="red";
+			}
+		#end
+		
+		if (Number(sum) > 100) {
+			document.getElementById("quotaValidTotal").value="false";
+		} else {
+			document.getElementById("quotaValidTotal").value="true";
+			document.getElementById("quotaTotal").value=sum;
+		}
+	}
 </script>
+
+<style>
+	/* For Firefox */
+	input[type='number'] {
+	    -moz-appearance:textfield;
+	}
+	/* Webkit browsers like Safari and Chrome */
+	input[type=number]::-webkit-inner-spin-button,
+	input[type=number]::-webkit-outer-spin-button {
+	    -webkit-appearance: none;
+	    margin: 0;
+	}
+</style>
 #javascript("/library/js/lang-datepicker/lang-datepicker.js")
 
 <div class="portletBody container-fluid">
@@ -147,6 +206,10 @@
 		<input type="hidden" name="eventSubmit_doAssignment_form" value="" />
 		<input type="hidden" name="option" id="option" value="" />
 		<input type="hidden" name="view" id="view" value="" />
+		<input type="hidden" name="quotaValidTotal" id="quotaValidTotal" value="" />
+		<input type="hidden" name="quotaValidValue" id="quotaValidValue" value="" />
+		<input type="hidden" name="quotaTotal" id="quotaTotal" value="" />
+		<input type="hidden" name="useMarkingTool" id="useMarkingTool" value="" />
 		<input type="hidden" name="$name_order" id="$name_order" value="$!value_position_order" />
 
 		<div class="form-group row form-required">
@@ -723,20 +786,13 @@
 			</label>
 			<div class="col-sm-10">
 				<div id="tempAllowMarker" #if ($value_SubmissionType == 4) style = "display:none"#end>
-					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!value_SubmissionType == 6) checked="checked"#end onclick="if(checked){document.getElementById('pdfMarkerSettings').style.display = 'block';ASN.resizeFrame();}else{document.getElementById('pdfMarkerSettings').style.display = 'none';}" />
+					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!value_SubmissionType == 6) checked="checked"#end onclick="if(checked){document.getElementById('pdfMarkerSettings').style.display = 'block';ASN.resizeFrame();}else{document.getElementById('pdfMarkerSettings').style.display = 'none';}enableMarkingTool();" />
 				</div>
 			</div>
 		</div>
 
 		##NAM-29 PDF marker settings that will be displayed when the tool is selected
 		<div class="col-sm-offset-1 row" id="pdfMarkerSettings" style="$!markerSetupStyle">
-			<label>
-				$tlang.getString("tool.marker.quota.options.display")
-			</label>
-			<div class="radio">
-				<label><input type="radio" name="quotaRatioType" value="" checked="checked"/>$tlang.getString("tool.marker.quota.percentage")</label><br>
-				<label><input type="radio" name="quotaRatioType" value="" />$tlang.getString("tool.marker.quota.number")</label>
-			</div>
 			<div class="col-sm-12 row table-reponsive">
 				<table class="table table-striped" id="quotaAssignmentTable">
 					<tr>
@@ -753,7 +809,7 @@
 							<label value="$i" id="$!submissionTypeTable.get($i)">$!tool_MarkerList.get($i)</label>
 						</td>
 						<td>
-							<input type="number" name="quota$i" min="0" max=$max required="Please enter a value between 0 and $max">
+							<input type="number" step="0.1" placeholder="0.0" name="quota$i" id="quota$i" onchange="quotaCalculation()">
 						</td>
 						<td>
 							<select>

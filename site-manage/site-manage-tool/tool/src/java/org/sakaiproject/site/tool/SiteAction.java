@@ -8843,7 +8843,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 				}
 
 				
-				//NAM - 46
+				//NAM - 43
 				//Something similar to the above, check each user against the marker table, if any are present with marking assigned dispute the change.
 				List<Participant> markersAfterProposedChanges = testProposedUpdatesForMarkers(participants, params);
 

@@ -8727,6 +8727,17 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 				**/
 				for(Participant roleParticipant : participants ) {
 					markersAfterUpdates.add(roleParticipant);
+					String id = roleParticipant.getUniqname();
+				/**	
+				 * 
+				 * TODO: Create provider for MarkerIDsList
+				 * 
+				 * List<String> markersIDsList = getMarkerIDs();
+				 *	if (markerIDList.contains(id))
+				 *	{
+				 *		markersAfterUpdates.add(roleParticipant);
+				 *	} 
+				 */
 				}
 
 				return markersAfterUpdates;

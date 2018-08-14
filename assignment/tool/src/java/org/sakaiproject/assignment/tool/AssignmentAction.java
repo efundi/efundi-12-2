@@ -6517,18 +6517,7 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String assignmentRef = params.getString("assignmentId");
-        String validTotal = params.getString("quotaValidTotal");
-        String validValues = params.getString("quotaValidValue");
         String quotaTotal = params.getString("quotaTotal");
-        
-        if (validTotal.equals("false")) {
-        	addAlert(state, rb.getString("quota.assignment.table.input.error3"));
-        }
-        
-		if (validValues.equals("false")) {
-			addAlert(state, rb.getString("quota.assignment.table.input.error4"));    	
-		}
-		
 		String markingToolEnabled = params.getString("allowMarkerToggle");
         
         if (markingToolEnabled.equals("true")) {
@@ -6677,7 +6666,8 @@ public class AssignmentAction extends PagedResourceActionII {
         String peerAssessmentInstructions = processFormattedTextFromBrowser(state, params.getString(NEW_ASSIGNMENT_PEER_ASSESSMENT_INSTRUCTIONS), true);
         state.setAttribute(NEW_ASSIGNMENT_PEER_ASSESSMENT_INSTRUCTIONS, peerAssessmentInstructions);
 
-        String b, r;
+        String b, r;      
+        
         //REVIEW SERVICE
         r = params.getString(NEW_ASSIGNMENT_USE_REVIEW_SERVICE);
         // set whether we use the review service or not

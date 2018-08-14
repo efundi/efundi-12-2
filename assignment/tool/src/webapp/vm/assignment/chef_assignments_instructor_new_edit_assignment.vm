@@ -53,6 +53,9 @@
 	## handles the Student Submissions dropdown
 	function switchAssignmentSubmissionType()
 	{
+	
+		enableButtons();
+	
 		var useTool = document.getElementById('allowMarkerToggle');
 		var useReview = document.getElementById('$name_UseReviewService');
 		var lblUseReview=document.getElementById('lblReviewService');
@@ -128,39 +131,56 @@
 	function enableMarkingTool() {
 		if (document.getElementById("allowMarkerToggle").checked) {
 			document.getElementById("useMarkingTool").value="true";
+			document.getElementById('pdfMarkerSettings').style.display = 'block';
+			quotaCalculation();
 		} else {
 			document.getElementById("useMarkingTool").value="false";
+			document.getElementById('pdfMarkerSettings').style.display = 'none';
+			enableButtons();
 		}
+	}
+	
+	function disableButtons()
+	{
+		document.getElementsByName("post")[0].disabled = true;
+		document.getElementsByName("preview")[0].disabled = true;
+		document.getElementsByName("save")[0].disabled = true;
+	}
+	
+	function enableButtons()
+	{
+		document.getElementsByName("post")[0].disabled = false;
+		document.getElementsByName("preview")[0].disabled = false;
+		document.getElementsByName("save")[0].disabled = false;
 	}
 	
 	function quotaCalculation()
 	{
 		var sum = 0;
 		
+		enableButtons();
+		
 		#foreach($i in [1..$!value_totalMarkers])
 			var value$i = document.getElementById("quota$i").value;
 			document.getElementById("quota$i").title="";
 			document.getElementById("quota$i").alt="";
 			document.getElementById("quota$i").style.backgroundColor="white";
-			document.getElementById("quotaValidValue").value="true";
 			if (countDecimals(Number(value$i)) > 1) {
 				document.getElementById("quota$i").title="$tlang.getString('quota.assignment.table.input.error2')";
 				document.getElementById("quota$i").alt="$tlang.getString('quota.assignment.table.input.error2')";
 				document.getElementById("quota$i").style.backgroundColor="red";
-				document.getElementById("quotaValidValue").value="false";
+				disableButtons();
 			}
 			sum = Number(value$i) + Number(sum);
 			if (Number(sum) > 100) {
 				document.getElementById("quota$i").title="$tlang.getString('quota.assignment.table.input.error')";
 				document.getElementById("quota$i").alt="$tlang.getString('quota.assignment.table.input.error')";
 				document.getElementById("quota$i").style.backgroundColor="red";
+				disableButtons();
 			}
 		#end
 		
-		if (Number(sum) > 100) {
-			document.getElementById("quotaValidTotal").value="false";
-		} else {
-			document.getElementById("quotaValidTotal").value="true";
+		if (Number(sum) <= 100) {
 			document.getElementById("quotaTotal").value=sum;
 		}
 	}
@@ -206,8 +226,6 @@
 		<input type="hidden" name="eventSubmit_doAssignment_form" value="" />
 		<input type="hidden" name="option" id="option" value="" />
 		<input type="hidden" name="view" id="view" value="" />
-		<input type="hidden" name="quotaValidTotal" id="quotaValidTotal" value="" />
-		<input type="hidden" name="quotaValidValue" id="quotaValidValue" value="" />
 		<input type="hidden" name="quotaTotal" id="quotaTotal" value="" />
 		<input type="hidden" name="useMarkingTool" id="useMarkingTool" value="" />
 		<input type="hidden" name="$name_order" id="$name_order" value="$!value_position_order" />
@@ -780,13 +798,13 @@
 		</div>
 
 		##NAM-29 PDF marker settings checkbox
-		<div class="form-group row" id="allowPdfMarker" style = "display:none">
+		<div class="form-group row" id="allowPdfMarker" style="$!markerSetupStyle">
 			<label class="col-sm-2 control-label" for="allowMarkToggle">
 				$tlang.getString("allowMarkingTool")
 			</label>
 			<div class="col-sm-10">
 				<div id="tempAllowMarker" #if ($value_SubmissionType == 4) style = "display:none"#end>
-					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!value_SubmissionType == 6) checked="checked"#end onclick="if(checked){document.getElementById('pdfMarkerSettings').style.display = 'block';ASN.resizeFrame();}else{document.getElementById('pdfMarkerSettings').style.display = 'none';}enableMarkingTool();" />
+					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!value_SubmissionType == 6) checked="checked"#end onclick="enableMarkingTool(); ASN.resizeFrame();" />
 				</div>
 			</div>
 		</div>
@@ -794,7 +812,7 @@
 		##NAM-29 PDF marker settings that will be displayed when the tool is selected
 		<div class="col-sm-offset-1 row" id="pdfMarkerSettings" style="$!markerSetupStyle">
 			<div class="col-sm-12 row table-reponsive">
-				<table class="table table-striped" id="quotaAssignmentTable">
+				<table class="table table-striped" id="quotaAssignmentTable" name="quotaAssignmentTable">
 					<tr>
 						<th>$tlang.getString("quota.assignment.table.column.name")</th>
 						<th>$tlang.getString("quota.assignment.table.column.quota")</th>

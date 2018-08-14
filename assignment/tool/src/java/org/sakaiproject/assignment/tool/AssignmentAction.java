@@ -6517,12 +6517,14 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String assignmentRef = params.getString("assignmentId");
-        String quotaTotal = params.getString("quotaTotal");
-		String markingToolEnabled = params.getString("allowMarkerToggle");
-        
-        if (markingToolEnabled.equals("true")) {
-        	addAlert(state, rb.getString("plespethe1"));
-        }
+        float quotaTotal = Float.parseFloat(params.getString("quotaTotal"));
+		boolean markingToolEnabled = Boolean.parseBoolean(params.getString("useMarkingTool"));
+
+		if (markingToolEnabled) {
+	        if (quotaTotal == 0.0) {
+	        	addAlert(state, rb.getString("quota.assignment.table.input.error3"));
+	        }
+		}
 		
         // put the input value into the state attributes
         String title = params.getString(NEW_ASSIGNMENT_TITLE);

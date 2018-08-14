@@ -672,7 +672,8 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 		List roles = (List) state.getAttribute(STATE_ROLES);
 		String newMarker ="";
 		
-		
+		log.error("readForm...");
+		log.error(abilities.toString());
 		PermissionLimiter limiter = getPermissionLimiter();
 		// look for each role's ability field
 		for (Iterator iRoles = roles.iterator(); iRoles.hasNext();)
@@ -690,16 +691,21 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 					continue;
 				}
 				// NAM-23 	- start			
-				if (lock.contains("asn.marker"))
+				log.error("before marker check...");
+				if (lock.equals("asn.marker"))
 				{
 					newMarker = lock;
+					log.error("newMarker:" + newMarker);
 				}
+				else
+					log.error(lock.toString());
 				if (lock.contains("current") && lock.contains("asn.marker"))
 				{
 					String curMarker = lock;
-					
+					log.error("curMarker:"+curMarker);
 					if ((newMarker == "false") && (curMarker == "true"))
 					{
+						log.error("post change check");
 						try
 						{
 							if (authzGroupService.checkAssignedMarkersForSite())

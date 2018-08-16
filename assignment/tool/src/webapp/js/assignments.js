@@ -11,7 +11,21 @@ ASN.updateQueryStringParameter = function(uri, key, value) {
   else {
     return uri + separator + key + "=" + value;
   }
-}
+};
+
+ASN.disableButtons = function()
+{
+	document.getElementsByName("post")[0].disabled = true;
+	document.getElementsByName("preview")[0].disabled = true;
+	document.getElementsByName("save")[0].disabled = true;
+};
+
+ASN.enableButtons = function()
+{
+	document.getElementsByName("post")[0].disabled = false;
+	document.getElementsByName("preview")[0].disabled = false;
+	document.getElementsByName("save")[0].disabled = false;
+};
 
 ASN.getSelect = function(selectBox) {
     if (selectBox && selectBox instanceof HTMLSelectElement) { 

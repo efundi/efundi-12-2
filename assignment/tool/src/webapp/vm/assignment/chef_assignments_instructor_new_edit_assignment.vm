@@ -54,7 +54,7 @@
 	function switchAssignmentSubmissionType()
 	{
 	
-		enableButtons();
+		ASN.enableButtons();
 	
 		var useTool = document.getElementById('allowMarkerToggle');
 		var useReview = document.getElementById('$name_UseReviewService');
@@ -136,29 +136,15 @@
 		} else {
 			document.getElementById("useMarkingTool").value="false";
 			document.getElementById('pdfMarkerSettings').style.display = 'none';
-			enableButtons();
+			ASN.enableButtons();
 		}
-	}
-	
-	function disableButtons()
-	{
-		document.getElementsByName("post")[0].disabled = true;
-		document.getElementsByName("preview")[0].disabled = true;
-		document.getElementsByName("save")[0].disabled = true;
-	}
-	
-	function enableButtons()
-	{
-		document.getElementsByName("post")[0].disabled = false;
-		document.getElementsByName("preview")[0].disabled = false;
-		document.getElementsByName("save")[0].disabled = false;
 	}
 	
 	function quotaCalculation()
 	{
 		var sum = 0;
 		
-		enableButtons();
+		ASN.enableButtons();
 		
 		#foreach($i in [1..$!value_totalMarkers])
 			var value$i = document.getElementById("quota$i").value;
@@ -169,15 +155,17 @@
 				document.getElementById("quota$i").title="$tlang.getString('quota.assignment.table.input.error2')";
 				document.getElementById("quota$i").alt="$tlang.getString('quota.assignment.table.input.error2')";
 				document.getElementById("quota$i").style.backgroundColor="red";
-				disableButtons();
+				ASN.disableButtons();
 			}
 			sum = Number(value$i) + Number(sum);
 			if (Number(sum) > 100) {
 				document.getElementById("quota$i").title="$tlang.getString('quota.assignment.table.input.error')";
 				document.getElementById("quota$i").alt="$tlang.getString('quota.assignment.table.input.error')";
 				document.getElementById("quota$i").style.backgroundColor="red";
-				disableButtons();
+				ASN.disableButtons();
 			}
+			
+			document.getElementById("markerTotal").value = $i;
 		#end
 		
 		if (Number(sum) <= 100) {
@@ -228,6 +216,7 @@
 		<input type="hidden" name="view" id="view" value="" />
 		<input type="hidden" name="quotaTotal" id="quotaTotal" value="" />
 		<input type="hidden" name="useMarkingTool" id="useMarkingTool" value="" />
+		<input type="hidden" name="markerTotal" id="markerTotal" value="" />
 		<input type="hidden" name="$name_order" id="$name_order" value="$!value_position_order" />
 
 		<div class="form-group row form-required">

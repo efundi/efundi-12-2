@@ -1,5 +1,7 @@
 // 'Namespace'
 var ASN = ASN || {};
+var decimalError = "1";
+var totalError = "2";
 
 // http://stackoverflow.com/a/6021027/3708872
 ASN.updateQueryStringParameter = function(uri, key, value) {
@@ -11,6 +13,69 @@ ASN.updateQueryStringParameter = function(uri, key, value) {
   else {
     return uri + separator + key + "=" + value;
   }
+};
+
+ASN.saveErrors = function(error, error2) {
+	decimalError = error2;
+	totalError = error;
+}
+
+ASN.displayError = function(value, error) {
+	document.getElementById(value).title=error;
+	document.getElementById(value).alt=error;
+	document.getElementById(value).style.backgroundColor="red";
+};
+
+ASN.hideError = function(value) {
+	document.getElementById(value).title="";
+	document.getElementById(value).alt="";
+	document.getElementById(value).style.backgroundColor="white";
+}
+
+ASN.quotaCalculation = function(value_totalMarkers)
+{
+	var sum = 0;
+	var value;
+	document.getElementById("markerTotal").value = value_totalMarkers;
+	
+	ASN.enableButtons();
+	
+	for (var i = 1; i <= value_totalMarkers; i++) {
+		var quotaId = "quota" + i;
+		value = document.getElementById(quotaId).value;
+		ASN.hideError(quotaId);
+		if (ASN.countDecimals(Number(value)) > 1) {
+			ASN.displayError(quotaId, decimalError);
+			ASN.disableButtons();
+		}
+		sum = Number(value) + Number(sum);
+		if (Number(sum) > 100) {
+			ASN.displayError(quotaId, totalError);
+			ASN.disableButtons();
+		}
+	}
+	
+	if (Number(sum) <= 100) {
+		document.getElementById("quotaTotal").value=sum;
+	}
+};
+
+ASN.enableMarkingTool = function(value_totalMarkers) {
+	if (document.getElementById("allowMarkerToggle").checked) {
+		document.getElementById("useMarkingTool").value="true";
+		document.getElementById('pdfMarkerSettings').style.display = 'block';
+		ASN.quotaCalculation(value_totalMarkers);
+	} else {
+		document.getElementById("useMarkingTool").value="false";
+		document.getElementById('pdfMarkerSettings').style.display = 'none';
+		ASN.enableButtons();
+	}
+};
+
+ASN.countDecimals = function(value) {
+    if (Math.floor(value) !== value)
+        return value.toString().split(".")[1].length || 0;
+    return 0;
 };
 
 ASN.disableButtons = function()

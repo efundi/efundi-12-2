@@ -1177,6 +1177,7 @@ public class UsersAction extends PagedResourceActionII
 		// unenroll the user from all AuthzGroups (if enabled)
 		String userId = user.getId();
 		String userEid = user.getEid();
+		
 		if (isUnenrollBeforeDeleteEnabled())
 		{
 			Map<String, String> userRoles = authzGroupService.getUserRoles(userId, null);
@@ -1185,6 +1186,23 @@ public class UsersAction extends PagedResourceActionII
 				try
 				{
 					AuthzGroup realmEdit = authzGroupService.getAuthzGroup(realm);
+					/* NAM-23 Prevent deletion of user that has marking
+					 * 
+					 * Check Property
+					 * Check userId in DB
+					 * TODO Create isMarker Method for checking against DB.
+					 * 
+					 */
+					Boolean useMarker = serverConfigurationService.getBoolean("assignment.useMarker ", true);
+				     if (useMarker) 
+				     {
+				    	 if (isMarker(userId, userEid))
+				    	 {
+				    		 log.error("Could not remove user {} from realm {} due to marking assignment", userEid, realm);
+				    		 addAlert(state, rb.getFormattedMessage("useact.markercouldnot", user.getEid(), realm));
+				    		 return;
+				    	 }					
+				     }
 					realmEdit.removeMember(userId);
 					authzGroupService.save(realmEdit);
 				 	log.info("User {} removed from realm {}", userEid, realm);
@@ -1228,6 +1246,13 @@ public class UsersAction extends PagedResourceActionII
 
 	} // doRemove_confirmed
 
+	
+	/* NAM-23 get Prop Method
+	 * 
+	 * Method to get value of property.
+	 * 
+	 */
+	
 	/**
 	 * doCancel_remove called when "eventSubmit_doCancel_remove" is in the request parameters to cancel user removal
 	 */

@@ -461,8 +461,6 @@ public class AssignmentAction extends PagedResourceActionII {
     // assignment order for default view
     private static final String NEW_ASSIGNMENT_ORDER = "new_assignment_order";
     private static final String NEW_ASSIGNMENT_GROUP_SUBMIT = "new_assignment_group_submit";
-    // quota values
-    private static final String NEW_ASSIGNMENT_QUOTA_VALUES = "new_assignment_quota_values";
     // open date
     private static final String NEW_ASSIGNMENT_OPENMONTH = "new_assignment_openmonth";
     private static final String NEW_ASSIGNMENT_OPENDAY = "new_assignment_openday";
@@ -2449,8 +2447,6 @@ public class AssignmentAction extends PagedResourceActionII {
 
         context.put("name_title", NEW_ASSIGNMENT_TITLE);
         context.put("name_order", NEW_ASSIGNMENT_ORDER);
-        
-        context.put("quota_values", NEW_ASSIGNMENT_QUOTA_VALUES);
 
         // set open time context variables
         putTimePropertiesInContext(context, state, "Open", NEW_ASSIGNMENT_OPENMONTH, NEW_ASSIGNMENT_OPENDAY, NEW_ASSIGNMENT_OPENYEAR, NEW_ASSIGNMENT_OPENHOUR, NEW_ASSIGNMENT_OPENMIN);
@@ -2515,7 +2511,6 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("value_year_from", state.getAttribute(NEW_ASSIGNMENT_YEAR_RANGE_FROM));
         context.put("value_year_to", state.getAttribute(NEW_ASSIGNMENT_YEAR_RANGE_TO));
         context.put("value_title", state.getAttribute(NEW_ASSIGNMENT_TITLE));
-        context.put("value_quotas", state.getAttribute(NEW_ASSIGNMENT_QUOTA_VALUES));
         context.put("value_position_order", state.getAttribute(NEW_ASSIGNMENT_ORDER));
 
         context.put("value_EnableCloseDate", state.getAttribute(NEW_ASSIGNMENT_ENABLECLOSEDATE));
@@ -3008,7 +3003,6 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("user", userDirectoryService.getCurrentUser());
 
         context.put("value_Title", (String) state.getAttribute(NEW_ASSIGNMENT_TITLE));
-        context.put("value_Quotas", (String) state.getAttribute(NEW_ASSIGNMENT_QUOTA_VALUES));
         context.put("name_order", NEW_ASSIGNMENT_ORDER);
         context.put("value_position_order", (String) state.getAttribute(NEW_ASSIGNMENT_ORDER));
 
@@ -6523,6 +6517,7 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String assignmentRef = params.getString("assignmentId");
+        // NAM-31 (remove these checks once NAM-30 is started) --START
         float quotaTotal = Float.parseFloat(params.getString("quotaTotal"));
 		boolean markingToolEnabled = Boolean.parseBoolean(params.getString("useMarkingTool"));
 		int markerTotal = Integer.parseInt(params.getString("markerTotal"));
@@ -6552,6 +6547,7 @@ public class AssignmentAction extends PagedResourceActionII {
 	        	state.setAttribute(NEW_ASSIGNMENT_QUOTA_VALUES, quotas);
 	        }
 		}
+		//--END
 		
         // put the input value into the state attributes
         String title = params.getString(NEW_ASSIGNMENT_TITLE);
@@ -7527,7 +7523,6 @@ public class AssignmentAction extends PagedResourceActionII {
             String assignmentReference = AssignmentReferenceReckoner.reckoner().assignment(a).reckon().getReference();
             // put the names and values into vm file
             String title = (String) state.getAttribute(NEW_ASSIGNMENT_TITLE);
-            String quotas = (String) state.getAttribute(NEW_ASSIGNMENT_QUOTA_VALUES);
             String order = (String) state.getAttribute(NEW_ASSIGNMENT_ORDER);
 
             // open time
@@ -11488,6 +11483,7 @@ public class AssignmentAction extends PagedResourceActionII {
         return submissionTypeTable;
     } // submissionTypeTable
     
+    //NAM-31 (remove these methods once NAM-30 is started) --START
     /**
      * construct a HashMap using the integer as the key and marker name String as the value
      */
@@ -11512,6 +11508,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
     	markerTableSize = size;
     } // markerTableSize
+    //--END
 
     /**
      * Add the list of categories from the gradebook tool

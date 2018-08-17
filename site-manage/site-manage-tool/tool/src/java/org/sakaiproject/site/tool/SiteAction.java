@@ -8845,14 +8845,19 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 				
 				//NAM - 43
 				//Something similar to the above, check each user against the marker table, if any are present with marking assigned dispute the change.
-				List<Participant> markersAfterProposedChanges = testProposedUpdatesForMarkers(participants, params);
 
-				if (maintainersAfterProposedChanges.size() > 0) {
-					addAlert(state, 
+				Boolean useMarker = serverConfigurationService.getBoolean("assignment.useMarker ", true)
+			     if (useMarker) 
+			     {				
+			    	 List<Participant> markersAfterProposedChanges = testProposedUpdatesForMarkers(participants, params);
+
+			    	 if (maintainersAfterProposedChanges.size() > 0) 
+			    	 {
+			    		 addAlert(state, 
 						rb.getFormattedMessage("sitegen.siteinfolist.markernuser"));
-					return;
-				}
-				
+			    		 return;
+			    	 }
+			     }
 				// SAK23029 - proposed changes do not leave site w/o maintainers; proceed with any allowed updates
 			
 				// list of roles being added or removed

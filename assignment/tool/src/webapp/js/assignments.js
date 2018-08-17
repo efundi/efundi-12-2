@@ -1,7 +1,7 @@
 // 'Namespace'
 var ASN = ASN || {};
-var decimalError = "1";
-var totalError = "2";
+var decimalError;
+var totalError;
 
 // http://stackoverflow.com/a/6021027/3708872
 ASN.updateQueryStringParameter = function(uri, key, value) {
@@ -18,7 +18,7 @@ ASN.updateQueryStringParameter = function(uri, key, value) {
 ASN.saveErrors = function(error, error2) {
 	decimalError = error2;
 	totalError = error;
-}
+};
 
 ASN.displayError = function(value, error) {
 	document.getElementById(value).title=error;

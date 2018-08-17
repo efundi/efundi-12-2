@@ -24,6 +24,7 @@
 		if ($("#generalAlert").length <= 0) {
 			SetMaxPoint(document.getElementById('$name_GradeType'), document.getElementById('$name_GradePoints'));
 		}
+		ASN.saveErrors("$tlang.getString('quota.assignment.table.input.error')", "$tlang.getString('quota.assignment.table.input.error2')");
 	});
 
     function SetMaxPoint(obj_option, obj_textfield)
@@ -158,7 +159,7 @@
 
 	#set($submitnotif="submitnotifTop")
 
-	<form name="newAssignmentForm" id="newAssignmentForm" action="#toolForm("AssignmentAction")" method="post" onload="ASN.saveErrors('$tlang.getString('quota.assignment.table.input.error')', '$tlang.getString('quota.assignment.table.input.error2')');"onsubmit="return true;">
+	<form name="newAssignmentForm" id="newAssignmentForm" action="#toolForm("AssignmentAction")" method="post" onsubmit="return true;">
 		<input type="hidden" name="assignmentId" value="$!assignmentId" />
 		<input type="hidden" name="eventSubmit_doAssignment_form" value="" />
 		<input type="hidden" name="option" id="option" value="" />

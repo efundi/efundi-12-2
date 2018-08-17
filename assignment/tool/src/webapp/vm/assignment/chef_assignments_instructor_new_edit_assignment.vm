@@ -24,6 +24,7 @@
 		if ($("#generalAlert").length <= 0) {
 			SetMaxPoint(document.getElementById('$name_GradeType'), document.getElementById('$name_GradePoints'));
 		}
+		ASN.saveErrors("$tlang.getString('quota.assignment.table.input.error')", "$tlang.getString('quota.assignment.table.input.error2')");
 	});
 
     function SetMaxPoint(obj_option, obj_textfield)
@@ -53,6 +54,10 @@
 	## handles the Student Submissions dropdown
 	function switchAssignmentSubmissionType()
 	{
+	
+		ASN.enableButtons();
+	
+		var useTool = document.getElementById('allowMarkerToggle');
 		var useReview = document.getElementById('$name_UseReviewService');
 		var lblUseReview=document.getElementById('lblReviewService');
 		var reviewSwitchNe1 = document.getElementById('review.switch.ne.1');
@@ -66,6 +71,10 @@
 				useReview.disabled=false;
 				lblUseReview.style.display = 'block';
 			#end
+			if (document.getElementById('subType').value == 6) 
+			{
+				document.getElementById('allowPdfMarker').style.display = 'block';
+			}
 			document.getElementById('tempAllowRes').parentNode.parentNode.style.display = 'block';
 			if (document.getElementById('allowResToggle').checked)
 			{
@@ -74,6 +83,19 @@
 				document.getElementById('resubmitNotification').style.display = 'block';
 				ASN.resizeFrame();
 			}
+			if (document.getElementById('subType').value == 6) 
+			{
+				if (document.getElementById('allowMarkerToggle').checked)
+				{
+					document.getElementById('pdfMarkerSettings').style.display = 'block';
+					ASN.resizeFrame();
+				}
+			} else {
+				document.getElementById('allowPdfMarker').style.display = 'none';
+				document.getElementById('pdfMarkerSettings').style.display = 'none';
+				useTool.checked=false;
+			}
+			
 		}
 		else
 		{
@@ -89,14 +111,31 @@
 				reviewSwitchNe1.style.removeProperty('display');
 				lblUseReview.style.display = 'none';
 			#end
+			useTool.checked=false;
 			document.getElementById('tempAllowRes').parentNode.parentNode.style.display = 'none';
 			document.getElementById('allowResubmitNumber').style.display = 'none';
 			document.getElementById('allowResubmitTime').style.display = 'none';
 			document.getElementById('resubmitNotification').style.display = 'none';
+			document.getElementById('pdfMarkerSettings').style.display = 'none';
+			document.getElementById('allowPdfMarker').style.display = 'none';
+			document.getElementById('pdfMarkerSettings').style.display = 'none';
 		}
 	}
 	focus_path = [ '$fField' ];
 </script>
+
+<style>
+	/* For Firefox */
+	input[type='number'] {
+	    -moz-appearance:textfield;
+	}
+	/* Webkit browsers like Safari and Chrome */
+	input[type=number]::-webkit-inner-spin-button,
+	input[type=number]::-webkit-outer-spin-button {
+	    -webkit-appearance: none;
+	    margin: 0;
+	}
+</style>
 #javascript("/library/js/lang-datepicker/lang-datepicker.js")
 
 <div class="portletBody container-fluid">
@@ -125,6 +164,9 @@
 		<input type="hidden" name="eventSubmit_doAssignment_form" value="" />
 		<input type="hidden" name="option" id="option" value="" />
 		<input type="hidden" name="view" id="view" value="" />
+		<input type="hidden" name="quotaTotal" id="quotaTotal" value="" />
+		<input type="hidden" name="useMarkingTool" id="useMarkingTool" value="" />
+		<input type="hidden" name="markerTotal" id="markerTotal" value="" />
 		<input type="hidden" name="$name_order" id="$name_order" value="$!value_position_order" />
 
 		<div class="form-group row form-required">
@@ -596,11 +638,13 @@
 			<div class="col-sm-6">
 				<select name="$name_SubmissionType" id="subType" onchange="switchAssignmentSubmissionType();" class="assignment-submission-type">
 				#foreach ($i in [1..$!value_totalSubmissionTypes])
-					#if ($i == $value_SubmissionType)
-						<option value="$i" selected="selected">$submissionTypeTable.get($i)</option>
-					#else
-						<option value="$i">$submissionTypeTable.get($i)</option>
-					#end
+					#if("$!submissionTypeTable.get($i)" != "") ##NAM-28
+						#if ($i == $value_SubmissionType)
+							<option value="$i" selected="selected">$!submissionTypeTable.get($i)</option>
+						#else
+							<option value="$i">$!submissionTypeTable.get($i)</option>
+						#end
+					#end	
 				#end
 				</select>
 			</div>
@@ -612,6 +656,12 @@
 			#set($resubmitStyle="display:block")
 		#else
 			#set($resubmitStyle="display:none")
+		#end
+		
+		#if ($value_SubmissionType != 6)
+			#set($markerSetupStyle="display:none")
+		#else
+			#set($markerSetupStyle="display:block")
 		#end
 
 		<div class="form-group row">
@@ -683,6 +733,54 @@
 					<input type="radio" name="$!name_assignment_releasereturn_notification" id="sendreleasereturnnotif" value="$!value_assignment_releasereturn_notification_each" #if($!value_assignment_releasereturn_notification.equals($!value_assignment_releasereturn_notification_each))checked="checked" #end />
 					$tlang.getString('send.submission.releasereturn.email')
 				</label>
+			</div>
+		</div>
+
+		##NAM-29 PDF marker settings checkbox
+		<div class="form-group row" id="allowPdfMarker" style="$!markerSetupStyle">
+			<label class="col-sm-2 control-label" for="allowMarkToggle">
+				$tlang.getString("allowMarkingTool")
+			</label>
+			<div class="col-sm-10">
+				<div id="tempAllowMarker" #if ($value_SubmissionType == 4) style = "display:none"#end>
+					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!value_SubmissionType == 6) checked="checked"#end onclick="ASN.enableMarkingTool($!value_totalMarkers); ASN.resizeFrame();" />
+				</div>
+			</div>
+		</div>
+
+		##NAM-29 PDF marker settings that will be displayed when the tool is selected
+		<div class="col-sm-offset-1 row" id="pdfMarkerSettings" style="$!markerSetupStyle">
+			<div class="col-sm-12 row table-reponsive">
+				<table class="table table-striped" id="quotaAssignmentTable" name="quotaAssignmentTable">
+					<tr>
+						<th>$tlang.getString("quota.assignment.table.column.name")</th>
+						<th>$tlang.getString("quota.assignment.table.column.quota")</th>
+						<th>$tlang.getString("quota.assignment.table.column.reassign")</th>
+					</tr>
+					##temp data to check if UI changes are correct
+					##loop will be replaced by actual database values loop
+					#set($max = 100)
+					#foreach ($i in [1..$!value_totalMarkers])
+					<tr>	
+						<td>
+							<label value="$i" id="$!submissionTypeTable.get($i)">$!tool_MarkerList.get($i)</label>
+						</td>
+						<td>
+							<input type="number" step="0.1" placeholder="0.0" name="quota$i" id="quota$i" onchange="ASN.quotaCalculation($!value_totalMarkers)">
+						</td>
+						<td>
+							<select>
+								<option value="" id="default">None</option>
+								#foreach($a in [1..$!value_totalMarkers])
+									#if("$!tool_MarkerList.get($a)" != "$!tool_MarkerList.get($i)")
+										<option value="$a" id=""> $tool_MarkerList.get($a) </option>
+									#end
+								#end
+							</select>
+						</td>
+					</tr>
+					#end
+				</table>
 			</div>
 		</div>
 

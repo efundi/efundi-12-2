@@ -909,6 +909,9 @@ public class AssignmentAction extends PagedResourceActionII {
     private String nextUngradedWithSubmissionRef = "";
     private String prevUngradedWithSubmissionRef = "";
 
+    /******** NAM-29 *********/
+    private int markerTableSize;
+    
     private AnnouncementService announcementService;
     private AssignmentActivityProducer assignmentActivityProducer;
     private AssignmentPeerAssessmentService assignmentPeerAssessmentService;
@@ -2478,6 +2481,10 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("name_OpenDateNotification", AssignmentConstants.ASSIGNMENT_OPENDATE_NOTIFICATION);
         }
         context.put("name_CheckAddHonorPledge", NEW_ASSIGNMENT_CHECK_ADD_HONOR_PLEDGE);
+        
+        //NAM-29
+        context.put("tool_MarkerList", markerTable());
+        context.put("value_totalMarkers", markerTableSize);
 
         // SAK-17606
         context.put("name_CheckAnonymousGrading", NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING);
@@ -2513,7 +2520,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
         // information related to gradebook categories
         putGradebookCategoryInfoIntoContext(state, context);
-
+        
         context.put("value_totalSubmissionTypes", Assignment.SubmissionType.values().length - 1);
         context.put("value_GradeType", state.getAttribute(NEW_ASSIGNMENT_GRADE_TYPE));
         // format to show one decimal place
@@ -6491,6 +6498,15 @@ public class AssignmentAction extends PagedResourceActionII {
     } // doReorder
 
     /**
+     * Checks and saves the assigned quota's
+     *
+     * @param form info
+     */
+    private void check_save_quotas(RunData data, SessionState state) {
+    	addAlert(state, "Works");
+    }
+    
+    /**
      * Action is to save the input infos for assignment fields
      *
      * @param validify Need to validify the inputs or not
@@ -6501,7 +6517,38 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String assignmentRef = params.getString("assignmentId");
+        // NAM-31 (remove these checks once NAM-30 is started) --START
+        float quotaTotal = Float.parseFloat(params.getString("quotaTotal"));
+		boolean markingToolEnabled = Boolean.parseBoolean(params.getString("useMarkingTool"));
+		int markerTotal = Integer.parseInt(params.getString("markerTotal"));
 
+		String quotas = "";
+		float quotaValue;
+		
+		for (int i = 0; i < markerTotal; i++) {
+			if (params.getString("quota" + (i+1)) != null && !params.getString("quota" + (i+1)).equals("")) {
+				quotaValue = Float.parseFloat(params.getString("quota" + (i+1))); //quota fields start numbering at 1 and not 0
+			} else {
+				quotaValue = 0;
+			}
+			
+			if ((i + 1) == markerTotal) {
+				quotas += quotaValue;
+			} else {
+				quotas += quotaValue + "/";
+			}
+		}
+		
+		if (markingToolEnabled) {
+	        if (quotaTotal == 0.0) {
+	        	addAlert(state, rb.getString("quota.assignment.table.input.error3"));
+	        } else {
+	        	// put quota values into the state attribute
+	        	state.setAttribute(NEW_ASSIGNMENT_QUOTA_VALUES, quotas);
+	        }
+		}
+		//--END
+		
         // put the input value into the state attributes
         String title = params.getString(NEW_ASSIGNMENT_TITLE);
         state.setAttribute(NEW_ASSIGNMENT_TITLE, title);
@@ -6644,7 +6691,8 @@ public class AssignmentAction extends PagedResourceActionII {
         String peerAssessmentInstructions = processFormattedTextFromBrowser(state, params.getString(NEW_ASSIGNMENT_PEER_ASSESSMENT_INSTRUCTIONS), true);
         state.setAttribute(NEW_ASSIGNMENT_PEER_ASSESSMENT_INSTRUCTIONS, peerAssessmentInstructions);
 
-        String b, r;
+        String b, r;      
+        
         //REVIEW SERVICE
         r = params.getString(NEW_ASSIGNMENT_USE_REVIEW_SERVICE);
         // set whether we use the review service or not
@@ -7426,7 +7474,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 addAlert(state, rb.getFormattedMessage("group.editsite.nopermission"));
             }
         }
-
+        
         String assignmentId = params.getString("assignmentId");
 
         // whether this is an editing which changes non-point graded assignment to point graded assignment?
@@ -7657,7 +7705,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 }
 
                 // persist the Assignment changes
-                commitAssignment(state, post, a, assignmentReference, title, submissionType, useReviewService, allowStudentViewReport,
+                commitAssignment(state, post, a, assignmentReference, title, submissionType, quotas, useReviewService, allowStudentViewReport,
                         gradeType, gradePoints, description, checkAddHonorPledge, attachments, section, range,
                         visibleTime, openTime, dueTime, closeTime, hideDueDate, enableCloseDate, isGroupSubmit, groups,
                         usePeerAssessment, peerPeriodTime, peerAssessmentAnonEval, peerAssessmentStudentViewReviews, peerAssessmentNumReviews, peerAssessmentInstructions,
@@ -8486,6 +8534,7 @@ public class AssignmentAction extends PagedResourceActionII {
                                   String assignmentRef,
                                   String title,
                                   Assignment.SubmissionType submissionType,
+                                  String quotas,
                                   boolean useReviewService,
                                   boolean allowStudentViewReport,
                                   Assignment.GradeType gradeType,
@@ -8532,6 +8581,7 @@ public class AssignmentAction extends PagedResourceActionII {
         a.setHonorPledge(checkAddHonorPledge);
         a.setHideDueDate(hideDueDate);
         a.setTypeOfSubmission(submissionType);
+        //a.setQuotas(quotas); //Still needs to be created in NAM-30
         a.setContentReview(useReviewService);
         a.setTypeOfGrade(gradeType);
 
@@ -11423,10 +11473,42 @@ public class AssignmentAction extends PagedResourceActionII {
         submissionTypeTable.put(3, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_INLINE_AND_ATTACHMENTS_PROP));
         submissionTypeTable.put(4, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_NON_ELECTRONIC_PROP));
         submissionTypeTable.put(5, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_SINGLE_ATTACHMENT_PROP));
-        submissionTypeTable.put(6, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_PDF_ONLY_PROP)); //NAM-26 adding new submission type to table data
+        
+        //NAM-28 Checks if the pdf marker tool should be displayed or not
+        Boolean useMarker = serverConfigurationService.getBoolean("assignment.useMarker ", true);
+        if (useMarker) {
+        	submissionTypeTable.put(6, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_PDF_ONLY_PROP)); //NAM-26 adding new submission type to table data
+        }
 
         return submissionTypeTable;
     } // submissionTypeTable
+    
+    //NAM-31 (remove these methods once NAM-30 is started) --START
+    /**
+     * construct a HashMap using the integer as the key and marker name String as the value
+     */
+    private Map<Integer, String> markerTable() {
+
+        Map<Integer, String> markerTable = new HashMap<>();
+        markerTable.put(1, "Name 1");
+        markerTable.put(2, "Name 2");
+        markerTable.put(3, "Name 3");
+        
+        markerTableSize(markerTable);
+
+        return markerTable;
+    } // markerTable
+    
+    /**
+     * get map size emthod that returns the marker map size
+     */
+    private void markerTableSize(Map markerTableTemp) {
+
+    	int size = markerTableTemp.size();
+
+    	markerTableSize = size;
+    } // markerTableSize
+    //--END
 
     /**
      * Add the list of categories from the gradebook tool

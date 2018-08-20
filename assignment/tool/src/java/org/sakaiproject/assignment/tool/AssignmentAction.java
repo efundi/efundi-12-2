@@ -6544,7 +6544,7 @@ public class AssignmentAction extends PagedResourceActionII {
 	        	addAlert(state, rb.getString("quota.assignment.table.input.error3"));
 	        } else {
 	        	// put quota values into the state attribute
-	        	state.setAttribute(NEW_ASSIGNMENT_QUOTA_VALUES, quotas);
+	        	//state.setAttribute(NEW_ASSIGNMENT_QUOTA_VALUES, quotas);
 	        }
 		}
 		//--END
@@ -7705,7 +7705,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 }
 
                 // persist the Assignment changes
-                commitAssignment(state, post, a, assignmentReference, title, submissionType, quotas, useReviewService, allowStudentViewReport,
+                commitAssignment(state, post, a, assignmentReference, title, submissionType, useReviewService, allowStudentViewReport,
                         gradeType, gradePoints, description, checkAddHonorPledge, attachments, section, range,
                         visibleTime, openTime, dueTime, closeTime, hideDueDate, enableCloseDate, isGroupSubmit, groups,
                         usePeerAssessment, peerPeriodTime, peerAssessmentAnonEval, peerAssessmentStudentViewReviews, peerAssessmentNumReviews, peerAssessmentInstructions,
@@ -8534,7 +8534,6 @@ public class AssignmentAction extends PagedResourceActionII {
                                   String assignmentRef,
                                   String title,
                                   Assignment.SubmissionType submissionType,
-                                  String quotas,
                                   boolean useReviewService,
                                   boolean allowStudentViewReport,
                                   Assignment.GradeType gradeType,

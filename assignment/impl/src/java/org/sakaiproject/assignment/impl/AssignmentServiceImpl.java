@@ -230,7 +230,10 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         functionManager.registerFunction(SECURE_GRADE_ASSIGNMENT_SUBMISSION);
         functionManager.registerFunction(SECURE_ASSIGNMENT_RECEIVE_NOTIFICATIONS);
         functionManager.registerFunction(SECURE_SHARE_DRAFTS);
+        //NAM-24 Marker Permission
+        functionManager.registerFunction(SECURE_ASSIGNMENT_MARKER);
 
+        
         // this is needed to avoid a circular dependency, notice we set the AssignmentService proxy and not this
         assignmentSupplementItemService.setAssignmentService(applicationContext.getBean(AssignmentService.class));
     }

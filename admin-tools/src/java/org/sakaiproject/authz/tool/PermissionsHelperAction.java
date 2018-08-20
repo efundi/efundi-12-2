@@ -670,7 +670,10 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 	{
 		List abilities = (List) state.getAttribute(STATE_ABILITIES);
 		List roles = (List) state.getAttribute(STATE_ROLES);
-
+		String newMarker ="";
+		
+		log.error("readForm...");
+		log.error(abilities.toString());
 		PermissionLimiter limiter = getPermissionLimiter();
 		// look for each role's ability field
 		for (Iterator iRoles = roles.iterator(); iRoles.hasNext();)
@@ -687,7 +690,39 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 					log.debug("Can't change permission '{}' on role '{}'.", lock, role.getId());
 					continue;
 				}
-
+				// NAM-23 	- start			
+				log.error("before marker check...");
+				if (lock.equals("asn.marker"))
+				{
+					newMarker = lock;
+					log.error("newMarker:" + newMarker);
+				}
+				else
+					log.error(lock.toString());
+				if (lock.contains("current") && lock.contains("asn.marker"))
+				{
+					String curMarker = lock;
+					log.error("curMarker:"+curMarker);
+					if ((newMarker == "false") && (curMarker == "true"))
+					{
+						log.error("post change check");
+						try
+						{
+							if (authzGroupService.checkAssignedMarkersForSite())
+								{	//not sure if this is right here?						
+									throw new Exception("Marker");
+								}
+						}
+						catch(Exception e) //not sure if this is right here?		
+							{
+								log.warn("PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission.", role.getId(), e);
+								addAlert(state, rb.getFormattedMessage("alert_marker"));
+								return;
+							}				
+					}
+					
+				}				
+				// NAM-23 	- end
 				if (checked)
 				{
 					// we have an ability! Make sure there's a role

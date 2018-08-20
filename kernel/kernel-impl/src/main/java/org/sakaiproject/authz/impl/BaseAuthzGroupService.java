@@ -1604,6 +1604,7 @@ public abstract class BaseAuthzGroupService implements AuthzGroupService
          * @return a String Set of all maintain roles
          */
         public Set<String> getMaintainRoles();
+     
 	}
 
 	@Override
@@ -1730,4 +1731,18 @@ public abstract class BaseAuthzGroupService implements AuthzGroupService
  	protected boolean isAllowedAuth() {
  		return serverConfigurationService().getBoolean("sitemanage.grant.auth", false);
  	}
+ 	
+    /**
+     * return if there are assignments assigned to a marker
+     *
+     * @return boolean true there are assignments to a marker.
+     */
+    public boolean checkAssignedMarkersForSite()
+    {
+    	//NAM-23 TODO
+    	
+    	
+    	return false;
+    }
+ 	
 }

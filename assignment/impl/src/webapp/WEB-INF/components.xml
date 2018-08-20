@@ -120,7 +120,9 @@
                 <value>org.sakaiproject.assignment.api.model.AssignmentSupplementItemAttachment</value>
                 <value>org.sakaiproject.assignment.api.model.AssignmentSupplementItemWithAttachment</value>
                 <value>org.sakaiproject.assignment.api.model.PeerAssessmentAttachment</value>
-                <value>org.sakaiproject.assignment.api.model.PeerAssessmentItem</value>
+                <value>org.sakaiproject.assignment.api.model.PeerAssessmentItem</value>                
+                <value>org.sakaiproject.assignment.api.model.AssignmentMarker</value>
+                <value>org.sakaiproject.assignment.api.model.AssignmentSubmissionMarker</value>
             </list>
         </property>
     </bean>

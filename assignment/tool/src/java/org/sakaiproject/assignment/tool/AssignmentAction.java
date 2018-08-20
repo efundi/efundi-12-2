@@ -6544,7 +6544,7 @@ public class AssignmentAction extends PagedResourceActionII {
 	        	addAlert(state, rb.getString("quota.assignment.table.input.error3"));
 	        } else {
 	        	// put quota values into the state attribute
-	        	state.setAttribute(NEW_ASSIGNMENT_QUOTA_VALUES, quotas);
+	        	//state.setAttribute(NEW_ASSIGNMENT_QUOTA_VALUES, quotas);
 	        }
 		}
 		//--END

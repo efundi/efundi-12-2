@@ -15,10 +15,29 @@
  */
 package org.sakaiproject.assignment.tool;
 
-import static org.sakaiproject.assignment.api.AssignmentServiceConstants.*;
-import static org.sakaiproject.assignment.api.model.Assignment.GradeType.*;
+import static org.sakaiproject.assignment.api.AssignmentServiceConstants.GRADEBOOK_INTEGRATION_ADD;
+import static org.sakaiproject.assignment.api.AssignmentServiceConstants.GRADEBOOK_INTEGRATION_ASSOCIATE;
+import static org.sakaiproject.assignment.api.AssignmentServiceConstants.GRADEBOOK_INTEGRATION_NO;
+import static org.sakaiproject.assignment.api.AssignmentServiceConstants.NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING;
+import static org.sakaiproject.assignment.api.AssignmentServiceConstants.PROP_ASSIGNMENT_ASSOCIATE_GRADEBOOK_ASSIGNMENT;
+import static org.sakaiproject.assignment.api.AssignmentServiceConstants.SECURE_ADD_ASSIGNMENT_SUBMISSION;
+import static org.sakaiproject.assignment.api.AssignmentServiceConstants.SECURE_GRADE_ASSIGNMENT_SUBMISSION;
+import static org.sakaiproject.assignment.api.AssignmentServiceConstants.SECURE_UPDATE_ASSIGNMENT;
+import static org.sakaiproject.assignment.api.model.Assignment.GradeType.CHECK_GRADE_TYPE;
+import static org.sakaiproject.assignment.api.model.Assignment.GradeType.GRADE_TYPE_NONE;
+import static org.sakaiproject.assignment.api.model.Assignment.GradeType.LETTER_GRADE_TYPE;
+import static org.sakaiproject.assignment.api.model.Assignment.GradeType.PASS_FAIL_GRADE_TYPE;
+import static org.sakaiproject.assignment.api.model.Assignment.GradeType.SCORE_GRADE_TYPE;
+import static org.sakaiproject.assignment.api.model.Assignment.GradeType.UNGRADED_GRADE_TYPE;
+import static org.sakaiproject.assignment.api.model.Assignment.GradeType.values;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -26,13 +45,39 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.text.*;
-import java.time.*;
+import java.text.Collator;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.RuleBasedCollator;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -41,48 +86,97 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import au.com.bytecode.opencsv.CSVReader;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.sakaiproject.announcement.api.*;
-import org.sakaiproject.assignment.api.*;
+import org.sakaiproject.announcement.api.AnnouncementChannel;
+import org.sakaiproject.announcement.api.AnnouncementMessage;
+import org.sakaiproject.announcement.api.AnnouncementMessageEdit;
+import org.sakaiproject.announcement.api.AnnouncementMessageHeaderEdit;
+import org.sakaiproject.announcement.api.AnnouncementService;
+import org.sakaiproject.assignment.api.AssignmentConstants;
+import org.sakaiproject.assignment.api.AssignmentPeerAssessmentService;
+import org.sakaiproject.assignment.api.AssignmentReferenceReckoner;
+import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.assignment.api.model.Assignment;
-import org.sakaiproject.assignment.api.model.*;
+import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItem;
+import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItemAccess;
+import org.sakaiproject.assignment.api.model.AssignmentModelAnswerItem;
+import org.sakaiproject.assignment.api.model.AssignmentNoteItem;
+import org.sakaiproject.assignment.api.model.AssignmentSubmission;
+import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
+import org.sakaiproject.assignment.api.model.AssignmentSupplementItemAttachment;
+import org.sakaiproject.assignment.api.model.AssignmentSupplementItemService;
+import org.sakaiproject.assignment.api.model.AssignmentSupplementItemWithAttachment;
+import org.sakaiproject.assignment.api.model.PeerAssessmentAttachment;
+import org.sakaiproject.assignment.api.model.PeerAssessmentItem;
 import org.sakaiproject.assignment.api.taggable.AssignmentActivityProducer;
 import org.sakaiproject.assignment.taggable.tool.DecoratedTaggingProvider;
 import org.sakaiproject.assignment.taggable.tool.DecoratedTaggingProvider.Pager;
 import org.sakaiproject.assignment.taggable.tool.DecoratedTaggingProvider.Sort;
-import org.sakaiproject.authz.api.*;
+import org.sakaiproject.authz.api.AuthzGroup;
+import org.sakaiproject.authz.api.AuthzGroupService;
+import org.sakaiproject.authz.api.Member;
+import org.sakaiproject.authz.api.PermissionsHelper;
+import org.sakaiproject.authz.api.Role;
+import org.sakaiproject.authz.api.SecurityAdvisor;
+import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.calendar.api.Calendar;
 import org.sakaiproject.calendar.api.CalendarEvent;
 import org.sakaiproject.calendar.api.CalendarEventEdit;
 import org.sakaiproject.calendar.api.CalendarService;
-import org.sakaiproject.cheftool.*;
+import org.sakaiproject.cheftool.Context;
+import org.sakaiproject.cheftool.JetspeedRunData;
+import org.sakaiproject.cheftool.PagedResourceActionII;
+import org.sakaiproject.cheftool.PortletConfig;
+import org.sakaiproject.cheftool.RunData;
+import org.sakaiproject.cheftool.VelocityPortlet;
 import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.component.cover.ComponentManager;
-import org.sakaiproject.content.api.*;
+import org.sakaiproject.content.api.ContentHostingService;
+import org.sakaiproject.content.api.ContentResource;
+import org.sakaiproject.content.api.ContentResourceEdit;
+import org.sakaiproject.content.api.ContentTypeImageService;
+import org.sakaiproject.content.api.FilePickerHelper;
 import org.sakaiproject.contentreview.dao.ContentReviewConstants;
 import org.sakaiproject.contentreview.service.ContentReviewService;
-import org.sakaiproject.entity.api.*;
-import org.sakaiproject.event.api.*;
+import org.sakaiproject.entity.api.Entity;
+import org.sakaiproject.entity.api.EntityManager;
+import org.sakaiproject.entity.api.EntityPropertyNotDefinedException;
+import org.sakaiproject.entity.api.EntityPropertyTypeException;
+import org.sakaiproject.entity.api.Reference;
+import org.sakaiproject.entity.api.ResourceProperties;
+import org.sakaiproject.entity.api.ResourcePropertiesEdit;
+import org.sakaiproject.event.api.Event;
+import org.sakaiproject.event.api.EventTrackingService;
+import org.sakaiproject.event.api.LearningResourceStoreService;
 import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Actor;
 import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Object;
 import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Statement;
 import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Verb;
 import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Verb.SAKAI_VERB;
-import org.sakaiproject.exception.*;
+import org.sakaiproject.event.api.NotificationService;
+import org.sakaiproject.event.api.SessionState;
+import org.sakaiproject.exception.IdInvalidException;
+import org.sakaiproject.exception.IdUnusedException;
+import org.sakaiproject.exception.InUseException;
+import org.sakaiproject.exception.PermissionException;
+import org.sakaiproject.exception.SakaiException;
+import org.sakaiproject.exception.ServerOverloadException;
 import org.sakaiproject.javax.PagingPosition;
 import org.sakaiproject.message.api.MessageHeader;
 import org.sakaiproject.scoringservice.api.ScoringAgent;
 import org.sakaiproject.scoringservice.api.ScoringComponent;
 import org.sakaiproject.scoringservice.api.ScoringService;
-import org.sakaiproject.service.gradebook.shared.*;
+import org.sakaiproject.service.gradebook.shared.AssignmentHasIllegalPointsException;
+import org.sakaiproject.service.gradebook.shared.CategoryDefinition;
+import org.sakaiproject.service.gradebook.shared.ConflictingAssignmentNameException;
+import org.sakaiproject.service.gradebook.shared.GradebookExternalAssessmentService;
+import org.sakaiproject.service.gradebook.shared.GradebookNotFoundException;
+import org.sakaiproject.service.gradebook.shared.GradebookService;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
 import org.sakaiproject.site.api.SiteService;
@@ -91,7 +185,10 @@ import org.sakaiproject.taggable.api.TaggingHelperInfo;
 import org.sakaiproject.taggable.api.TaggingManager;
 import org.sakaiproject.taggable.api.TaggingProvider;
 import org.sakaiproject.time.api.TimeService;
-import org.sakaiproject.tool.api.*;
+import org.sakaiproject.tool.api.Session;
+import org.sakaiproject.tool.api.SessionManager;
+import org.sakaiproject.tool.api.ToolManager;
+import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.user.api.CandidateDetailProvider;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
@@ -102,6 +199,10 @@ import org.sakaiproject.util.ResourceLoader;
 import org.sakaiproject.util.SortedIterator;
 import org.sakaiproject.util.Validator;
 import org.sakaiproject.util.api.FormattedText;
+
+import au.com.bytecode.opencsv.CSVReader;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -2483,7 +2584,7 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("name_CheckAddHonorPledge", NEW_ASSIGNMENT_CHECK_ADD_HONOR_PLEDGE);
         
         //NAM-29
-        context.put("tool_MarkerList", markerTable());
+        context.put("tool_MarkerList", getSiteMarkers(state));
         context.put("value_totalMarkers", markerTableSize);
 
         // SAK-17606
@@ -11482,32 +11583,38 @@ public class AssignmentAction extends PagedResourceActionII {
         return submissionTypeTable;
     } // submissionTypeTable
     
-    //NAM-31 (remove these methods once NAM-30 is started) --START
     /**
      * construct a HashMap using the integer as the key and marker name String as the value
      */
-    private Map<Integer, String> markerTable() {
+    private Map<String, String> getSiteMarkers(SessionState state) {
+    	
+    	String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
 
-        Map<Integer, String> markerTable = new HashMap<>();
-        markerTable.put(1, "Name 1");
-        markerTable.put(2, "Name 2");
-        markerTable.put(3, "Name 3");
+        Map<String, String> markerUsers = new HashMap<String, String>();
+        try {
+            AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
+            Set<Role> roles = realm.getRoles();
+            for (Iterator iRoles = roles.iterator(); iRoles.hasNext(); ) {
+                Role r = (Role) iRoles.next();
+                if (r.isAllowed("asn.marker")) {
+                	Set<String> users = realm.getUsersHasRole(r.getId());
+                	if (users != null && users.size() > 0) {
+                        List<User> usersList = new ArrayList<>();
+                        for (Iterator<String> iUsers = users.iterator(); iUsers.hasNext(); ) {
+                        	String userID = iUsers.next();
+                        	User user = userDirectoryService.getUser(userID);
+                            String displayName = user.getFirstName() + " " + user.getLastName();
+                            markerUsers.put(userID, displayName);
+                        }
+                	}
+                }
+            }
+        } catch (Exception e) {
+            log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
+        }
         
-        markerTableSize(markerTable);
-
-        return markerTable;
+        return markerUsers;
     } // markerTable
-    
-    /**
-     * get map size emthod that returns the marker map size
-     */
-    private void markerTableSize(Map markerTableTemp) {
-
-    	int size = markerTableTemp.size();
-
-    	markerTableSize = size;
-    } // markerTableSize
-    //--END
 
     /**
      * Add the list of categories from the gradebook tool

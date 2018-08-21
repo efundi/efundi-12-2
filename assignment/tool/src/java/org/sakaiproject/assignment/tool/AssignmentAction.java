@@ -2585,7 +2585,6 @@ public class AssignmentAction extends PagedResourceActionII {
         
         //NAM-29
         context.put("tool_MarkerList", getSiteMarkers(state));
-        context.put("value_totalMarkers", markerTableSize);
 
         // SAK-17606
         context.put("name_CheckAnonymousGrading", NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING);
@@ -6607,19 +6606,8 @@ public class AssignmentAction extends PagedResourceActionII {
     	addAlert(state, "Works");
     }
     
-    /**
-     * Action is to save the input infos for assignment fields
-     *
-     * @param validify Need to validify the inputs or not
-     */
-    private void setNewAssignmentParameters(RunData data, boolean validify) {
-        // read the form inputs
-        SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
-        ParameterParser params = data.getParameters();
-
-        String assignmentRef = params.getString("assignmentId");
-        // NAM-31 (remove these checks once NAM-30 is started) --START
-        float quotaTotal = Float.parseFloat(params.getString("quotaTotal"));
+    private void quotaMethod(SessionState state, ParameterParser params) {
+    	float quotaTotal = Float.parseFloat(params.getString("quotaTotal"));
 		boolean markingToolEnabled = Boolean.parseBoolean(params.getString("useMarkingTool"));
 		int markerTotal = Integer.parseInt(params.getString("markerTotal"));
 
@@ -6648,8 +6636,22 @@ public class AssignmentAction extends PagedResourceActionII {
 	        	//state.setAttribute(NEW_ASSIGNMENT_QUOTA_VALUES, quotas);
 	        }
 		}
-		//--END
+    }
+    
+    /**
+     * Action is to save the input infos for assignment fields
+     *
+     * @param validify Need to validify the inputs or not
+     */
+    private void setNewAssignmentParameters(RunData data, boolean validify) {
+        // read the form inputs
+        SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
+        ParameterParser params = data.getParameters();
+
+        String assignmentRef = params.getString("assignmentId");
 		
+        //quotaMethod(state, params);
+        
         // put the input value into the state attributes
         String title = params.getString(NEW_ASSIGNMENT_TITLE);
         state.setAttribute(NEW_ASSIGNMENT_TITLE, title);
@@ -11586,11 +11588,11 @@ public class AssignmentAction extends PagedResourceActionII {
     /**
      * construct a HashMap using the integer as the key and marker name String as the value
      */
-    private Map<String, String> getSiteMarkers(SessionState state) {
+    private HashMap<String, String> getSiteMarkers(SessionState state) {
     	
     	String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
 
-        Map<String, String> markerUsers = new HashMap<String, String>();
+    	HashMap<String, String> markerUsers = new HashMap<String, String>();
         try {
             AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
             Set<Role> roles = realm.getRoles();
@@ -11613,6 +11615,9 @@ public class AssignmentAction extends PagedResourceActionII {
             log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
         }
         
+        log.warn(markerUsers.toString());
+        
+        markerTableSize = markerUsers.size();
         return markerUsers;
     } // markerTable
 

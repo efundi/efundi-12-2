@@ -16,6 +16,37 @@ th {
   text-align: left;
 }
 
+//quota reassign dropdown
+.select-quota {
+    width: 200px;
+    text-overflow: ellipsis;
+}
+
+//quota value input field
+.input-quota {
+    width: 50px;
+}
+
+//quota table formatting
+.table-quota {
+  width: 50%;
+  max-width: 100%;
+  margin-bottom: $line-height-computed;
+  // Cells
+  > thead,
+  > tbody,
+  > tfoot {
+    > tr {
+      > th,
+      > td {
+        padding: $table-cell-padding;
+        line-height: $line-height-base;
+        vertical-align: top;
+        border-top: 1px solid $table-border-color;
+      }
+    }
+  }
+}
 
 // Baseline styles
 

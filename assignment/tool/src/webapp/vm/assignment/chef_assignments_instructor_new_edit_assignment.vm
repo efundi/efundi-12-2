@@ -764,17 +764,25 @@
 							<label value="assignedMarker" id="$mapKey">$tool_MarkerList.get($mapKey)</label>
 						</td>
 						<td>
-							<input type="number" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
+							#if ($tool_MarkerList.size() > 1)
+								<input type="number" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
+							#else
+								<input type="number" value=100 class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
+							#end	
 						</td>
 						<td>
-							<select class="select-quota">
-								<option value="reassignedMarker" id="default">None</option>
-								#foreach ($mapEntryList in $tool_MarkerList.keySet())
-									#if("$tool_MarkerList.get($mapEntryList)" != "$tool_MarkerList.get($mapKey)")
-										<option id="$mapEntryList" value="reassignedMarker">$tool_MarkerList.get($mapEntryList)</option>
-									#end	
-								#end
-							</select>
+							#if ($tool_MarkerList.size() > 1)
+								<select class="select-quota">
+									#foreach ($mapEntryList in $tool_MarkerList.keySet())
+										#if("$tool_MarkerList.get($mapEntryList)" != "$tool_MarkerList.get($mapKey)")
+											<option id="$mapEntryList" value="reassignedMarker">$tool_MarkerList.get($mapEntryList)</option>
+										#end	
+									#end
+								</select>
+							#else
+								<select class="select-quota" disabled=true/>
+							#end
+							
 						</td>
 					</tr>
 					#end

@@ -11605,8 +11605,10 @@ public class AssignmentAction extends PagedResourceActionII {
                         for (Iterator<String> iUsers = users.iterator(); iUsers.hasNext(); ) {
                         	String userID = iUsers.next();
                         	User user = userDirectoryService.getUser(userID);
-                            String displayName = user.getFirstName() + " " + user.getLastName();
-                            markerUsers.put(userID, displayName);
+                            String displayName = user.getEid() + " (" + user.getDisplayName() + ")";
+                            if (!markerUsers.containsKey(userID)) {
+                            	markerUsers.put(userID, displayName);
+                            }
                         }
                 	}
                 }

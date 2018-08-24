@@ -6606,36 +6606,9 @@ public class AssignmentAction extends PagedResourceActionII {
     	addAlert(state, "Works");
     }
     
+    //To be modified in NAM-32
     private void quotaMethod(SessionState state, ParameterParser params) {
-    	float quotaTotal = Float.parseFloat(params.getString("quotaTotal"));
-		boolean markingToolEnabled = Boolean.parseBoolean(params.getString("useMarkingTool"));
-		int markerTotal = Integer.parseInt(params.getString("markerTotal"));
-
-		String quotas = "";
-		float quotaValue;
-		
-		for (int i = 0; i < markerTotal; i++) {
-			if (params.getString("quota" + (i+1)) != null && !params.getString("quota" + (i+1)).equals("")) {
-				quotaValue = Float.parseFloat(params.getString("quota" + (i+1))); //quota fields start numbering at 1 and not 0
-			} else {
-				quotaValue = 0;
-			}
-			
-			if ((i + 1) == markerTotal) {
-				quotas += quotaValue;
-			} else {
-				quotas += quotaValue + "/";
-			}
-		}
-		
-		if (markingToolEnabled) {
-	        if (quotaTotal == 0.0) {
-	        	addAlert(state, rb.getString("quota.assignment.table.input.error3"));
-	        } else {
-	        	// put quota values into the state attribute
-	        	//state.setAttribute(NEW_ASSIGNMENT_QUOTA_VALUES, quotas);
-	        }
-		}
+    	
     }
     
     /**
@@ -6650,6 +6623,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
         String assignmentRef = params.getString("assignmentId");
 		
+        //To be modified in NAM-32
         //quotaMethod(state, params);
         
         // put the input value into the state attributes

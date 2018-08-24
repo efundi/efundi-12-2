@@ -108,4 +108,10 @@ public class DbAuthzGroupSqlMySql extends DbAuthzGroupSqlDefault
 	{
 		return "DELETE SAKAI_REALM_RL_GR FROM SAKAI_REALM_RL_GR INNER JOIN SAKAI_REALM ON SAKAI_REALM_RL_GR.REALM_KEY = SAKAI_REALM.REALM_KEY AND SAKAI_REALM.REALM_ID = ? WHERE SAKAI_REALM_RL_GR.USER_ID = ?";
 	}
+	
+	@Override
+	public String checkAssignedMarkersForSite()
+	{
+		throw new java.lang.UnsupportedOperationException("Not supported yet - checkAssignedMarkersForSite - DbAuthzGroupSqlMySql.java");
+	}
 }

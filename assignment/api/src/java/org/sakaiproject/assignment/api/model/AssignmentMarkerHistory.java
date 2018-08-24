@@ -52,7 +52,7 @@ public class AssignmentMarkerHistory {
 	@Column(name = "CONTEXT", length = 99, nullable = false)
 	private String context;
 
-	@OneToMany(mappedBy = "submission", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	@ManyToOne
 	@JoinColumn(name = "ASSIGNMENT_ID")
 	private Assignment assignment;
    

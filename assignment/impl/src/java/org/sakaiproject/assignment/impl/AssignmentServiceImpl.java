@@ -159,7 +159,6 @@ import org.sakaiproject.util.Validator;
 import org.sakaiproject.util.api.FormattedText;
 import org.sakaiproject.util.api.LinkMigrationHelper;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.cglib.proxy.CallbackGenerator.Context;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.TransactionStatus;
@@ -4069,9 +4068,12 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         return errorMessage;
     }
     
-    private void logMarkerHistory(String assignmentId, AssignmentMarker oldAssignmentMarker, AssignmentMarker newAssignmentMarker)
+    public void logMarkerHistory(String assignmentId, AssignmentMarker oldAssignmentMarker, AssignmentMarker newAssignmentMarker)
     {
-    	Assignment assignment = getAssignment(assignmentId);
+    	Assignment assignment;
+		try {
+			assignment = getAssignment(assignmentId);
+		
     	String context = assignment.getContext();
     	double oldQuota = newAssignmentMarker.getQuotaPercentage();
     	double newQuota = oldQuota + newAssignmentMarker.getQuotaPercentage();
@@ -4080,7 +4082,14 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     	java.util.Date uDate = new java.util.Date();
     	java.sql.Date modifiedDate = new java.sql.Date(uDate.getTime());
     	
-    	assignmentRepository.logMarkerChanges(assignment, oldAssignmentMarker, newAssignmentMarker, context, oldQuota, newQuota, modifier, modifiedDate);
+    	assignmentRepository.logMarkerChanges(assignment, oldAssignmentMarker, newAssignmentMarker, context, oldQuota, newQuota, modifier);
+		} catch (IdUnusedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (PermissionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 

@@ -740,5 +740,5 @@ public interface AssignmentService extends EntityProducer {
 
     public List<ContentReviewResult> getContentReviewResults(AssignmentSubmission submission);
     
-    public void logMarkerChanges(Assignment assignment, AssignmentMarker beforeMarker, AssignmentMarker afterMarker);
+    public void logMarkerHistory(String assignmentId, AssignmentMarker oldAssignmentMarker, AssignmentMarker newAssignmentMarker);
 }

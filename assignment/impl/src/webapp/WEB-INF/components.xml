@@ -123,6 +123,7 @@
                 <value>org.sakaiproject.assignment.api.model.PeerAssessmentItem</value>                
                 <value>org.sakaiproject.assignment.api.model.AssignmentMarker</value>
                 <value>org.sakaiproject.assignment.api.model.AssignmentSubmissionMarker</value>
+                <value>org.sakaiproject.assignment.api.model.AssignmentMarkerHistory</value>
             </list>
         </property>
     </bean>

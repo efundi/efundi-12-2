@@ -24,7 +24,7 @@
 		if ($("#generalAlert").length <= 0) {
 			SetMaxPoint(document.getElementById('$name_GradeType'), document.getElementById('$name_GradePoints'));
 		}
-		ASN.saveErrors("$tlang.getString('quota.assignment.table.input.error')", "$tlang.getString('quota.assignment.table.input.error2')");
+		ASN.saveErrors("$tlang.getString('quota.assignment.table.input.error')", "$tlang.getString('quota.assignment.table.input.error2')", "$tlang.getString('quota.assignment.table.input.error4')");
 	});
 
     function SetMaxPoint(obj_option, obj_textfield)
@@ -743,7 +743,7 @@
 			</label>
 			<div class="col-sm-10">
 				<div id="tempAllowMarker" #if ($value_SubmissionType == 4) style = "display:none"#end>
-					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!value_SubmissionType == 6) checked="checked"#end onclick="ASN.enableMarkingTool($!value_totalMarkers); ASN.resizeFrame();" />
+					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!value_SubmissionType == 6) checked="checked"#end onclick="ASN.enableMarkingTool($tool_MarkerList.size()); ASN.resizeFrame();" />
 				</div>
 			</div>
 		</div>
@@ -751,32 +751,38 @@
 		##NAM-29 PDF marker settings that will be displayed when the tool is selected
 		<div class="col-sm-offset-1 row" id="pdfMarkerSettings" style="$!markerSetupStyle">
 			<div class="col-sm-12 row table-reponsive">
-				<table class="table table-striped" id="quotaAssignmentTable" name="quotaAssignmentTable">
+				<table class="table-striped table-quota" id="quotaAssignmentTable" name="quotaAssignmentTable">
 					<tr>
 						<th>$tlang.getString("quota.assignment.table.column.name")</th>
 						<th>$tlang.getString("quota.assignment.table.column.quota")</th>
 						<th>$tlang.getString("quota.assignment.table.column.reassign")</th>
 					</tr>
-					##temp data to check if UI changes are correct
-					##loop will be replaced by actual database values loop
 					#set($max = 100)
-					#foreach ($i in [1..$!value_totalMarkers])
+					#foreach ($mapKey in $tool_MarkerList.keySet())
 					<tr>	
 						<td>
-							<label value="$i" id="$!submissionTypeTable.get($i)">$!tool_MarkerList.get($i)</label>
+							<label value="assignedMarker" id="$mapKey">$tool_MarkerList.get($mapKey)</label>
 						</td>
 						<td>
-							<input type="number" step="0.1" placeholder="0.0" name="quota$i" id="quota$i" onchange="ASN.quotaCalculation($!value_totalMarkers)">
+							#if ($tool_MarkerList.size() > 1)
+								<input type="number" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
+							#else
+								<input type="number" value=100 class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
+							#end	
 						</td>
 						<td>
-							<select>
-								<option value="" id="default">None</option>
-								#foreach($a in [1..$!value_totalMarkers])
-									#if("$!tool_MarkerList.get($a)" != "$!tool_MarkerList.get($i)")
-										<option value="$a" id=""> $tool_MarkerList.get($a) </option>
+							#if ($tool_MarkerList.size() > 1)
+								<select class="select-quota">
+									#foreach ($mapEntryList in $tool_MarkerList.keySet())
+										#if("$tool_MarkerList.get($mapEntryList)" != "$tool_MarkerList.get($mapKey)")
+											<option id="$mapEntryList" value="reassignedMarker">$tool_MarkerList.get($mapEntryList)</option>
+										#end	
 									#end
-								#end
-							</select>
+								</select>
+							#else
+								<select class="select-quota" disabled=true/>
+							#end
+							
 						</td>
 					</tr>
 					#end

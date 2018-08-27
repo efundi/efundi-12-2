@@ -2,6 +2,7 @@
 var ASN = ASN || {};
 var decimalError;
 var totalError;
+var totalLessThanError;
 
 // http://stackoverflow.com/a/6021027/3708872
 ASN.updateQueryStringParameter = function(uri, key, value) {
@@ -15,9 +16,10 @@ ASN.updateQueryStringParameter = function(uri, key, value) {
   }
 };
 
-ASN.saveErrors = function(error, error2) {
+ASN.saveErrors = function(error, error2, error3) {
 	decimalError = error2;
 	totalError = error;
+	totalLessThanError = error3;
 };
 
 ASN.displayError = function(value, error) {
@@ -36,12 +38,13 @@ ASN.quotaCalculation = function(value_totalMarkers)
 {
 	var sum = 0;
 	var value;
-	document.getElementById("markerTotal").value = value_totalMarkers;
+	var quotaId;
+	
 	
 	ASN.enableButtons();
 	
 	for (var i = 1; i <= value_totalMarkers; i++) {
-		var quotaId = "quota" + i;
+		quotaId = "quota" + i;
 		value = document.getElementById(quotaId).value;
 		ASN.hideError(quotaId);
 		if (ASN.countDecimals(Number(value)) > 1) {
@@ -53,6 +56,11 @@ ASN.quotaCalculation = function(value_totalMarkers)
 			ASN.displayError(quotaId, totalError);
 			ASN.disableButtons();
 		}
+	}
+	
+	if (Number(sum) < 100) {
+		ASN.displayError(quotaId, totalLessThanError);
+		ASN.disableButtons();
 	}
 	
 	if (Number(sum) <= 100) {

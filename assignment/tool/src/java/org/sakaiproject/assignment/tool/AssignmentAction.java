@@ -19,6 +19,7 @@ import static org.sakaiproject.assignment.api.AssignmentServiceConstants.*;
 import static org.sakaiproject.assignment.api.model.Assignment.GradeType.*;
 
 import java.io.*;
+
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -41,9 +42,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import au.com.bytecode.opencsv.CSVReader;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -76,6 +74,8 @@ import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Object;
 import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Statement;
 import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Verb;
 import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Verb.SAKAI_VERB;
+import org.sakaiproject.event.api.NotificationService;
+import org.sakaiproject.event.api.SessionState;
 import org.sakaiproject.exception.*;
 import org.sakaiproject.javax.PagingPosition;
 import org.sakaiproject.message.api.MessageHeader;
@@ -102,6 +102,10 @@ import org.sakaiproject.util.ResourceLoader;
 import org.sakaiproject.util.SortedIterator;
 import org.sakaiproject.util.Validator;
 import org.sakaiproject.util.api.FormattedText;
+
+import au.com.bytecode.opencsv.CSVReader;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -2483,8 +2487,7 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("name_CheckAddHonorPledge", NEW_ASSIGNMENT_CHECK_ADD_HONOR_PLEDGE);
         
         //NAM-29
-        context.put("tool_MarkerList", markerTable());
-        context.put("value_totalMarkers", markerTableSize);
+        context.put("tool_MarkerList", getSiteMarkers(state));
 
         // SAK-17606
         context.put("name_CheckAnonymousGrading", NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING);
@@ -6506,6 +6509,11 @@ public class AssignmentAction extends PagedResourceActionII {
     	addAlert(state, "Works");
     }
     
+    //To be modified in NAM-32
+    private void quotaMethod(SessionState state, ParameterParser params) {
+    	
+    }
+    
     /**
      * Action is to save the input infos for assignment fields
      *
@@ -6517,38 +6525,10 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String assignmentRef = params.getString("assignmentId");
-        // NAM-31 (remove these checks once NAM-30 is started) --START
-        float quotaTotal = Float.parseFloat(params.getString("quotaTotal"));
-		boolean markingToolEnabled = Boolean.parseBoolean(params.getString("useMarkingTool"));
-		int markerTotal = Integer.parseInt(params.getString("markerTotal"));
-
-		String quotas = "";
-		float quotaValue;
 		
-		for (int i = 0; i < markerTotal; i++) {
-			if (params.getString("quota" + (i+1)) != null && !params.getString("quota" + (i+1)).equals("")) {
-				quotaValue = Float.parseFloat(params.getString("quota" + (i+1))); //quota fields start numbering at 1 and not 0
-			} else {
-				quotaValue = 0;
-			}
-			
-			if ((i + 1) == markerTotal) {
-				quotas += quotaValue;
-			} else {
-				quotas += quotaValue + "/";
-			}
-		}
-		
-		if (markingToolEnabled) {
-	        if (quotaTotal == 0.0) {
-	        	addAlert(state, rb.getString("quota.assignment.table.input.error3"));
-	        } else {
-	        	// put quota values into the state attribute
-	        	//state.setAttribute(NEW_ASSIGNMENT_QUOTA_VALUES, quotas);
-	        }
-		}
-		//--END
-		
+        //To be modified in NAM-32
+        //quotaMethod(state, params);
+        
         // put the input value into the state attributes
         String title = params.getString(NEW_ASSIGNMENT_TITLE);
         state.setAttribute(NEW_ASSIGNMENT_TITLE, title);
@@ -11482,32 +11462,41 @@ public class AssignmentAction extends PagedResourceActionII {
         return submissionTypeTable;
     } // submissionTypeTable
     
-    //NAM-31 (remove these methods once NAM-30 is started) --START
     /**
      * construct a HashMap using the integer as the key and marker name String as the value
      */
-    private Map<Integer, String> markerTable() {
+    private HashMap<String, String> getSiteMarkers(SessionState state) {
+    	
+    	String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
 
-        Map<Integer, String> markerTable = new HashMap<>();
-        markerTable.put(1, "Name 1");
-        markerTable.put(2, "Name 2");
-        markerTable.put(3, "Name 3");
+    	HashMap<String, String> markerUsers = new HashMap<String, String>();
+        try {
+            AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
+            Set<Role> roles = realm.getRoles();
+            for (Iterator iRoles = roles.iterator(); iRoles.hasNext(); ) {
+                Role r = (Role) iRoles.next();
+                if (r.isAllowed("asn.marker")) {
+                	Set<String> users = realm.getUsersHasRole(r.getId());
+                	if (users != null && users.size() > 0) {
+                        List<User> usersList = new ArrayList<>();
+                        for (Iterator<String> iUsers = users.iterator(); iUsers.hasNext(); ) {
+                        	String userID = iUsers.next();
+                        	User user = userDirectoryService.getUser(userID);
+                            String displayName = user.getEid() + " (" + user.getDisplayName() + ")";
+                            if (!markerUsers.containsKey(userID)) {
+                            	markerUsers.put(userID, displayName);
+                            }
+                        }
+                	}
+                }
+            }
+        } catch (Exception e) {
+            log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
+        }
         
-        markerTableSize(markerTable);
-
-        return markerTable;
+        markerTableSize = markerUsers.size();
+        return markerUsers;
     } // markerTable
-    
-    /**
-     * get map size emthod that returns the marker map size
-     */
-    private void markerTableSize(Map markerTableTemp) {
-
-    	int size = markerTableTemp.size();
-
-    	markerTableSize = size;
-    } // markerTableSize
-    //--END
 
     /**
      * Add the list of categories from the gradebook tool

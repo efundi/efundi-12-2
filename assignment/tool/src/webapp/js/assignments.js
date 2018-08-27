@@ -63,18 +63,45 @@ ASN.quotaCalculation = function(value_totalMarkers)
 		ASN.disableButtons();
 	}
 	
-	if (Number(sum) <= 100) {
-		document.getElementById("quotaTotal").value=sum;
+	if (Number(sum) == 100) {
+		document.getElementById("quota_values").value = ASN.saveQuotaValues();
 	}
 };
 
+ASN.saveQuotaValues = function() {
+	var list = "";
+	var table = document.getElementById('quotaAssignmentTable');
+	for (var r = 1, n = table.rows.length; r < n; r++) {
+	   	var a = table.rows[r];
+	    var inputs = a.getElementsByTagName("input");
+	    var id = document.getElementById("assignedMarker" + r).innerHTML;
+	    if ((r + 1) != n) {
+	    	list += id + "," + inputs[0].value + ",";
+	    } else {
+	    	list += id + "," + inputs[0].value;
+	    }
+	}
+	return list;
+}
+	
+ASN.setQuotaValues = function(quota_values_list) {
+	var array = quota_values_list.replace("[","").replace("]","").split(",");
+	if (array.length > 0) {
+		var i = 1;
+		var table = document.getElementById('quotaAssignmentTable');
+	    for (var r = 1, n = table.rows.length; r < n; r++) {
+	    	var a = table.rows[r];
+	        a.getElementsByTagName("input")[0].value = Number(array[i]);
+	        i+=2;
+	    }
+	}
+}
+
 ASN.enableMarkingTool = function(value_totalMarkers) {
 	if (document.getElementById("allowMarkerToggle").checked) {
-		document.getElementById("useMarkingTool").value="true";
 		document.getElementById('pdfMarkerSettings').style.display = 'block';
 		ASN.quotaCalculation(value_totalMarkers);
 	} else {
-		document.getElementById("useMarkingTool").value="false";
 		document.getElementById('pdfMarkerSettings').style.display = 'none';
 		ASN.enableButtons();
 	}

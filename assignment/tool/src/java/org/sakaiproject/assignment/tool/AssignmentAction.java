@@ -541,7 +541,8 @@ public class AssignmentAction extends PagedResourceActionII {
      * The list view of assignments
      */
     private static final String MODE_LIST_ASSIGNMENTS = "lisofass1"; // set in velocity template
-
+    /*************************** assignment quota values *******************/
+    private static final String ASSIGNMENT_QUOTA_VALUES = "quota_values";
     /** **************************** modes *************************** */
     /**
      * The student view of an assignment submission
@@ -2514,6 +2515,8 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("value_year_from", state.getAttribute(NEW_ASSIGNMENT_YEAR_RANGE_FROM));
         context.put("value_year_to", state.getAttribute(NEW_ASSIGNMENT_YEAR_RANGE_TO));
         context.put("value_title", state.getAttribute(NEW_ASSIGNMENT_TITLE));
+        //NAM-32
+        context.put("quota_values_list", state.getAttribute(ASSIGNMENT_QUOTA_VALUES));
         context.put("value_position_order", state.getAttribute(NEW_ASSIGNMENT_ORDER));
 
         context.put("value_EnableCloseDate", state.getAttribute(NEW_ASSIGNMENT_ENABLECLOSEDATE));
@@ -6528,6 +6531,10 @@ public class AssignmentAction extends PagedResourceActionII {
 		
         //To be modified in NAM-32
         //quotaMethod(state, params);
+        
+        //put the quota values into the state attribute
+        List<String> quotas = new ArrayList<String>(Arrays.asList(params.getString(ASSIGNMENT_QUOTA_VALUES).split(",")));
+        state.setAttribute(ASSIGNMENT_QUOTA_VALUES, quotas);
         
         // put the input value into the state attributes
         String title = params.getString(NEW_ASSIGNMENT_TITLE);
@@ -11284,7 +11291,7 @@ public class AssignmentAction extends PagedResourceActionII {
         state.removeAttribute(ALLPURPOSE_RETRACT_DATE);
         state.removeAttribute(ALLPURPOSE_ACCESS);
         state.removeAttribute(ALLPURPOSE_ATTACHMENTS);
-
+        
         // SAK-17606
         state.removeAttribute(NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING);
 
@@ -11402,7 +11409,8 @@ public class AssignmentAction extends PagedResourceActionII {
 
         state.removeAttribute(PROP_ASSIGNMENT_ASSOCIATE_GRADEBOOK_ASSIGNMENT);
 
-
+        //NAM-32
+        state.removeAttribute(ASSIGNMENT_QUOTA_VALUES);
     } // resetNewAssignment
 
     /**

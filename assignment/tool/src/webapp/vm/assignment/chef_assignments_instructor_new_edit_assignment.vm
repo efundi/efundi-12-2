@@ -25,6 +25,7 @@
 			SetMaxPoint(document.getElementById('$name_GradeType'), document.getElementById('$name_GradePoints'));
 		}
 		ASN.saveErrors("$tlang.getString('quota.assignment.table.input.error')", "$tlang.getString('quota.assignment.table.input.error2')", "$tlang.getString('quota.assignment.table.input.error4')");
+		ASN.setQuotaValues("$quota_values_list");
 	});
 
     function SetMaxPoint(obj_option, obj_textfield)
@@ -164,9 +165,7 @@
 		<input type="hidden" name="eventSubmit_doAssignment_form" value="" />
 		<input type="hidden" name="option" id="option" value="" />
 		<input type="hidden" name="view" id="view" value="" />
-		<input type="hidden" name="quotaTotal" id="quotaTotal" value="" /> ##remove once NAM-30 is started
-		<input type="hidden" name="useMarkingTool" id="useMarkingTool" value="" />##remove once NAM-30 is started
-		<input type="hidden" name="markerTotal" id="markerTotal" value="" />##remove once NAM-30 is started
+		<input type="hidden" name="quota_values" id="quota_values" value="" />
 		<input type="hidden" name="$name_order" id="$name_order" value="$!value_position_order" />
 
 		<div class="form-group row form-required">
@@ -761,11 +760,12 @@
 					#foreach ($mapKey in $tool_MarkerList.keySet())
 					<tr>	
 						<td>
-							<label value="assignedMarker" id="$mapKey">$tool_MarkerList.get($mapKey)</label>
+							<label type="hidden" style="display:none" id="assignedMarker$velocityCount">$mapKey</label>
+							<label id="$mapKey">$tool_MarkerList.get($mapKey)</label>
 						</td>
 						<td>
 							#if ($tool_MarkerList.size() > 1)
-								<input type="number" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
+								<input type="number" value="" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
 							#else
 								<input type="number" value=100 class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
 							#end	

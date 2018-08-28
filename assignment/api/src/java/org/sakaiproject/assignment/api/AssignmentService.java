@@ -740,5 +740,9 @@ public interface AssignmentService extends EntityProducer {
 
     public List<ContentReviewResult> getContentReviewResults(AssignmentSubmission submission);
     
+    /**
+     * NAM-35
+     */
+    
     public void logMarkerHistory(String assignmentId, AssignmentMarker oldAssignmentMarker, AssignmentMarker newAssignmentMarker);
 }

@@ -82,6 +82,11 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
 
     void resetAssignment(Assignment assignment);
 
+    
+    /**
+     * NAM-35
+     */
+    
 	void logMarkerChanges(Assignment assignment, AssignmentMarker oldAssignmentMarker,
 			AssignmentMarker newAssignmentMarker, String context, double oldQuota, double newQuota, String modifier);
 }

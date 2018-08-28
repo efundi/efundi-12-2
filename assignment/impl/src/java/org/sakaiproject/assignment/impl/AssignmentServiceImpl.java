@@ -4068,6 +4068,11 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         return errorMessage;
     }
     
+    
+    /**
+     * NAM-35 - Further testing from front end required here.
+     */
+    
     public void logMarkerHistory(String assignmentId, AssignmentMarker oldAssignmentMarker, AssignmentMarker newAssignmentMarker)
     {
     	Assignment assignment;

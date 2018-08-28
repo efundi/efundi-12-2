@@ -27,6 +27,11 @@ import lombok.NoArgsConstructor;
  * AssignmentSubmissionMarkerHisotry represents a History of Markers for an Assignment submission.
  */
 
+/**
+ * NAM-35
+ */
+
+
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "ASN_SUBMISSION_MARKER_HISTORY")

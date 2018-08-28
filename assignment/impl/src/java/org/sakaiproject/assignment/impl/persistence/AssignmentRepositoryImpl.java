@@ -26,6 +26,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentMarkerHistory;
@@ -77,6 +78,21 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
         if (!existsAssignment(assignment.getId())) {
             assignment.setDateCreated(Instant.now());
             sessionFactory.getCurrentSession().persist(assignment);
+     
+            /**
+             * NAM-35
+             * 
+             *  Testing occures here.
+             *       
+            	sessionFactory.getCurrentSession().save(assignment);
+           		AssignmentMarker lec1 = new AssignmentMarker();
+           		lec1.setId("1");
+           		AssignmentMarker lec2 = new AssignmentMarker();;
+           		lec2.setId("2");
+           		logMarkerChanges(assignment, lec1, lec2, "8783a2d3-8b38-43da-9e66-befd15992470", 50.0, 50.0, "admin");       
+          
+            */
+            
         }
     }
 
@@ -209,6 +225,16 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
             sessionFactory.getCache().evictEntity(Assignment.class, assignment.getId());
         }
     }
+    
+    
+    /**
+     * NAM-35 
+     *
+     * Transactional method for logging assignmentMarkerHistory.
+     * Create new object of AssignmentMarkerHistory
+     * Assign variables
+     * Use sessionFactory.getCurrentSession().persist(obj);
+     */
     
     @Override
     @Transactional

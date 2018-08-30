@@ -175,6 +175,17 @@
                 #end
             </li>
         #end
+        #if($allowAssignmentMarker)
+        	<li #if( $prevAction == false ) class="firstToolBarItem" #set( $prevAction = true ) #end>
+        		#if( !$!current.equals("markerdownstats") )
+	        		<span>
+	        			<a href="#toolLink( "$action" "doMarkerDownStats" )" title="$!tlang.getString( "markerdownstats" )">$!tlang.getString("markerdownstats")</a>
+	        		</span>
+	        	#else
+	        		<span class="current">$!tlang.getString("markerdownstats")</span>
+	        	#end
+        	</li>
+        #end
     </ul>
 #end
 
@@ -285,6 +296,19 @@
                     </span>
                 #end
             </li>
+        #end
+        #if ($allowAssignmentMarker)
+        	<li #if( $prevAction == false) class="firstToolBarItem" #set( $prevAction = true ) #end>
+        		#if( $current == "markerdownstats" )
+        			<span class="current">$tlang.getString( "markerdownstats" )</span>
+        		#else
+        			<span>
+                        <a href="javascript:void(0)" title="$tlang.getString( "markerdownstats" )" onclick="ASN.submitForm( '$formID', 'markerdownstats', null, 'null' ); return false;">
+                            $tlang.getString( "markerdownstats" )
+                        </a>
+                    </span>
+        		#end
+        	</li>
         #end
     </ul>
 #end

@@ -1089,16 +1089,34 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("dateFormat", getDateFormatString());
         context.put("cheffeedbackhelper", this);
         context.put("service", assignmentService);
-
+        
+        // NAM-34 check if current user has marker role
         String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
+        try {
+	        AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
+	        Set<Role> roles = realm.getRoles();
+	        User user = userDirectoryService.getCurrentUser();
+	        
+	        for (Iterator iRoles = roles.iterator(); iRoles.hasNext(); ) {
+	            Role r = (Role) iRoles.next();
+	            if (r.isAllowed("asn.marker")) {
+	            	boolean allowAssignmentMarker = realm.hasRole(user.getEid(), r.getId());
+	            	context.put("allowAssignmentMarker", allowAssignmentMarker);
+	            } else {
+	            	continue;
+	            }
+	        }
+        } catch (Exception e) {
+            log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
+        }
+        
+     // check if assignment marker is enabled?
+        boolean isEnabledAssignmentMarker = serverConfigurationService.getBoolean("assignment.useMarker", false);
+        context.put("isEnabledAssignmentMarker", isEnabledAssignmentMarker);
 
         // allow add assignment?
         boolean allowAddAssignment = assignmentService.allowAddAssignment(contextString);
         context.put("allowAddAssignment", Boolean.valueOf(allowAddAssignment));
-        
-        // allow assignment marker?
-        boolean allowAssignmentMarker = serverConfigurationService.getBoolean("assignment.useMarker", false);
-        context.put("allowAssignmentMarker", allowAssignmentMarker);
 
         Object allowGradeSubmission = state.getAttribute(STATE_ALLOW_GRADE_SUBMISSION);
 

@@ -175,7 +175,7 @@
                 #end
             </li>
         #end
-        #if($allowAssignmentMarker)
+        #if( ($isEnabledAssignmentMarker) && ($allowAssignmentMarker) )
         	<li #if( $prevAction == false ) class="firstToolBarItem" #set( $prevAction = true ) #end>
         		#if( !$!current.equals("markerdownstats") )
 	        		<span>
@@ -297,7 +297,7 @@
                 #end
             </li>
         #end
-        #if ($allowAssignmentMarker)
+        #if ( ($isEnabledAssignmentMarker) && ($allowAssignmentMarker) )
         	<li #if( $prevAction == false) class="firstToolBarItem" #set( $prevAction = true ) #end>
         		#if( $current == "markerdownstats" )
         			<span class="current">$tlang.getString( "markerdownstats" )</span>

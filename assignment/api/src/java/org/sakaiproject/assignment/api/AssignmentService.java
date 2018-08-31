@@ -738,11 +738,5 @@ public interface AssignmentService extends EntityProducer {
 
     String getUsersLocalDateTimeString(Instant date);
 
-    public List<ContentReviewResult> getContentReviewResults(AssignmentSubmission submission);
-    
-    /**
-     * NAM-35
-     */
-    
-    public void logMarkerHistory(String assignmentId, AssignmentMarker oldAssignmentMarker, AssignmentMarker newAssignmentMarker);
+    public List<ContentReviewResult> getContentReviewResults(AssignmentSubmission submission);    
 }

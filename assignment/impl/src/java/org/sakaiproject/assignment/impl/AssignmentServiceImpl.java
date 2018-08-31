@@ -26,7 +26,6 @@ import java.io.StringReader;
 import java.text.DecimalFormat;
 import java.text.Normalizer;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -37,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -63,7 +61,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.hibernate.Session;
 import org.sakaiproject.announcement.api.AnnouncementChannel;
 import org.sakaiproject.announcement.api.AnnouncementService;
 import org.sakaiproject.assignment.api.AssignmentConstants;
@@ -82,7 +79,6 @@ import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemAttachment;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemService;
 import org.sakaiproject.assignment.api.model.AssignmentMarker;
-import org.sakaiproject.assignment.api.model.AssignmentMarkerHistory;
 import org.sakaiproject.assignment.impl.sort.AnonymousSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.AssignmentSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.UserComparator;
@@ -4066,36 +4062,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         }
 
         return errorMessage;
-    }
+    }   
     
-    
-    /**
-     * NAM-35 - Further testing from front end required here.
-     */
-    
-    public void logMarkerHistory(String assignmentId, AssignmentMarker oldAssignmentMarker, AssignmentMarker newAssignmentMarker)
-    {
-    	Assignment assignment;
-		try {
-			assignment = getAssignment(assignmentId);
-		
-    	String context = assignment.getContext();
-    	double oldQuota = newAssignmentMarker.getQuotaPercentage();
-    	double newQuota = oldQuota + newAssignmentMarker.getQuotaPercentage();
-    	
-    	String modifier =  userDirectoryService.getCurrentUser().getId();
-    	java.util.Date uDate = new java.util.Date();
-    	java.sql.Date modifiedDate = new java.sql.Date(uDate.getTime());
-    	
-    	assignmentRepository.logMarkerChanges(assignment, oldAssignmentMarker, newAssignmentMarker, context, oldQuota, newQuota, modifier);
-		} catch (IdUnusedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (PermissionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
+
 
 
 }

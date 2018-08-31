@@ -99,9 +99,10 @@
 										<input class="$role.Id$lock" type="checkbox" name="$role.Id$lock" id="$role.Id$lock" value="$role.Id$lock" #if($checked)checked="checked"#end  #if(! $limiter.isEnabled($role.id, $lock, $checked))disabled="true"#end />
 											##NAM-23 If permission is asn.marker, print out a duplicate for us to keep as a hidden input. 
 											 ##This is used to check for a change from true to false. As we must then confirm that no markers are assigned marking.
-											#if ($lock=="asn.marker")
-												<input class="current.$role.Id$lock" type="hidden" name="current.$role.Id$lock" id="current.$role.Id$lock" value="$role.Id$lock" #if($checked)checked="checked"#end  #if(! $limiter.isEnabled($role.id, $lock, $checked))disabled="true"#end />
-											#end 
+										##	#if ($lock=="asn.marker")
+										##		<input class="current.$role.Id$lock" type="checkbox" name="current.$role.Id$lock" id="current.$role.Id$lock" value="current.$role.Id$lock" #if($checked)checked="checked"#end  #if(! $limiter.isEnabled($role.id, $lock, $checked))disabled="true"#end />
+										##												
+										##	#end 
 									#end
 								</td>
 							#end

@@ -68,6 +68,10 @@ import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.util.ResourceLoader;
+import org.sakaiproject.assignment.api.AssignmentService;
+import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
+import org.sakaiproject.assignment.api.model.AssignmentSubmissionMarker;
 
 /**
  * This is a helper interface to the Permissions tool.
@@ -131,6 +135,7 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 	private SessionManager sessionManager;
 	private ToolManager toolManager;
 	private ServerConfigurationService serverConfigurationService;
+	private AssignmentService asnService;
 
 	public PermissionsHelperAction() {
 		super();
@@ -142,6 +147,7 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 		sessionManager = ComponentManager.get(SessionManager.class);
 		toolManager = ComponentManager.get(ToolManager.class);
 		serverConfigurationService = ComponentManager.get(ServerConfigurationService.class);
+		asnService = ComponentManager.get(AssignmentService.class);
 	}
 
 	protected void toolModeDispatch(String methodBase, String methodExt, HttpServletRequest req, HttpServletResponse res)
@@ -669,11 +675,8 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 	private void readForm(RunData data, AuthzGroup edit, SessionState state)
 	{
 		List abilities = (List) state.getAttribute(STATE_ABILITIES);
-		List roles = (List) state.getAttribute(STATE_ROLES);
-		String newMarker ="";
-		
-		log.error("readForm...");
-		log.error(abilities.toString());
+		List roles = (List) state.getAttribute(STATE_ROLES);		
+				
 		PermissionLimiter limiter = getPermissionLimiter();
 		// look for each role's ability field
 		for (Iterator iRoles = roles.iterator(); iRoles.hasNext();)
@@ -683,45 +686,63 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 			for (Iterator iLocks = abilities.iterator(); iLocks.hasNext();)
 			{
 				String lock = (String) iLocks.next();
+				
 				boolean checked = (data.getParameters().getString(role.getId() + lock) != null);
+				//log.error(lock);
 				// Don't allow changes to some permissions.
 				if ( !(limiter.isEnabled(role.getId(), lock, role.isAllowed(lock))) )
 				{
 					log.debug("Can't change permission '{}' on role '{}'.", lock, role.getId());
 					continue;
 				}
-				// NAM-23 	- start			
-				log.error("before marker check...");
+				// NAM-23 	- start		
+				
 				if (lock.equals("asn.marker"))
 				{
-					newMarker = lock;
-					log.error("newMarker:" + newMarker);
-				}
-				else
-					log.error(lock.toString());
-				if (lock.contains("current") && lock.contains("asn.marker"))
-				{
-					String curMarker = lock;
-					log.error("curMarker:"+curMarker);
-					if ((newMarker == "false") && (curMarker == "true"))
-					{
-						log.error("post change check");
-						try
+					try 
+					{				
+									
+					if (!checked)
+					{	
+						String contextString = (String) state.getAttribute("Assignment.context_string");
+						AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
+						
+						Collection<Assignment> asnCollection = asnService.getAssignmentsForContext(contextString);
+						
+						AssignmentMarker asn = new AssignmentMarker();
+						
+						for (Assignment assignmentObj : asnCollection) {
+							
+							
+						asn.setAssignment(assignmentObj);
+						log.error("Assignment: " + assignmentObj.getTitle());	
+						Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();
+						log.error(asnMrks.toString());
+						Set<String> users = realm.getUsersHasRole(role.getId());
+				
+						
+						for (String user : users) 
 						{
-							if (authzGroupService.checkAssignedMarkersForSite())
-								{	//not sure if this is right here?						
-									throw new Exception("Marker");
-								}
-						}
-						catch(Exception e) //not sure if this is right here?		
+							log.error(user);		
+							for ( AssignmentMarker asnMarker : asnMrks)
 							{
-								log.warn("PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission.", role.getId(), e);
+							if (asnMarker.getMarkerUserId().equals(user))
+							{
+								log.warn("PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission.", role.getId(), "Excpetion");
 								addAlert(state, rb.getFormattedMessage("alert_marker"));
-								return;
-							}				
+								return;					
+							}
+						}	
+						}
+						
 					}
 					
-				}				
+				}
+					}
+					catch (Exception e)
+					{
+						
+					}	
 				// NAM-23 	- end
 				if (checked)
 				{
@@ -753,6 +774,7 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 				}
 			}
 		}
+	}
 	}
 
 	public PermissionLimiter getPermissionLimiter() {

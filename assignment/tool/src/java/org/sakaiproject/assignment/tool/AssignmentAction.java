@@ -6156,6 +6156,18 @@ public class AssignmentAction extends PagedResourceActionII {
 
                         // set the resubmission properties
                         setResubmissionProperties(a, submission);
+                        
+                        //set assignment marker properties
+                        if (params.getBoolean("allowMarkerToggle")) {
+                        	String [] list = params.getString("quota_values").split(",");
+                        	for (int i = 0; i < list.length; i+=2) {
+                        		String id = list[i];
+                        		float quota = Float.parseFloat(list[i+1]);
+                        		Date createdDate = Date.from(submission.getDateCreated());
+                        		Date modifiedDate = Date.from(submission.getDateModified());
+                        		String siteID = (String) state.getAttribute(STATE_CONTEXT_STRING);
+                        	}
+                        }
                     } catch (PermissionException e) {
                         log.warn("Could not add submission for assignment/submitter: {}/{}, {}", a.getId(), submitterId, e.getMessage());
                         addAlert(state, rb.getString("youarenot13"));
@@ -7480,7 +7492,7 @@ public class AssignmentAction extends PagedResourceActionII {
         if (StringUtils.isBlank(assignmentId)) {
             //  create a new assignment
             try {
-                a = assignmentService.addAssignment(siteId);
+            	a = assignmentService.addAssignment(siteId);//NAM-32
                 newAssignment = true;
             } catch (PermissionException e) {
                 log.warn("Could not create new assignment for site: {}, {}", siteId, e.getMessage());
@@ -7789,6 +7801,11 @@ public class AssignmentAction extends PagedResourceActionII {
                     }
 
                 } //if
+                
+                List<String> quotas = (List<String>) state.getAttribute(ASSIGNMENT_QUOTA_VALUES);
+               	if (quotas.size() > 1) {
+               		assignmentService.addQuotas(quotas, a);//NAM-32
+               	}
 
                 // save supplement item information
                 saveAssignmentSupplementItem(state, params, siteId, a);
@@ -7853,6 +7870,7 @@ public class AssignmentAction extends PagedResourceActionII {
                     }
                 }
             }
+
             if (newAssignment) {
                 // post new assignment event since it is fully initialized by now
                 eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_ADD_ASSIGNMENT, assignmentReference, true));

@@ -70,6 +70,7 @@ import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.assignment.api.AssignmentServiceConstants;
 import org.sakaiproject.assignment.api.ContentReviewResult;
 import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItem;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItemAccess;
 import org.sakaiproject.assignment.api.model.AssignmentModelAnswerItem;
@@ -723,7 +724,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     public boolean allowGradeSubmission(String assignmentReference) {
         return permissionCheck(SECURE_GRADE_ASSIGNMENT_SUBMISSION, assignmentReference, null);
     }
-
+    
     @Override
     @Transactional
     public Assignment addAssignment(String context) throws PermissionException {
@@ -731,21 +732,34 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         if (!allowAddAssignment(context)) {
             throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_ADD_ASSIGNMENT, null);
         }
-
+        
         Assignment assignment = new Assignment();
         assignment.setContext(context);
         assignment.setAuthor(sessionManager.getCurrentSessionUserId());
         assignment.setPosition(0);
+        
         assignmentRepository.newAssignment(assignment);
-
+        
         log.debug("Created new assignment {}", assignment.getId());
-
+        
         // String reference = AssignmentReferenceReckoner.reckoner().assignment(assignment).reckon().getReference();
         // AssignmentAction#post_save_assignment contains the logic for adding a new assignment
         // the event should come at the end of that logic, eventually that logic should be moved here
         // eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_ADD_ASSIGNMENT, reference, true));
 
         return assignment;
+    }
+    
+    @Override
+    @Transactional
+    public void addQuotas (List quotas, Assignment assignment) {
+    	//check for quota values
+        if (quotas.size() > 1) {
+        	for (int i = 0; i < quotas.size(); i+=2) {
+        		double quotaValue = Double.parseDouble(quotas.get(i+1).toString());
+        		assignmentRepository.saveMarkerSetup(assignment.getContext(), quotas.get(i).toString(), quotaValue, assignment.getModifier(), assignment, assignment.getDateCreated());
+        	}
+        }
     }
 
     @Override

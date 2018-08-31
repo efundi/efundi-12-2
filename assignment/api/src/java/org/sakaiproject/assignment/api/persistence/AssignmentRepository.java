@@ -19,8 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.time.Instant;
 
 import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.serialization.SerializableRepository;
@@ -80,4 +82,6 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
     long countAssignmentSubmissions(String assignmentId, Boolean graded, Boolean hasSubmissionDate, Boolean userSubmission);
 
     void resetAssignment(Assignment assignment);
+    
+    void saveMarkerSetup(String context, String markerUserID, double quota, String modifier, Assignment assignmentID, Instant dateCreated);
 }

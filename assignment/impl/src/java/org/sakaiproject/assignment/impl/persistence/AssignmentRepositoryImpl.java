@@ -26,6 +26,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.assignment.api.persistence.AssignmentRepository;
@@ -205,5 +206,34 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
         if (assignment != null && assignment.getId() != null) {
             sessionFactory.getCache().evictEntity(Assignment.class, assignment.getId());
         }
+    }
+    
+    /**
+     * NAM-32
+     *
+     * Method for saving assignmentMarkerSetup.
+     * Create new object of AssignmentMarker
+     * Assign variables
+     * Use sessionFactory.getCurrentSession().persist(obj);
+     */
+    
+    @Override
+    @Transactional
+    public void saveMarkerSetup(String context, String markerUserID, double quota, String modifier, Assignment assignmentID, Instant dateCreated) {
+ 	   	
+    	AssignmentMarker asnMarker = new AssignmentMarker();
+    	
+    	asnMarker.setContext(context);
+ 		asnMarker.setDateCreated(dateCreated);
+ 		//asnMarker.setModifiedDate();
+    	asnMarker.setMarkerUserId(markerUserID);
+    	//modifier
+    	//num_allocated
+    	//num_uploaded
+    	//order_number
+    	asnMarker.setQuotaPercentage(quota);
+ 	   	asnMarker.setAssignment(assignmentID);
+        
+        sessionFactory.getCurrentSession().persist(asnMarker);
     }
 }

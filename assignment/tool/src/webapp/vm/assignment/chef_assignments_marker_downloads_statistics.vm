@@ -34,6 +34,7 @@
 							#set($counter = 0)
 							#set( $markers = ["Jansen van Vuuren, CJ (12345678)", "Knoetze, A (11111111)", "JSeemonster, S (22222222)"] )
 							#set( $roles = ["Instructor", "Teaching Assistant", "Marker"] )
+							#set( $stats = ["2/20/25", "50/70/200", "3/10/100"] )
 							#foreach( $marker in $markers )
 								<tr #if( $counter % 2 == 0) style="background: #fff" #else style="background: #f9f9f9" #end>
 									<td>$!marker</td>
@@ -41,7 +42,7 @@
 									<td><a href="#">Download</a></td>
 									<td><a href="#">Upload</a></td>
 									<td><a href="#">Download All</a></td>
-									<td>2/20/25</td>
+									<td>$stats.get($counter)</td>
 								</tr>
 								#set( $counter = $counter + 1 )
 							#end

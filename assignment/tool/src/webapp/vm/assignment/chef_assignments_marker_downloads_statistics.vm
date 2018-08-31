@@ -2,16 +2,22 @@
 <div class="portletBody container-fluid">
 	#navBarHREF( $allowAddAssignment $withGrade $allowGradeSubmission $allowAddAssignment $allowRecoverAssignment $allowAllGroups $assignmentscheck $allowUpdateSite $enableViewOption $view "markerdownstats" )
 
-	<div class="page-header">
+	<div class="page-header" id="marker_downloads_statistics">
         <h1>
 			$tlang.getString("markerdownstats")
 		</h1>
+	</div>
+	#if (!$!assignments.hasNext())
+		<p class="instruction">
+			$tlang.getString("gen.thearecur1")
+		</p>
+	#else
 		<div class="panel-default">
 			#foreach( $assignment in $assignments)
 				#set ($assignmentReference = $!service.assignmentReference($assignment.Id))
 				#set($assignmentProperties=$!assignment.getProperties())
-				
-				<div class="panel-heading" style="background: #FAFAFA"><h2 style="margin-top: 0px; margin-bottom: 0px;">$validator.escapeHtml($!assignment.Title)</h2></div>
+					
+				<div class="panel-heading" style="background: #fafafa; padding-left: 5px;"><h4 style="margin-top: 0px; margin-bottom: 0px;">$validator.escapeHtml($!assignment.Title)</h4></div>
 				<div class="panel-body">
 					<table class="table table-striped table-bordered">
 						<thead>
@@ -25,34 +31,25 @@
 							</tr>	
 						</thead>
 						<tbody>
-							<tr>
-								<td>Jansen van Vuuren, CJ (12345678)</td>
-								<td>Instructor</td>
-								<td><a href="#">Download</a></td>
-								<td><a href="#">Upload</a></td>
-								<td><a href="#">Download All</a></td>
-								<td>2/20/25</td>
-							</tr>
-							<tr>
-								<td>JKnoetze, A (11111111)</td>
-								<td>Teaching Assistant</td>
-								<td><a href="#">Download</a></td>
-								<td><a href="#">Upload</a></td>
-								<td><a href="#">Download All</a></td>
-								<td>50/70/200</td>
-							</tr>
-							<tr>
-								<td>JSeemonster, S (22222222)</td>
-								<td>Marker</td>
-								<td><a href="#">Download</a></td>
-								<td><a href="#">Upload</a></td>
-								<td><a href="#">Download All</a></td>
-								<td>3/10/100</td>
-							</tr>
+							#set($counter = 0)
+							#set( $markers = ["Jansen van Vuuren, CJ (12345678)", "Knoetze, A (11111111)", "JSeemonster, S (22222222)"] )
+							#set( $roles = ["Instructor", "Teaching Assistant", "Marker"] )
+							#foreach( $marker in $markers )
+								<tr #if( $counter % 2 == 0) style="background: #fff" #else style="background: #f9f9f9" #end>
+									<td>$!marker</td>
+									<td>$roles.get($counter)</td>
+									<td><a href="#">Download</a></td>
+									<td><a href="#">Upload</a></td>
+									<td><a href="#">Download All</a></td>
+									<td>2/20/25</td>
+								</tr>
+								#set( $counter = $counter + 1 )
+							#end
 						</tbody>	
 					</table>
-				</div>	
+				</div>
 			#end
-	</div>
-</div>
+		</div>
+	#end
+</div>	
 <!-- end: chef_assignments_marker_downloads_statistics.vm  -->

@@ -750,7 +750,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         return assignment;
     }
     
-    @Override
+    /*@Override
     @Transactional
     public void addQuotas (List quotas, Assignment assignment) {
     	//check for quota values
@@ -760,7 +760,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         		assignmentRepository.saveMarkerSetup(assignment.getContext(), quotas.get(i).toString(), quotaValue, assignment.getModifier(), assignment, assignment.getDateCreated());
         	}
         }
-    }
+    }*/
 
     @Override
     @Transactional

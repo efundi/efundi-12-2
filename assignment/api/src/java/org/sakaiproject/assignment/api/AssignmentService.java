@@ -274,7 +274,7 @@ public interface AssignmentService extends EntityProducer {
      */
     public Assignment addAssignment(String context) throws PermissionException;
     
-    public void addQuotas (List quotas, Assignment assignment);
+    //public void addQuotas (List quotas, Assignment assignment);
 
     /**
      * Add a new assignment to the directory, from a definition in XML. Must commitEdit() to make official, or cancelEdit() when done!

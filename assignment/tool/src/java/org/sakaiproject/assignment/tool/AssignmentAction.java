@@ -2387,6 +2387,8 @@ public class AssignmentAction extends PagedResourceActionII {
         }
         context.put("forceAnonGrading", forceAnonGrading);
 
+        //NAM-32 Check Here
+        
         // is the assignment an new assignment
         String assignmentId = (String) state.getAttribute(EDIT_ASSIGNMENT_ID);
         if (assignmentId != null) {
@@ -7703,12 +7705,32 @@ public class AssignmentAction extends PagedResourceActionII {
                     aProperties.put(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE, (String) state.getAttribute(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE));
                 }
 
+                Set <AssignmentMarker> markers = new HashMap();
+                
+                List<String> quotas = (List<String>) state.getAttribute(ASSIGNMENT_QUOTA_VALUES);
+                if (quotas.size() > 1) {
+	                for (int i = 0; i < quotas.size(); i+=2) {
+	                	AssignmentMarker asnMarker = new AssignmentMarker();
+	                	
+	            		double quotaValue = Double.parseDouble(quotas.get(i+1).toString());
+                   		
+                   		asnMarker.setContext(a.getContext());
+                 		asnMarker.setDateCreated(Instant.now());
+                    	asnMarker.setMarkerUserId(quotas.get(i));
+                    	asnMarker.setQuotaPercentage(quotaValue);
+                 	   	asnMarker.setAssignment(a);
+                 	   	
+                 	   	markers.add(asnMarker);
+                   	}
+            	}
+                
                 // persist the Assignment changes
                 commitAssignment(state, post, a, assignmentReference, title, submissionType, useReviewService, allowStudentViewReport,
                         gradeType, gradePoints, description, checkAddHonorPledge, attachments, section, range,
                         visibleTime, openTime, dueTime, closeTime, hideDueDate, enableCloseDate, isGroupSubmit, groups,
                         usePeerAssessment, peerPeriodTime, peerAssessmentAnonEval, peerAssessmentStudentViewReviews, peerAssessmentNumReviews, peerAssessmentInstructions,
-                        submitReviewRepo, generateOriginalityReport, checkTurnitin, checkInternet, checkPublications, checkInstitution, excludeBibliographic, excludeQuoted, excludeSelfPlag, storeInstIndex, studentPreview, excludeType, excludeValue);
+                        submitReviewRepo, generateOriginalityReport, checkTurnitin, checkInternet, checkPublications, checkInstitution,
+                        excludeBibliographic, excludeQuoted, excludeSelfPlag, storeInstIndex, studentPreview, excludeType, excludeValue, markers);
 
                 // Locking and unlocking groups
                 List<String> lockedGroupsReferences = new ArrayList<String>();
@@ -7801,15 +7823,10 @@ public class AssignmentAction extends PagedResourceActionII {
                     }
 
                 } //if
-                
-                List<String> quotas = (List<String>) state.getAttribute(ASSIGNMENT_QUOTA_VALUES);
-               	if (quotas.size() > 1) {
-               		assignmentService.addQuotas(quotas, a);//NAM-32
-               	}
 
                 // save supplement item information
                 saveAssignmentSupplementItem(state, params, siteId, a);
-
+                
                 // set default sorting
                 setDefaultSort(state);
 
@@ -8576,7 +8593,8 @@ public class AssignmentAction extends PagedResourceActionII {
                                   boolean storeInstIndex,
                                   boolean studentPreview,
                                   int excludeType,
-                                  int excludeValue) {
+                                  int excludeValue,
+                                  Set <AssignmentMarker> markers) {
         a.setTitle(title);
         a.setContext((String) state.getAttribute(STATE_CONTEXT_STRING));
         a.setSection(section);
@@ -8585,7 +8603,7 @@ public class AssignmentAction extends PagedResourceActionII {
         a.setHonorPledge(checkAddHonorPledge);
         a.setHideDueDate(hideDueDate);
         a.setTypeOfSubmission(submissionType);
-        //a.setQuotas(quotas); //Still needs to be created in NAM-30
+        a.setMarkers(markers); //NAM-32
         a.setContentReview(useReviewService);
         a.setTypeOfGrade(gradeType);
 
@@ -9206,7 +9224,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 // get all supplement item info into state
                 setAssignmentSupplementItemInState(state, a);
 
-                state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_NEW_EDIT_ASSIGNMENT);
+                state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_NEW_EDIT_ASSIGNMENT);   
             }
         } else {
             addAlert(state, rb.getString("youarenot6"));

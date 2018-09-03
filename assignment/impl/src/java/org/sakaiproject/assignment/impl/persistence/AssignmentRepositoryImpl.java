@@ -215,14 +215,13 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
      * Create new object of AssignmentMarker
      * Assign variables
      * Use sessionFactory.getCurrentSession().persist(obj);
-     */
+     *
     
     @Override
     @Transactional
     public void saveMarkerSetup(String context, String markerUserID, double quota, String modifier, Assignment assignmentID, Instant dateCreated) {
  	   	
     	AssignmentMarker asnMarker = new AssignmentMarker();
-    	
     	asnMarker.setContext(context);
  		asnMarker.setDateCreated(dateCreated);
  		//asnMarker.setModifiedDate();
@@ -236,4 +235,5 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
         
         sessionFactory.getCurrentSession().persist(asnMarker);
     }
+    */
 }

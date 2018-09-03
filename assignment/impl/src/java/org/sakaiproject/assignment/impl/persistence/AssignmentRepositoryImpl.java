@@ -74,25 +74,12 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
 
     @Override
     @Transactional
-    public void newAssignment(Assignment assignment) {
-        if (!existsAssignment(assignment.getId())) {
+    public void newAssignment(Assignment assignment) 
+    {
+        if (!existsAssignment(assignment.getId())) 
+        {
             assignment.setDateCreated(Instant.now());
             sessionFactory.getCurrentSession().persist(assignment);
-     
-            /**
-             * NAM-35
-             * 
-             *  Testing occures here.
-             *       
-            	sessionFactory.getCurrentSession().save(assignment);
-           		AssignmentMarker lec1 = new AssignmentMarker();
-           		lec1.setId("1");
-           		AssignmentMarker lec2 = new AssignmentMarker();;
-           		lec2.setId("2");
-           		logMarkerChanges(assignment, lec1, lec2, "8783a2d3-8b38-43da-9e66-befd15992470", 50.0, 50.0, "admin");       
-          
-            */
-            
         }
     }
 

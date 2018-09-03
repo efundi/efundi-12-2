@@ -64,7 +64,7 @@
 					<div class="panel-heading" style="background: #fafafa; padding-left: 5px;">
 						<h4 style="margin-top: 0px; margin-bottom: 0px;">
 							$validator.escapeHtml($!assignment.Title)
-							<span class="icon-container" style="display: block; float: right">
+							<span class="icon-container" style="display: block; float: right; font-size: 25px">
 								#if( $NumberOfFoundAssignments > 1 )
 									#if( $assignmentCount == 0 )
 										<span class="glyphicon glyphicon-chevron-down"></span>

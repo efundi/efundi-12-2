@@ -14296,6 +14296,7 @@ public class AssignmentAction extends PagedResourceActionII {
     	
     	List<Assignment> assignments = prepPage(state);
         context.put("assignments", assignments.iterator());
+        context.put("NumberOfFoundAssignments", assignments.size());
         
         state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
         String template = (String) getContext(data).get("template");

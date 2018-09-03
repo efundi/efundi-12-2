@@ -705,21 +705,17 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 					if (!checked)
 					{	
 						String contextString = (String) state.getAttribute("Assignment.context_string");
-						AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
+						AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));						
+						Collection<Assignment> asnCollection = asnService.getAssignmentsForContext(contextString);												
 						
-						Collection<Assignment> asnCollection = asnService.getAssignmentsForContext(contextString);
+						for (Assignment assignmentObj : asnCollection) {													
 						
-						AssignmentMarker asn = new AssignmentMarker();
-						
-						for (Assignment assignmentObj : asnCollection) {
-							
-							
-						asn.setAssignment(assignmentObj);
-						log.error("Assignment: " + assignmentObj.getTitle());	
-						Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();
-						log.error(asnMrks.toString());
+						log.error("Assignment: " + assignmentObj.getId());	
+						assignmentObj.getMarkers();						
+						Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();			
 						Set<String> users = realm.getUsersHasRole(role.getId());
-				
+						//log.error("Users in Role: "+users.toString());
+						//log.error("Markers: "+asnMrks.toString());
 						
 						for (String user : users) 
 						{
@@ -727,12 +723,13 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 							for ( AssignmentMarker asnMarker : asnMrks)
 							{
 							if (asnMarker.getMarkerUserId().equals(user))
-							{
-								log.warn("PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission.", role.getId(), "Excpetion");
-								addAlert(state, rb.getFormattedMessage("alert_marker"));
-								return;					
-							}
-						}	
+							//if("ce66b538-98a6-41d5-b98e-ee4d019fb337".equals(user))
+								{
+									log.warn("PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission.", role.getId(), "Excpetion");
+									addAlert(state, rb.getFormattedMessage("alert_marker"));
+									return;					
+								}
+							}	
 						}
 						
 					}
@@ -741,7 +738,7 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 					}
 					catch (Exception e)
 					{
-						
+						e.printStackTrace();
 					}	
 				// NAM-23 	- end
 				if (checked)

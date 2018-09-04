@@ -1111,12 +1111,12 @@ public class AssignmentAction extends PagedResourceActionII {
                             	allowAssignmentMarker = true;
                             }
                         }
-                        context.put("allowAssignmentMarker", allowAssignmentMarker);
                 	}
 	            } else {
 	            	continue;
 	            }
 	        }
+	        context.put("allowAssignmentMarker", allowAssignmentMarker);
         } catch (Exception e) {
             log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
         }

@@ -749,18 +749,6 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
         return assignment;
     }
-    
-    /*@Override
-    @Transactional
-    public void addQuotas (List quotas, Assignment assignment) {
-    	//check for quota values
-        if (quotas.size() > 1) {
-        	for (int i = 0; i < quotas.size(); i+=2) {
-        		double quotaValue = Double.parseDouble(quotas.get(i+1).toString());
-        		assignmentRepository.saveMarkerSetup(assignment.getContext(), quotas.get(i).toString(), quotaValue, assignment.getModifier(), assignment, assignment.getDateCreated());
-        	}
-        }
-    }*/
 
     @Override
     @Transactional

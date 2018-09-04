@@ -767,7 +767,7 @@
 							#if ($tool_MarkerList.size() > 1)
 								<input type="number" value="" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
 							#else
-								<input type="number" value=100 class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
+								<input type="number" class="input-quota" name="quota$velocityCount" id="quota$velocityCount" value="100" disabled=true onchange="ASN.quotaCalculation($tool_MarkerList.size())">
 							#end	
 						</td>
 						<td>

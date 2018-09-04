@@ -82,6 +82,4 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
     long countAssignmentSubmissions(String assignmentId, Boolean graded, Boolean hasSubmissionDate, Boolean userSubmission);
 
     void resetAssignment(Assignment assignment);
-    
-    //void saveMarkerSetup(String context, String markerUserID, double quota, String modifier, Assignment assignmentID, Instant dateCreated);
 }

@@ -207,33 +207,4 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
             sessionFactory.getCache().evictEntity(Assignment.class, assignment.getId());
         }
     }
-    
-    /**
-     * NAM-32
-     *
-     * Method for saving assignmentMarkerSetup.
-     * Create new object of AssignmentMarker
-     * Assign variables
-     * Use sessionFactory.getCurrentSession().persist(obj);
-     *
-    
-    @Override
-    @Transactional
-    public void saveMarkerSetup(String context, String markerUserID, double quota, String modifier, Assignment assignmentID, Instant dateCreated) {
- 	   	
-    	AssignmentMarker asnMarker = new AssignmentMarker();
-    	asnMarker.setContext(context);
- 		asnMarker.setDateCreated(dateCreated);
- 		//asnMarker.setModifiedDate();
-    	asnMarker.setMarkerUserId(markerUserID);
-    	//modifier
-    	//num_allocated
-    	//num_uploaded
-    	//order_number
-    	asnMarker.setQuotaPercentage(quota);
- 	   	asnMarker.setAssignment(assignmentID);
-        
-        sessionFactory.getCurrentSession().persist(asnMarker);
-    }
-    */
 }

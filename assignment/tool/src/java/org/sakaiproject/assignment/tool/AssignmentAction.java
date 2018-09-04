@@ -7705,7 +7705,7 @@ public class AssignmentAction extends PagedResourceActionII {
                     aProperties.put(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE, (String) state.getAttribute(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE));
                 }
 
-                Set <AssignmentMarker> markers = new HashMap();
+                Set<AssignmentMarker> markers = new HashSet<AssignmentMarker>();
                 
                 List<String> quotas = (List<String>) state.getAttribute(ASSIGNMENT_QUOTA_VALUES);
                 if (quotas.size() > 1) {
@@ -8603,7 +8603,6 @@ public class AssignmentAction extends PagedResourceActionII {
         a.setHonorPledge(checkAddHonorPledge);
         a.setHideDueDate(hideDueDate);
         a.setTypeOfSubmission(submissionType);
-        a.setMarkers(markers); //NAM-32
         a.setContentReview(useReviewService);
         a.setTypeOfGrade(gradeType);
 
@@ -8684,8 +8683,20 @@ public class AssignmentAction extends PagedResourceActionII {
                 a.setGroups(groups.stream().map(Group::getReference).collect(Collectors.toSet()));
             }
 
+            
+            // only uploads the first marker in the Set
+             a.setMarkers(markers);
             // commit the changes
-            assignmentService.updateAssignment(a);
+             assignmentService.updateAssignment(a);
+            
+            // uploads all the markers in the set, but replaces the initial record with the new set values - updates the field on the auto ID
+            /*for (AssignmentMarker marker : markers) { //NAM-32
+            	Set<AssignmentMarker> set = new HashSet<AssignmentMarker>();
+            	set.add(marker);
+            	a.setMarkers(set);
+	            // commit the changes
+	            assignmentService.updateAssignment(a);
+            }*/
 
             // content review (after changes are stored)
             if (a.getContentReview()) {
@@ -11526,10 +11537,17 @@ public class AssignmentAction extends PagedResourceActionII {
                         for (Iterator<String> iUsers = users.iterator(); iUsers.hasNext(); ) {
                         	String userID = iUsers.next();
                         	User user = userDirectoryService.getUser(userID);
-                            String displayName = user.getEid() + " (" + user.getDisplayName() + ")";
-                            if (!markerUsers.containsKey(userID)) {
-                            	markerUsers.put(userID, displayName);
-                            }
+                        	if (!(user.getEid().equals("admin"))) {
+                        		String displayName = user.getEid() + " (" + user.getDisplayName() + ")";
+                                if (!markerUsers.containsKey(userID)) {
+                                	markerUsers.put(userID, displayName);
+                                }
+                        	}
+                        }
+                        if (markerUsers.isEmpty()) {
+                        	User user = userDirectoryService.getUser("admin");
+                        	String displayName = user.getEid() + " (" + user.getDisplayName() + ")";
+                        	markerUsers.put("admin", displayName);
                         }
                 	}
                 }

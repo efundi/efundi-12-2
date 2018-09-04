@@ -1093,6 +1093,7 @@ public class AssignmentAction extends PagedResourceActionII {
         // NAM-34 check if current user has marker role
         String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
         try {
+        	boolean allowAssignmentMarker = false;
 	        AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
 	        Set<Role> roles = realm.getRoles();
 	        User user = userDirectoryService.getCurrentUser();
@@ -1100,8 +1101,18 @@ public class AssignmentAction extends PagedResourceActionII {
 	        for (Iterator iRoles = roles.iterator(); iRoles.hasNext(); ) {
 	            Role r = (Role) iRoles.next();
 	            if (r.isAllowed("asn.marker")) {
-	            	boolean allowAssignmentMarker = realm.hasRole(user.getEid(), r.getId());
-	            	context.put("allowAssignmentMarker", allowAssignmentMarker);
+	            	Set<String> users = realm.getUsersHasRole(r.getId());
+                	if (users != null && users.size() > 0) {
+                        List<User> usersList = new ArrayList<>();
+                        for (Iterator<String> iUsers = users.iterator(); iUsers.hasNext(); ) {
+                        	String userID = iUsers.next();
+                        	User userFromService = userDirectoryService.getUser(userID);
+                            if(user.getEid().equals(userFromService.getEid())) {
+                            	allowAssignmentMarker = true;
+                            }
+                        }
+                        context.put("allowAssignmentMarker", allowAssignmentMarker);
+                	}
 	            } else {
 	            	continue;
 	            }

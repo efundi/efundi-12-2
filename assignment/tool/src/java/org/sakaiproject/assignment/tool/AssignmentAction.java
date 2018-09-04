@@ -1100,10 +1100,9 @@ public class AssignmentAction extends PagedResourceActionII {
 	        
 	        for (Iterator iRoles = roles.iterator(); iRoles.hasNext(); ) {
 	            Role r = (Role) iRoles.next();
-	            if (r.isAllowed("asn.marker")) {
+	            if (r.isAllowed(SECURE_ASSIGNMENT_MARKER)) {
 	            	Set<String> users = realm.getUsersHasRole(r.getId());
                 	if (users != null && users.size() > 0) {
-                        List<User> usersList = new ArrayList<>();
                         for (Iterator<String> iUsers = users.iterator(); iUsers.hasNext(); ) {
                         	String userID = iUsers.next();
                         	User userFromService = userDirectoryService.getUser(userID);
@@ -1112,8 +1111,6 @@ public class AssignmentAction extends PagedResourceActionII {
                             }
                         }
                 	}
-	            } else {
-	            	continue;
 	            }
 	        }
 	        context.put("allowAssignmentMarker", allowAssignmentMarker);

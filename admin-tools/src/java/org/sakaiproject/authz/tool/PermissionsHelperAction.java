@@ -68,10 +68,6 @@ import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.util.ResourceLoader;
-import org.sakaiproject.assignment.api.AssignmentService;
-import org.sakaiproject.assignment.api.model.Assignment;
-import org.sakaiproject.assignment.api.model.AssignmentMarker;
-import org.sakaiproject.assignment.api.model.AssignmentSubmissionMarker;
 
 /**
  * This is a helper interface to the Permissions tool.
@@ -135,7 +131,6 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 	private SessionManager sessionManager;
 	private ToolManager toolManager;
 	private ServerConfigurationService serverConfigurationService;
-	private AssignmentService asnService;
 
 	public PermissionsHelperAction() {
 		super();
@@ -147,7 +142,6 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 		sessionManager = ComponentManager.get(SessionManager.class);
 		toolManager = ComponentManager.get(ToolManager.class);
 		serverConfigurationService = ComponentManager.get(ServerConfigurationService.class);
-		asnService = ComponentManager.get(AssignmentService.class);
 	}
 
 	protected void toolModeDispatch(String methodBase, String methodExt, HttpServletRequest req, HttpServletResponse res)
@@ -675,8 +669,8 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 	private void readForm(RunData data, AuthzGroup edit, SessionState state)
 	{
 		List abilities = (List) state.getAttribute(STATE_ABILITIES);
-		List roles = (List) state.getAttribute(STATE_ROLES);		
-				
+		List roles = (List) state.getAttribute(STATE_ROLES);
+
 		PermissionLimiter limiter = getPermissionLimiter();
 		// look for each role's ability field
 		for (Iterator iRoles = roles.iterator(); iRoles.hasNext();)
@@ -686,61 +680,14 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 			for (Iterator iLocks = abilities.iterator(); iLocks.hasNext();)
 			{
 				String lock = (String) iLocks.next();
-				
 				boolean checked = (data.getParameters().getString(role.getId() + lock) != null);
-				//log.error(lock);
 				// Don't allow changes to some permissions.
 				if ( !(limiter.isEnabled(role.getId(), lock, role.isAllowed(lock))) )
 				{
 					log.debug("Can't change permission '{}' on role '{}'.", lock, role.getId());
 					continue;
 				}
-				// NAM-23 	- start		
-				
-				if (lock.equals("asn.marker"))
-				{
-					try 
-					{				
-									
-					if (!checked)
-					{	
-						String contextString = (String) state.getAttribute("Assignment.context_string");
-						AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));						
-						Collection<Assignment> asnCollection = asnService.getAssignmentsForContext(contextString);												
-						
-						for (Assignment assignmentObj : asnCollection) {													
-						
-						log.error("Assignment: " + assignmentObj.getId());	
-						assignmentObj.getMarkers();						
-						Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();			
-						Set<String> users = realm.getUsersHasRole(role.getId());
-						//log.error("Users in Role: "+users.toString());
-						//log.error("Markers: "+asnMrks.toString());
-						
-						for (String user : users) 
-						{
-							log.error(user);		
-							for ( AssignmentMarker asnMarker : asnMrks)
-							{
-							if (asnMarker.getMarkerUserId().equals(user))
-							//if("ce66b538-98a6-41d5-b98e-ee4d019fb337".equals(user))
-								{
-									log.warn("PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission.", role.getId(), "Excpetion");
-									addAlert(state, rb.getFormattedMessage("alert_marker"));
-									return;					
-								}
-							}	
-						}
-						
-					}
-					
-				}
-					}
-					catch (Exception e)
-					{
-						e.printStackTrace();
-					}	
-				// NAM-23 	- end
+
 				if (checked)
 				{
 					// we have an ability! Make sure there's a role
@@ -771,7 +718,6 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 				}
 			}
 		}
-	}
 	}
 
 	public PermissionLimiter getPermissionLimiter() {

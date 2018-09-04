@@ -4062,9 +4062,5 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         }
 
         return errorMessage;
-    }   
-    
-
-
-
+    } 
 }

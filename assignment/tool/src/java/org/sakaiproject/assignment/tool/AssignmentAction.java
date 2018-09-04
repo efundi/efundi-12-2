@@ -1090,33 +1090,19 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("cheffeedbackhelper", this);
         context.put("service", assignmentService);
         
-        // NAM-34 check if current user has marker role
+        // NAM-34 check if current user has marker permissions
         String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
+        boolean allowAssignmentMarker = false;
         try {
-        	boolean allowAssignmentMarker = false;
-	        AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
-	        Set<Role> roles = realm.getRoles();
-	        User user = userDirectoryService.getCurrentUser();
-	        
-	        for (Iterator iRoles = roles.iterator(); iRoles.hasNext(); ) {
-	            Role r = (Role) iRoles.next();
-	            if (r.isAllowed(SECURE_ASSIGNMENT_MARKER)) {
-	            	Set<String> users = realm.getUsersHasRole(r.getId());
-                	if (users != null && users.size() > 0) {
-                        for (Iterator<String> iUsers = users.iterator(); iUsers.hasNext(); ) {
-                        	String userID = iUsers.next();
-                        	User userFromService = userDirectoryService.getUser(userID);
-                            if(user.getEid().equals(userFromService.getEid())) {
-                            	allowAssignmentMarker = true;
-                            }
-                        }
-                	}
-	            }
-	        }
-	        context.put("allowAssignmentMarker", allowAssignmentMarker);
+    	    AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
+    	    User user = userDirectoryService.getCurrentUser();
+    	    
+    	    allowAssignmentMarker = (realm.isAllowed(user.getId(), SECURE_ASSIGNMENT_MARKER)) ? true: false;
         } catch (Exception e) {
             log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
         }
+        
+        context.put("allowAssignmentMarker", allowAssignmentMarker);
         
      // check if assignment marker is enabled?
         boolean isEnabledAssignmentMarker = serverConfigurationService.getBoolean("assignment.useMarker", false);

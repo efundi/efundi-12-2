@@ -628,6 +628,11 @@ public class AssignmentAction extends PagedResourceActionII {
      */
     private static final String MODE_OPTIONS = "options"; // set in velocity template
     /**
+     *  NAM-34
+     *  The marker download view
+     */
+    private static final String MODE_MARKER_DOWNLOADS_STATISTICS = "markerdownstats";
+    /**
      * Review Edit page for students
      */
     private static final String MODE_STUDENT_REVIEW_EDIT = "Assignment.mode_student_review_edit"; // set in velocity template
@@ -726,6 +731,11 @@ public class AssignmentAction extends PagedResourceActionII {
      * The options page
      */
     private static final String TEMPLATE_OPTIONS = "_options";
+    /**
+     *  NAM-34
+     *  The Marker Downlaods Statistics page
+     */
+    private static final String TEMPLATE_MARKER_DOWNLOADS_STATISTICS = "_marker_downloads_statistics";
     /**
      * The opening mark comment
      */
@@ -1079,8 +1089,24 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("dateFormat", getDateFormatString());
         context.put("cheffeedbackhelper", this);
         context.put("service", assignmentService);
-
+        
+        // NAM-34 check if current user has marker permissions
         String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
+        boolean allowAssignmentMarker = false;
+        try {
+    	    AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
+    	    User user = userDirectoryService.getCurrentUser();
+    	    
+    	    allowAssignmentMarker = (realm.isAllowed(user.getId(), SECURE_ASSIGNMENT_MARKER)) ? true: false;
+        } catch (Exception e) {
+            log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
+        }
+        
+        context.put("allowAssignmentMarker", allowAssignmentMarker);
+        
+     // check if assignment marker is enabled?
+        boolean isEnabledAssignmentMarker = serverConfigurationService.getBoolean("assignment.useMarker", false);
+        context.put("isEnabledAssignmentMarker", isEnabledAssignmentMarker);
 
         // allow add assignment?
         boolean allowAddAssignment = assignmentService.allowAddAssignment(contextString);
@@ -1277,6 +1303,9 @@ public class AssignmentAction extends PagedResourceActionII {
                 // build the options page
                 template = build_options_context(portlet, context, data, state);
             }
+        }else if(mode.equals(MODE_MARKER_DOWNLOADS_STATISTICS)) {
+        	// build the options page
+            template = build_marker_downloads_statistics_context(portlet, context, data, state);
         } else if (mode.equals(MODE_STUDENT_REVIEW_EDIT)) {
             template = build_student_review_edit_context(portlet, context, data, state);
         } else if (MODE_LIST_DELETED_ASSIGNMENTS.equals(mode)) {
@@ -10158,6 +10187,9 @@ public class AssignmentAction extends PagedResourceActionII {
             } else if ("options".equals(option)) {
                 // go to the options view
                 doOptions(data);
+            } else if("markerdownstats".equals(option)) { // NAM-34
+            	// go to the marker downloads statistics view
+                doMarkerDownStats(data);
             }
 
         }
@@ -14172,6 +14204,14 @@ public class AssignmentAction extends PagedResourceActionII {
     public void doOptions(RunData data, Context context) {
         doOptions(data);
     } // doOptions
+    
+    /**
+     * NAM-34
+     * Marker Download Statistics
+     */
+    public void doMarkerDownStats(RunData data, Context context) {
+    	doMarkerDownStats(data);
+    } // doMarkerDownStats
 
     protected void doOptions(RunData data) {
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
@@ -14198,7 +14238,35 @@ public class AssignmentAction extends PagedResourceActionII {
             }
         }
     }
+    
+    /**
+     * NAM-34
+     * Marker Download Statistics
+     */
+    protected void doMarkerDownStats(RunData data) {
+        SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
+        String siteId = toolManager.getCurrentPlacement().getContext();
+        try {
+            Site site = siteService.getSite(siteId);
+            ToolConfiguration tc = site.getToolForCommonId(ASSIGNMENT_TOOL_ID);
+        } catch (IdUnusedException e) {
+            log.warn(this + ":doMarkerDownStats  Cannot find site with id " + siteId);
+        }
 
+        if (!alertGlobalNavigation(state, data)) {
+            if (siteService.allowUpdateSite((String) state.getAttribute(STATE_CONTEXT_STRING))) {
+                state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
+            } else {
+                addAlert(state, rb.getString("youarenot_marker_downloads_statistics"));
+            }
+
+            // reset the global navigaion alert flag
+            if (state.getAttribute(ALERT_GLOBAL_NAVIGATION) != null) {
+                state.removeAttribute(ALERT_GLOBAL_NAVIGATION);
+            }
+        }
+    }
+    
     /**
      * build the options
      */
@@ -14211,6 +14279,23 @@ public class AssignmentAction extends PagedResourceActionII {
         return template + TEMPLATE_OPTIONS;
 
     } // build_options_context
+    
+    /**
+     * NAM-34
+     * build the marker downloads statistics context
+     */
+    protected String build_marker_downloads_statistics_context(VelocityPortlet portlet, Context context, RunData data, SessionState state) {
+    	state.setAttribute(STATE_MODE, MODE_LIST_ASSIGNMENTS);
+    	context.put("context", state.getAttribute(STATE_CONTEXT_STRING));
+    	
+    	List<Assignment> assignments = prepPage(state);
+        context.put("assignments", assignments.iterator());
+        context.put("NumberOfFoundAssignments", assignments.size());
+        
+        state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
+        String template = (String) getContext(data).get("template");
+        return template + TEMPLATE_MARKER_DOWNLOADS_STATISTICS;
+    }
 
     /**
      * save the option edits

@@ -78,6 +78,7 @@ import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemAttachment;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemService;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.impl.sort.AnonymousSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.AssignmentSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.UserComparator;
@@ -206,6 +207,8 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     @Setter private ToolManager toolManager;
     @Setter private UserDirectoryService userDirectoryService;
     @Setter private UserTimeService userTimeService;
+    
+    @Setter private AssignmentMarker assignmentMarker;
 
     private boolean allowSubmitByInstructor;
 
@@ -4062,5 +4065,5 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         }
 
         return errorMessage;
-    }
+    } 
 }

@@ -737,5 +737,5 @@ public interface AssignmentService extends EntityProducer {
 
     String getUsersLocalDateTimeString(Instant date);
 
-    public List<ContentReviewResult> getContentReviewResults(AssignmentSubmission submission);
+    public List<ContentReviewResult> getContentReviewResults(AssignmentSubmission submission);    
 }

@@ -2,6 +2,7 @@ package org.sakaiproject.assignment.api.model;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -80,4 +81,17 @@ public class AssignmentMarker {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "assignmentMarker", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AssignmentSubmissionMarker> submissionMarkers = new HashSet<>();
+    
+    @Override
+    public boolean equals(Object o) {
+    	return (o instanceof AssignmentMarker) && 
+    			((AssignmentMarker)o).getMarkerUserId().equals(this.id) && 
+    			((AssignmentMarker)o).getDateCreated().equals(this.dateCreated);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(markerUserId, dateCreated);
+    }
+    
 }

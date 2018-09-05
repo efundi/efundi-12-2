@@ -72,10 +72,6 @@
 				useReview.disabled=false;
 				lblUseReview.style.display = 'block';
 			#end
-			if (document.getElementById('subType').value == 6) 
-			{
-				document.getElementById('allowPdfMarker').style.display = 'block';
-			}
 			document.getElementById('tempAllowRes').parentNode.parentNode.style.display = 'block';
 			if (document.getElementById('allowResToggle').checked)
 			{
@@ -86,6 +82,8 @@
 			}
 			if (document.getElementById('subType').value == 6) 
 			{
+				document.getElementById('allowPdfMarker').style.display = 'block';
+				
 				if (document.getElementById('allowMarkerToggle').checked)
 				{
 					document.getElementById('pdfMarkerSettings').style.display = 'block';
@@ -767,7 +765,7 @@
 							#if ($tool_MarkerList.size() > 1)
 								<input type="number" value="" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
 							#else
-								<input type="number" class="input-quota" name="quota$velocityCount" id="quota$velocityCount" value="100" disabled=true onchange="ASN.quotaCalculation($tool_MarkerList.size())">
+								<input type="number" value='100' class="input-quota" name="quota$velocityCount" id="quota$velocityCount" disabled=true onchange="ASN.quotaCalculation($tool_MarkerList.size())">
 							#end	
 						</td>
 						<td>

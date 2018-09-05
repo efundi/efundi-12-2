@@ -7709,18 +7709,17 @@ public class AssignmentAction extends PagedResourceActionII {
                 
                 List<String> quotas = (List<String>) state.getAttribute(ASSIGNMENT_QUOTA_VALUES);
                 if (quotas.size() > 1) {
+                	AssignmentMarker asnMarker;
 	                for (int i = 0; i < quotas.size(); i+=2) {
-	                	AssignmentMarker asnMarker = new AssignmentMarker();
-	                	
+	                	asnMarker = new AssignmentMarker();
 	            		double quotaValue = Double.parseDouble(quotas.get(i+1).toString());
-                   		
                    		asnMarker.setContext(a.getContext());
                  		asnMarker.setDateCreated(Instant.now());
                     	asnMarker.setMarkerUserId(quotas.get(i));
                     	asnMarker.setQuotaPercentage(quotaValue);
                  	   	asnMarker.setAssignment(a);
                  	   	
-                 	   	markers.add(asnMarker);
+                 	    markers.add(asnMarker);
                    	}
             	}
                 
@@ -8685,18 +8684,9 @@ public class AssignmentAction extends PagedResourceActionII {
 
             
             // only uploads the first marker in the Set
-             a.setMarkers(markers);
+            a.setMarkers(markers);
             // commit the changes
-             assignmentService.updateAssignment(a);
-            
-            // uploads all the markers in the set, but replaces the initial record with the new set values - updates the field on the auto ID
-            /*for (AssignmentMarker marker : markers) { //NAM-32
-            	Set<AssignmentMarker> set = new HashSet<AssignmentMarker>();
-            	set.add(marker);
-            	a.setMarkers(set);
-	            // commit the changes
-	            assignmentService.updateAssignment(a);
-            }*/
+            assignmentService.updateAssignment(a);
 
             // content review (after changes are stored)
             if (a.getContentReview()) {

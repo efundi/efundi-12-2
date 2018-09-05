@@ -85,7 +85,7 @@ public class AssignmentMarker {
     @Override
     public boolean equals(Object o) {
     	return (o instanceof AssignmentMarker) && 
-    			((AssignmentMarker)o).getMarkerUserId().equals(this.id) && 
+    			((AssignmentMarker)o).getId().equals(this.id) && 
     			((AssignmentMarker)o).getDateCreated().equals(this.dateCreated);
     }
     

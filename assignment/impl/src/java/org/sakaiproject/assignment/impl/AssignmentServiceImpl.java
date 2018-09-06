@@ -4068,7 +4068,8 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         return errorMessage;
 
     } 
-    
+
+    //NAM-23 Used local variable for assignmentContext, remove a log.error that was remaining from prior local testing and added in a NAM-23 comment in AssignmentServiceImpl for future referance'
 	public Boolean hasMarkingAssigned(String contextString, String role) {
 
 		AuthzGroup realm = null;		

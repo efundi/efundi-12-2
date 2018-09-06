@@ -6526,11 +6526,6 @@ public class AssignmentAction extends PagedResourceActionII {
     	addAlert(state, "Works");
     }
     
-    //To be modified in NAM-32
-    private void quotaMethod(SessionState state, ParameterParser params) {
-    	
-    }
-    
     /**
      * Action is to save the input infos for assignment fields
      *
@@ -6542,9 +6537,6 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String assignmentRef = params.getString("assignmentId");
-		
-        //To be modified in NAM-32
-        //quotaMethod(state, params);
         
         //put the quota values into the state attribute
         List<String> quotas = new ArrayList<String>(Arrays.asList(params.getString(ASSIGNMENT_QUOTA_VALUES).split(",")));
@@ -9088,6 +9080,16 @@ public class AssignmentAction extends PagedResourceActionII {
                 state.setAttribute(NEW_ASSIGNMENT_TITLE, a.getTitle());
                 state.setAttribute(NEW_ASSIGNMENT_ORDER, a.getPosition());
 
+                //put the quota values into the state attribute
+                Set<AssignmentMarker> markers = a.getMarkers();
+                List<String> quotas = new ArrayList<String>();
+                for (AssignmentMarker marker : markers) {
+                	quotas.add(marker.getMarkerUserId());
+                	quotas.add(marker.getQuotaPercentage().toString());
+                }
+                
+                state.setAttribute(ASSIGNMENT_QUOTA_VALUES, quotas);
+                
                 if (serverConfigurationService.getBoolean("assignment.visible.date.enabled", false)) {
                     putTimePropertiesInState(state, a.getVisibleDate(), NEW_ASSIGNMENT_VISIBLEMONTH, NEW_ASSIGNMENT_VISIBLEDAY, NEW_ASSIGNMENT_VISIBLEYEAR, NEW_ASSIGNMENT_VISIBLEHOUR, NEW_ASSIGNMENT_VISIBLEMIN);
                     state.setAttribute(NEW_ASSIGNMENT_VISIBLETOGGLE, a.getVisibleDate() != null);

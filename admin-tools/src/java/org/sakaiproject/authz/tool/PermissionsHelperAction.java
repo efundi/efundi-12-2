@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.authz.api.AuthzGroup;
 import org.sakaiproject.authz.api.AuthzPermissionException;
 import org.sakaiproject.authz.api.GroupAlreadyDefinedException;
@@ -687,7 +688,27 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 					log.debug("Can't change permission '{}' on role '{}'.", lock, role.getId());
 					continue;
 				}
-
+				// NAM-23 - start
+				try {
+					if (serverConfigurationService.getBoolean("assignment.useMarker ", true)) {
+						if (state.getAttribute("Assignment.context_string") != null) {
+							if (lock.equals("asn.marker")) {
+								if (!checked) {									
+									AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
+									Boolean hasAssigned = assignmentService.hasMarkingAssigned((String) state.getAttribute("Assignment.context_string"), role.getId());
+									if (hasAssigned) {
+										log.warn("PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission.", role.getId(), "Excpetion");
+										addAlert(state, rb.getFormattedMessage("alert_marker"));
+										return;
+									}
+								}
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				// NAM-23 - end
 				if (checked)
 				{
 					// we have an ability! Make sure there's a role

@@ -72,6 +72,7 @@ import org.sakaiproject.assignment.api.ContentReviewResult;
 import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItem;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItemAccess;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentModelAnswerItem;
 import org.sakaiproject.assignment.api.model.AssignmentNoteItem;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
@@ -4065,5 +4066,38 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         }
 
         return errorMessage;
+
     } 
+    
+	public Boolean hasMarkingAssigned(String contextString, String role) {
+
+		AuthzGroup realm = null;		
+		try {
+			realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
+		} catch (GroupNotDefinedException e) {
+			log.error("Error encountered in hasMarkingAssigned Check - Error: "+e);
+		}
+		Collection<Assignment> asnCollection = getAssignmentsForContext(contextString);
+
+		for (Assignment assignmentObj : asnCollection) {
+
+			Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();
+			Set<String> users = realm.getUsersHasRole(role);
+			if (asnMrks.size() > 0 && users.size() > 0) {
+				if (role.equals("access"))
+					return false;
+				for (String user : users) {					
+				
+					for (AssignmentMarker asnMarker : asnMrks) {
+						if (asnMarker.getMarkerUserId().equals(user))
+						{
+						return true;
+						}
+					}
+				}
+				return false;
+			}
+		}
+		return false;
+		}
 }

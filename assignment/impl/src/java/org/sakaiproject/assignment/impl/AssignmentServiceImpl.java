@@ -603,6 +603,18 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         // if not, see if the user has any groups to which adds are allowed
         return (!getGroupsAllowAddAssignment(context).isEmpty());
     }
+    
+    /**
+     * NAM-34 AND NAM-36
+     * Check if user has marker role
+     */
+    @Override
+    public boolean allowMarkerAssignment(String context) {
+        String resourceString = AssignmentReferenceReckoner.reckoner().context(context).reckon().getReference();
+        if (permissionCheck(SECURE_ASSIGNMENT_MARKER, resourceString, null)) return true;
+        // if not, see if the user has any groups to which adds are allowed
+        return (!getGroupsAllowAddAssignment(context).isEmpty());
+    }
 
     @Override
     public boolean allowRemoveAssignmentInContext(String context) {

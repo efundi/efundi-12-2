@@ -1092,22 +1092,15 @@ public class AssignmentAction extends PagedResourceActionII {
         
         // NAM-34 check if current user has marker permissions
         String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
-        boolean allowAssignmentMarker = false;
-        try {
-    	    AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
-    	    User user = userDirectoryService.getCurrentUser();
-    	    
-    	    allowAssignmentMarker = (realm.isAllowed(user.getId(), SECURE_ASSIGNMENT_MARKER)) ? true: false;
-        } catch (Exception e) {
-            log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
-        }
         
-        context.put("allowAssignmentMarker", allowAssignmentMarker);
+        // allow marker assignment?
+        boolean allowAssignmentMarker = assignmentService.allowMarkerAssignment(contextString);
+        context.put("allowAssignmentMarker", Boolean.valueOf(allowAssignmentMarker));
         
-     // check if assignment marker is enabled?
+        // check if assignment marker is enabled?
         boolean isEnabledAssignmentMarker = serverConfigurationService.getBoolean("assignment.useMarker", false);
         context.put("isEnabledAssignmentMarker", isEnabledAssignmentMarker);
-
+        
         // allow add assignment?
         boolean allowAddAssignment = assignmentService.allowAddAssignment(contextString);
         context.put("allowAddAssignment", Boolean.valueOf(allowAddAssignment));
@@ -14245,22 +14238,15 @@ public class AssignmentAction extends PagedResourceActionII {
      */
     protected void doMarkerDownStats(RunData data) {
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
-        String siteId = toolManager.getCurrentPlacement().getContext();
-        try {
-            Site site = siteService.getSite(siteId);
-            ToolConfiguration tc = site.getToolForCommonId(ASSIGNMENT_TOOL_ID);
-        } catch (IdUnusedException e) {
-            log.warn(this + ":doMarkerDownStats  Cannot find site with id " + siteId);
-        }
-
+        
         if (!alertGlobalNavigation(state, data)) {
-            if (siteService.allowUpdateSite((String) state.getAttribute(STATE_CONTEXT_STRING))) {
-                state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
-            } else {
-                addAlert(state, rb.getString("youarenot_marker_downloads_statistics"));
-            }
-
-            // reset the global navigaion alert flag
+	        if(assignmentService.allowMarkerAssignment((String) state.getAttribute(STATE_CONTEXT_STRING))) {
+	        	state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
+	        } else {
+	            addAlert(state, rb.getString("youarenot_marker_downloads_statistics"));
+	        }
+	        
+	        // reset the global navigaion alert flag
             if (state.getAttribute(ALERT_GLOBAL_NAVIGATION) != null) {
                 state.removeAttribute(ALERT_GLOBAL_NAVIGATION);
             }
@@ -14287,14 +14273,19 @@ public class AssignmentAction extends PagedResourceActionII {
     protected String build_marker_downloads_statistics_context(VelocityPortlet portlet, Context context, RunData data, SessionState state) {
     	state.setAttribute(STATE_MODE, MODE_LIST_ASSIGNMENTS);
     	context.put("context", state.getAttribute(STATE_CONTEXT_STRING));
+    	String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
     	
     	List<Assignment> assignments = prepPage(state);
         context.put("assignments", assignments.iterator());
         context.put("NumberOfFoundAssignments", assignments.size());
         
-        state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
-        String template = (String) getContext(data).get("template");
-        return template + TEMPLATE_MARKER_DOWNLOADS_STATISTICS;
+        if(assignmentService.allowMarkerAssignment(contextString)) {
+	        state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
+	        String template = (String) getContext(data).get("template");
+	        return template + TEMPLATE_MARKER_DOWNLOADS_STATISTICS;
+        }
+        
+        return null;
     }
 
     /**

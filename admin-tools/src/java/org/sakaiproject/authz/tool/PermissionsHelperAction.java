@@ -687,29 +687,7 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 				{
 					log.debug("Can't change permission '{}' on role '{}'.", lock, role.getId());
 					continue;
-				}
-				// NAM-23 - start
-				try {
-					String assignmentContext = (String) state.getAttribute("Assignment.context_string");
-					if (assignmentContext != null) {
-					if (serverConfigurationService.getBoolean("assignment.useMarker ", true)) {						
-							if (lock.equals("asn.marker")) {
-								if (!checked) {									
-									AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
-									Boolean hasAssigned = assignmentService.hasMarkingAssigned(assignmentContext, role.getId());
-									if (hasAssigned) {
-										log.warn("PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission.", role.getId(), "Excpetion");
-										addAlert(state, rb.getFormattedMessage("alert_marker"));
-										return;
-									}
-								}
-							}
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				// NAM-23 - end
+				}				
 				if (checked)
 				{
 					// we have an ability! Make sure there's a role
@@ -731,6 +709,28 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 				}
 				else
 				{
+					// NAM-23 - start
+					try {
+						String assignmentContext = (String) state.getAttribute("Assignment.context_string");
+						String roleID = role.getId();
+						if (assignmentContext != null) {
+						if (serverConfigurationService.getBoolean("assignment.useMarker ", true)) {						
+								if (lock.equals("asn.marker")) {																	
+										AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
+										Boolean hasAssigned = assignmentService.hasMarkingAssigned(assignmentContext, roleID);
+										if (hasAssigned) {
+											log.warn("PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission for role "+ roleID, roleID, "Excpetion");
+											addAlert(state, rb.getFormattedMessage("alert_marker"));
+											return;
+										}									
+								}
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					// NAM-23 - end
+					
 					// if we do have this role, make sure there's not this lock
 					Role myRole = edit.getRole(role.getId());
 					if (myRole != null)

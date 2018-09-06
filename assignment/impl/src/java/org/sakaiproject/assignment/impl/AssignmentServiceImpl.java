@@ -4066,39 +4066,37 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         }
 
         return errorMessage;
-
-    } 
-
-    //NAM-23 Used local variable for assignmentContext, remove a log.error that was remaining from prior local testing and added in a NAM-23 comment in AssignmentServiceImpl for future referance'
+    }
+    //NAM-23
 	public Boolean hasMarkingAssigned(String contextString, String role) {
 
-		AuthzGroup realm = null;		
 		try {
-			realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
-		} catch (GroupNotDefinedException e) {
-			log.error("Error encountered in hasMarkingAssigned Check - Error: "+e);
-		}
-		Collection<Assignment> asnCollection = getAssignmentsForContext(contextString);
-
-		for (Assignment assignmentObj : asnCollection) {
-
-			Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();
-			Set<String> users = realm.getUsersHasRole(role);
-			if (asnMrks.size() > 0 && users.size() > 0) {
-				if (role.equals("access"))
-					return false;
-				for (String user : users) {					
-				
-					for (AssignmentMarker asnMarker : asnMrks) {
-						if (asnMarker.getMarkerUserId().equals(user))
-						{
-						return true;
-						}
-					}
+			Site site = siteService.getSite(contextString);
+			Set<String> siteMarkers = getMarkersForSite(contextString);
+			Set<String> siteUsersHasRole = site.getUsersHasRole(role);		
+			for (String user : siteMarkers) {
+				if (siteUsersHasRole.contains(user)) {
+					return true;
 				}
-				return false;
 			}
+		} catch (IdUnusedException e) {
+			log.error("Error encountered in hasMarkingAssigned Check - Error: " + e);
 		}
 		return false;
+	}
+
+	private Set<String> getMarkersForSite(String contextString) {
+
+		Collection<Assignment> asnCollection = getAssignmentsForContext(contextString);
+		Set<String> userIds = new HashSet<String>();
+		for (Assignment assignmentObj : asnCollection) {
+
+			Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();			
+			for (AssignmentMarker asnMarker : asnMrks) {
+				String id = asnMarker.getMarkerUserId();
+				userIds.add(id);
+			}
 		}
+		return userIds;
+	} 
 }

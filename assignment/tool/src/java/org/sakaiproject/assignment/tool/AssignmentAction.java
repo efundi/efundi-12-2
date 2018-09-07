@@ -6158,18 +6158,6 @@ public class AssignmentAction extends PagedResourceActionII {
 
                         // set the resubmission properties
                         setResubmissionProperties(a, submission);
-                        
-                        //set assignment marker properties
-                        if (params.getBoolean("allowMarkerToggle")) {
-                        	String [] list = params.getString("quota_values").split(",");
-                        	for (int i = 0; i < list.length; i+=2) {
-                        		String id = list[i];
-                        		float quota = Float.parseFloat(list[i+1]);
-                        		Date createdDate = Date.from(submission.getDateCreated());
-                        		Date modifiedDate = Date.from(submission.getDateModified());
-                        		String siteID = (String) state.getAttribute(STATE_CONTEXT_STRING);
-                        	}
-                        }
                     } catch (PermissionException e) {
                         log.warn("Could not add submission for assignment/submitter: {}/{}, {}", a.getId(), submitterId, e.getMessage());
                         addAlert(state, rb.getString("youarenot13"));
@@ -7702,7 +7690,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 List<String> quotas = (List<String>) state.getAttribute(ASSIGNMENT_QUOTA_VALUES);
                 if (quotas.size() > 1) {
                 	AssignmentMarker asnMarker;
-	                for (int i = 0; i < quotas.size(); i+=2) {
+	                for (int i = 0; i < quotas.size(); i+=3) {
 	                	asnMarker = new AssignmentMarker();
 	            		double quotaValue = Double.parseDouble(quotas.get(i+1).toString());
                    		asnMarker.setContext(a.getContext());
@@ -7710,6 +7698,7 @@ public class AssignmentAction extends PagedResourceActionII {
                     	asnMarker.setMarkerUserId(quotas.get(i));
                     	asnMarker.setQuotaPercentage(quotaValue);
                  	   	asnMarker.setAssignment(a);
+                 	   	//add reassigned marker set here
                  	   	
                  	    markers.add(asnMarker);
                    	}
@@ -9035,6 +9024,7 @@ public class AssignmentAction extends PagedResourceActionII {
         String assignmentId = StringUtils.trimToNull(params.getString("assignmentId"));
         if (assignmentService.allowUpdateAssignment(assignmentId)) {
             Assignment a = getAssignment(assignmentId, "doEdit_assignment", state);
+            
             if (a != null) {
                 // whether the user can modify the assignment
                 state.setAttribute(EDIT_ASSIGNMENT_ID, assignmentId);
@@ -9072,6 +9062,15 @@ public class AssignmentAction extends PagedResourceActionII {
                         }
                     }
                 }
+                
+                //put the quota values into the state attribute
+                Set<AssignmentMarker> markers = assignmentService.getMarkers(a);
+                List<String> quotas = new ArrayList<String>();
+                for (AssignmentMarker marker : markers) {
+                	quotas.add(marker.getMarkerUserId());
+                	quotas.add(marker.getQuotaPercentage().toString());
+                	//add reassign marker select option here
+                }
 
                 // SECTION MOD
                 state.setAttribute(STATE_SECTION_STRING, a.getSection());
@@ -9079,14 +9078,6 @@ public class AssignmentAction extends PagedResourceActionII {
                 // put the names and values into vm file
                 state.setAttribute(NEW_ASSIGNMENT_TITLE, a.getTitle());
                 state.setAttribute(NEW_ASSIGNMENT_ORDER, a.getPosition());
-
-                //put the quota values into the state attribute
-                Set<AssignmentMarker> markers = a.getMarkers();
-                List<String> quotas = new ArrayList<String>();
-                for (AssignmentMarker marker : markers) {
-                	quotas.add(marker.getMarkerUserId());
-                	quotas.add(marker.getQuotaPercentage().toString());
-                }
                 
                 state.setAttribute(ASSIGNMENT_QUOTA_VALUES, quotas);
                 

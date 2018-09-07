@@ -4065,4 +4065,10 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
         return errorMessage;
     }
+    
+    @Override
+    public Set<AssignmentMarker> getMarkers(Assignment assignment) {
+    	assignmentRepository.initializeAssignment(assignment);
+    	return assignment.getMarkers();
+    }
 }

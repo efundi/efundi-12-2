@@ -521,7 +521,7 @@
 				#if( $!range == "SITE" || $selectedGroupsNotFound )
 					checked="checked"
 				#end
-				#if($!assignment && !$assignment.draft && $!value_additionalOptions.equals("GROUP"))
+				#if($!assignment.id && !$assignment.draft && $!value_additionalOptions.equals("GROUP"))
 					disabled="disabled"
 				#end
 				/>
@@ -529,13 +529,13 @@
 				<input type="radio" name="range" id="site" value="SITE" onclick="$('#groupTable').fadeOut('slow'); ASN.showOrHideAccessMessages( false ); ASN.resizeFrame();"
 				#if( $!range == "SITE" || $selectedGroupsNotFound )
 					checked="checked"
-				#elseif (($!value_CheckIsGroupSubmission.equals("1") && $!groupsList) || ($!assignment && !$assignment.draft && $!value_additionalOptions.equals("GROUP")))
+				#elseif (($!value_CheckIsGroupSubmission.equals("1") && $!groupsList) || ($!assignment.id && !$assignment.draft && $!value_additionalOptions.equals("GROUP")))
 					disabled="disabled"
 				#end
 				/>
 			#end
 				$tlang.getString("displayto.site")
-				#if($!assignment && !$assignment.draft && $!value_additionalOptions.equals("GROUP"))
+				#if($!assignment.id && !$assignment.draft && $!value_additionalOptions.equals("GROUP"))
 					$tlang.getString("gen.cant.change.setting.after.draft")
 				#end
 			</label>
@@ -740,13 +740,13 @@
 			</label>
 			<div class="col-sm-10">
 				<div id="tempAllowMarker" #if ($value_SubmissionType == 4) style = "display:none"#end>
-					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!value_SubmissionType == 6) checked="checked"#end onclick="ASN.enableMarkingTool($tool_MarkerList.size()); ASN.resizeFrame();" />
+					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" onclick="ASN.enableMarkingTool($tool_MarkerList.size()); ASN.resizeFrame();" />
 				</div>
 			</div>
 		</div>
 
 		##NAM-29 PDF marker settings that will be displayed when the tool is selected
-		<div class="col-sm-offset-1 row" id="pdfMarkerSettings" style="$!markerSetupStyle">
+		<div class="col-sm-offset-1 row" id="pdfMarkerSettings">
 			<div class="col-sm-12 row table-reponsive">
 				<table class="table-striped table-quota" id="quotaAssignmentTable" name="quotaAssignmentTable">
 					<tr>
@@ -760,6 +760,8 @@
 						<td>
 							<label type="hidden" style="display:none" id="assignedMarker$velocityCount">$mapKey</label>
 							<label id="$mapKey">$tool_MarkerList.get($mapKey)</label>
+							#set($somevalue = "a\na")
+							<label>"$somevalue"</label>
 						</td>
 						<td>
 							#if ($tool_MarkerList.size() > 1)
@@ -770,10 +772,10 @@
 						</td>
 						<td>
 							#if ($tool_MarkerList.size() > 1)
-								<select class="select-quota">
+								<select class="select-quota" id="reassignMarker">
 									#foreach ($mapEntryList in $tool_MarkerList.keySet())
 										#if("$tool_MarkerList.get($mapEntryList)" != "$tool_MarkerList.get($mapKey)")
-											<option id="$mapEntryList" value="reassignedMarker">$tool_MarkerList.get($mapEntryList)</option>
+											<option id="marker" value="$mapEntryList">$tool_MarkerList.get($mapEntryList)</option>
 										#end	
 									#end
 								</select>
@@ -1151,14 +1153,14 @@
 							<option value="$i" selected="selected">$gradeTypeTable.get($i)</option>
 						#else
 							<option value="$i"
-								#if(($!assignment && !$assignment.draft) && $!value_additionalOptions.equals("peerreview"))
+								#if(($!assignment.id && !$assignment.draft) && $!value_additionalOptions.equals("peerreview"))
 									disabled="disabled" 
 								#end
 							>$gradeTypeTable.get($i)</option>
 						#end
 					#end
 					</select>
-					#if(($!assignment && !$assignment.draft) && $!value_additionalOptions.equals("peerreview"))
+					#if(($!assignment.id && !$assignment.draft) && $!value_additionalOptions.equals("peerreview"))
 						$tlang.getString("gen.cant.change.setting.after.draft")
 					#end
 				</div>
@@ -1373,7 +1375,7 @@
 				<input id="$name_noAdditionalOptionsName" name="$name_additionalOptions" type="radio" value="1"
 					#if ($!value_additionalOptions.equals("none"))
 						checked="checked"
-					#elseif($!assignment && !$assignment.draft)
+					#elseif($!assignment.id && !$assignment.draft)
 						disabled="disabled"
 					#end
 					onclick="ASN.toggleAddOptions('none');" />
@@ -1389,7 +1391,7 @@
 						<input id="$name_UsePeerAssessment" name="$name_additionalOptions" type="radio" value="peerreview"
 						#if ($!value_additionalOptions.equals("peerreview"))
 							checked="checked"
-						#elseif($!assignment && !$assignment.draft)
+						#elseif($!assignment.id && !$assignment.draft)
 							disabled="disabled"
 						#end
 						onclick="ASN.toggleAddOptions('peerreview')"/>
@@ -1469,7 +1471,7 @@
 					<input id="$name_CheckIsGroupSubmission" name="$name_additionalOptions" type="radio" value="GROUP" onclick="ASN.toggleAddOptions('GROUP');"
 					#if ($!value_additionalOptions.equals("GROUP") && $!groupsList)
 						checked="checked"
-					#elseif( !$!groupsList || ($!assignment && !$assignment.draft))
+					#elseif( !$!groupsList || ($!assignment.id && !$assignment.draft))
 						disabled="disabled"
 					#end
 					/>

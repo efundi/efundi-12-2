@@ -74,11 +74,13 @@ ASN.saveQuotaValues = function() {
 	for (var r = 1, n = table.rows.length; r < n; r++) {
 	   	var a = table.rows[r];
 	    var inputs = a.getElementsByTagName("input");
+	    var markerList = table.getElementsByTagName("select");
+	    var reassignMarker = markerList[0].value;
 	    var id = document.getElementById("assignedMarker" + r).innerHTML;
 	    if ((r + 1) != n) {
-	    	list += id + "," + inputs[0].value + ",";
+	    	list += id + "," + inputs[0].value + "," + reassignMarker + ",";
 	    } else {
-	    	list += id + "," + inputs[0].value;
+	    	list += id + "," + inputs[0].value + "," + reassignMarker;
 	    }
 	}
 	return list;
@@ -86,14 +88,20 @@ ASN.saveQuotaValues = function() {
 	
 ASN.setQuotaValues = function(quota_values_list) {
 	var array = quota_values_list.replace("[","").replace("]","").split(",");
-	if (array.length > 0) {
+	if (array.length > 1) {
+		document.getElementById('allowMarkerToggle').checked = true;
+		document.getElementById('pdfMarkerSettings').style = "display:block";
 		var i = 1;
 		var table = document.getElementById('quotaAssignmentTable');
 	    for (var r = 1, n = table.rows.length; r < n; r++) {
 	    	var a = table.rows[r];
 	        a.getElementsByTagName("input")[0].value = Number(array[i]);
-	        i+=2;
+	        i+=2; //change to +=3 when reassign marker is implemented
+	        //change the selected option to the reassigned marker value
 	    }
+	} else {
+		document.getElementById('allowMarkerToggle').checked = false;
+		document.getElementById('pdfMarkerSettings').style = "display:none";
 	}
 }
 

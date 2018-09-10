@@ -98,6 +98,7 @@ import net.tanesha.recaptcha.ReCaptcha;
 import net.tanesha.recaptcha.ReCaptchaFactory;
 import net.tanesha.recaptcha.ReCaptchaResponse;
 
+import org.sakaiproject.assignment.api.AssignmentService;
 /**
  * <p>
  * UsersAction is the Sakai users editor.
@@ -1077,8 +1078,7 @@ public class UsersAction extends PagedResourceActionII
 		// get the user
 		UserEdit user = (UserEdit) state.getAttribute("user");
 		if (user != null)
-		{
-			// if this was a new, delete the user
+		{// if this was a new, delete the user
 			if ("true".equals(state.getAttribute("new")))
 			{
 				// remove
@@ -1186,17 +1186,14 @@ public class UsersAction extends PagedResourceActionII
 				try
 				{
 					AuthzGroup realmEdit = authzGroupService.getAuthzGroup(realm);
-					/* NAM-23 Prevent deletion of user that has marking
-					 * 
-					 * Check Property
-					 * Check userId in DB
-					 * TODO Create isMarker Method for checking against DB.
-					 * 
-					 */
-					Boolean useMarker = serverConfigurationService.getBoolean("assignment.useMarker ", true);
+					/* NAM-23 Prevent deletion of user that has marking */
+					
+					Boolean useMarker = ServerConfigurationService.getBoolean("assignment.useMarker ", true);
 				     if (useMarker) 
 				     {
-				    	 if (isMarker(userId, userEid))
+				    	AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
+						Boolean hasAssigned = assignmentService.hasMarkingAssigned(context.toString(), realm);
+						if (hasAssigned)
 				    	 {
 				    		 log.error("Could not remove user {} from realm {} due to marking assignment", userEid, realm);
 				    		 addAlert(state, rb.getFormattedMessage("useact.markercouldnot", user.getEid(), realm));
@@ -1245,13 +1242,6 @@ public class UsersAction extends PagedResourceActionII
 		enableObserver(state);
 
 	} // doRemove_confirmed
-
-	
-	/* NAM-23 get Prop Method
-	 * 
-	 * Method to get value of property.
-	 * 
-	 */
 	
 	/**
 	 * doCancel_remove called when "eventSubmit_doCancel_remove" is in the request parameters to cancel user removal

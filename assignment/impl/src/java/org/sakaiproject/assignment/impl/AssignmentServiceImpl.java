@@ -72,6 +72,7 @@ import org.sakaiproject.assignment.api.ContentReviewResult;
 import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItem;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItemAccess;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentModelAnswerItem;
 import org.sakaiproject.assignment.api.model.AssignmentNoteItem;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
@@ -4065,5 +4066,37 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         }
 
         return errorMessage;
-    } 
+    }
+    //NAM-23
+	public Boolean hasMarkingAssigned(String contextString, String role) {
+
+		try {
+			Site site = siteService.getSite(contextString);
+			Set<String> siteMarkers = getMarkersForSite(contextString);
+			Set<String> siteUsersHasRole = site.getUsersHasRole(role);		
+			for (String user : siteMarkers) {
+				if (siteUsersHasRole.contains(user)) {
+					return true;
+				}
+			}
+		} catch (IdUnusedException e) {
+			log.error("Error encountered in hasMarkingAssigned Check - Error: " + e);
+		}
+		return false;
+	}
+
+	private Set<String> getMarkersForSite(String contextString) {
+
+		Collection<Assignment> asnCollection = getAssignmentsForContext(contextString);
+		Set<String> userIds = new HashSet<String>();
+		for (Assignment assignmentObj : asnCollection) {
+
+			Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();			
+			for (AssignmentMarker asnMarker : asnMrks) {
+				String id = asnMarker.getMarkerUserId();
+				userIds.add(id);
+			}
+		}
+		return userIds;
+	} 
 }

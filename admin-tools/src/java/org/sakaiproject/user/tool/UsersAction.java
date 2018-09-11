@@ -98,7 +98,6 @@ import net.tanesha.recaptcha.ReCaptcha;
 import net.tanesha.recaptcha.ReCaptchaFactory;
 import net.tanesha.recaptcha.ReCaptchaResponse;
 
-import org.sakaiproject.assignment.api.AssignmentService;
 /**
  * <p>
  * UsersAction is the Sakai users editor.
@@ -1078,7 +1077,8 @@ public class UsersAction extends PagedResourceActionII
 		// get the user
 		UserEdit user = (UserEdit) state.getAttribute("user");
 		if (user != null)
-		{// if this was a new, delete the user
+		{
+			// if this was a new, delete the user
 			if ("true".equals(state.getAttribute("new")))
 			{
 				// remove
@@ -1177,7 +1177,6 @@ public class UsersAction extends PagedResourceActionII
 		// unenroll the user from all AuthzGroups (if enabled)
 		String userId = user.getId();
 		String userEid = user.getEid();
-		
 		if (isUnenrollBeforeDeleteEnabled())
 		{
 			Map<String, String> userRoles = authzGroupService.getUserRoles(userId, null);
@@ -1186,20 +1185,6 @@ public class UsersAction extends PagedResourceActionII
 				try
 				{
 					AuthzGroup realmEdit = authzGroupService.getAuthzGroup(realm);
-					/* NAM-43 Prevent deletion of user that has marking  This will change after the rebase and aquisition of code from NAM-23*/
-					
-					Boolean useMarker = ServerConfigurationService.getBoolean("assignment.useMarker ", true);
-				     if (useMarker) 
-				     {
-				    	AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
-						Boolean hasAssigned = assignmentService.hasMarkingAssigned(context.toString(), realm);
-						if (hasAssigned)
-				    	 {
-				    		 log.error("Could not remove user {} from realm {} due to marking assignment", userEid, realm);
-				    		 addAlert(state, rb.getFormattedMessage("useact.markercouldnot", user.getEid(), realm));
-				    		 return;
-				    	 }					
-				     }
 					realmEdit.removeMember(userId);
 					authzGroupService.save(realmEdit);
 				 	log.info("User {} removed from realm {}", userEid, realm);
@@ -1242,7 +1227,7 @@ public class UsersAction extends PagedResourceActionII
 		enableObserver(state);
 
 	} // doRemove_confirmed
-	
+
 	/**
 	 * doCancel_remove called when "eventSubmit_doCancel_remove" is in the request parameters to cancel user removal
 	 */

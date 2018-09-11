@@ -63,6 +63,7 @@ import org.sakaiproject.alias.api.AliasService;
 import org.sakaiproject.api.privacy.PrivacyManager;
 import org.sakaiproject.archive.api.ImportMetadata;
 import org.sakaiproject.archive.cover.ArchiveService;
+import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.authz.api.AuthzGroup;
 import org.sakaiproject.authz.api.AuthzPermissionException;
 import org.sakaiproject.authz.api.GroupNotDefinedException;
@@ -8691,58 +8692,6 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 		}
 	}
 	
-	
-	private List<Participant> testProposedUpdatesForMarkers(List<Participant> participants, ParameterParser params) {
-		List<Participant> markersAfterUpdates = new ArrayList<Participant>();
-		// create list of all partcipants that have been 'Charles Bronson-ed'
-		Set<String> removedParticipantIds = new HashSet();
-		Set<String> deactivatedParticipants = new HashSet();
-		if (params.getStrings("selectedUser") != null) {
-			List removals = new ArrayList(Arrays.asList(params.getStrings("selectedUser")));
-			for (int i = 0; i < removals.size(); i++) {
-				String rId = (String) removals.get(i);
-				removedParticipantIds.add(rId);
-				
-			}
-		}		
-		// create list of all participants that have been deactivated
-				for(Participant statusParticipant : participants ) {
-					String activeGrantId = statusParticipant.getUniqname();
-					String activeGrantField = "activeGrant" + activeGrantId;
-				
-					if (params.getString(activeGrantField) != null) { 
-						boolean activeStatus = params.getString(activeGrantField).equalsIgnoreCase("true") ? true : false;
-						if (activeStatus == false) {
-							deactivatedParticipants.add(activeGrantId);
-						}
-					}
-				}
-				/**
-				 * NAM-43
-				 * 				Now check all users in these lists against those in the marker table.
-				 *				using below list for testing in the meantime
-				 *				the for particpant loop will need to check against the marker db table and add any that are assigned to the markersafterupdates list.
-				 *				 This is returned and if contains any results the removal is stopped.
-				 * 
-				**/
-				for(Participant roleParticipant : participants ) {
-					markersAfterUpdates.add(roleParticipant);
-					String id = roleParticipant.getUniqname();
-				/**	
-				 * 
-				 * TODO: Create provider for MarkerIDsList
-				 * 
-				 * List<String> markersIDsList = getMarkerIDs();
-				 *	if (markerIDList.contains(id))
-				 *	{
-				 *		markersAfterUpdates.add(roleParticipant);
-				 *	} 
-				 */
-				}
-
-				return markersAfterUpdates;
-	}
-
 	/**
  	* SAK 23029 -  iterate through changed partiants to see how many would have maintain role if all roles, status and deletion changes went through
  	*
@@ -8816,7 +8765,9 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 		List<String> userUpdated = new Vector<String>();
 		// list of all removed user
 		List<String> usersDeleted = new Vector<String>();
-	
+		// list of markers to prevent removal
+		Set<String> markersWithMarking = new HashSet<>();
+		
 		if (authzGroupService.allowUpdate(realmId)
 						|| SiteService.allowUpdateSiteMembership(s.getId())) {
 			try {
@@ -8843,19 +8794,45 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 				}
 
 				
-				//NAM - 43
+				//NAM-43
 				//Something similar to the above, check each user against the marker table, if any are present with marking assigned dispute the change.
+				log.error("########### - "+participants.toString());		
+				if (ServerConfigurationService.getBoolean("assignment.useMarker ", true)) 
+			     {
+			    	AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
+			    	
+					// create list of all partcipants that have been 'Charles Bronson-ed'
+					Set<String> removedParticipantIds = new HashSet();
+					Set<String> deactivatedParticipants = new HashSet();
+					if (params.getStrings("selectedUser") != null) {
+						List removals = new ArrayList(Arrays.asList(params.getStrings("selectedUser")));
+						for (int i = 0; i < removals.size(); i++) {
+							String rId = (String) removals.get(i);
+							removedParticipantIds.add(rId);
+						}
+					}
 
-				Boolean useMarker = serverConfigurationService.getBoolean("assignment.useMarker ", true)
-			     if (useMarker) 
-			     {				
-			    	 List<Participant> markersAfterProposedChanges = testProposedUpdatesForMarkers(participants, params);
-
-			    	 if (maintainersAfterProposedChanges.size() > 0) 
+					// create list of all participants that have been deactivated
+					for(Object statusParticipant : participants ) {
+						String activeGrantId = ((Participant)statusParticipant).getUniqname();
+						String activeGrantField = "activeGrant" + activeGrantId;
+					
+						if (params.getString(activeGrantField) != null) { 
+							boolean activeStatus = params.getString(activeGrantField).equalsIgnoreCase("true") ? true : false;
+							if (activeStatus == false) {
+								deactivatedParticipants.add(activeGrantId);
+							}
+						}
+					}
+					log.error("TBR ---- " + removedParticipantIds.toString());
+					log.error("TBD ---- " + deactivatedParticipants.toString());
+					markersWithMarking =  assignmentService.checkParticipantsForMarking((String)state.getAttribute("Assignment.context_string"), removedParticipantIds, deactivatedParticipants);
+					log.error("Markers Set: " + markersWithMarking.toString());
+					if (markersWithMarking.size() > 0)
 			    	 {
-			    		 addAlert(state, 
-						rb.getFormattedMessage("sitegen.siteinfolist.markernuser"));
-			    		 return;
+			    		 log.error("Could not remove user from realm due to marking assignment");
+			    		 addAlert(state, rb.getFormattedMessage("useact.markercouldnot"));		    		 
+			    		 
 			    	 }
 			     }
 				// SAK23029 - proposed changes do not leave site w/o maintainers; proceed with any allowed updates
@@ -8874,6 +8851,12 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 					Participant participant = (Participant) participants.get(i);
 					id = participant.getUniqname();
 
+					//NAM-43 add check here to remove users in markerList from the participants being changed.
+					if(markersWithMarking.contains(id))
+					{
+						 log.error("Prevented removal of Marker with ID "+id);	
+					}
+					else					
 					if (id != null) {
 						// get the newly assigned role
 						String inputRoleField = "role" + id;

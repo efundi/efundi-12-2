@@ -1186,7 +1186,7 @@ public class UsersAction extends PagedResourceActionII
 				try
 				{
 					AuthzGroup realmEdit = authzGroupService.getAuthzGroup(realm);
-					/* NAM-23 Prevent deletion of user that has marking */
+					/* NAM-43 Prevent deletion of user that has marking  This will change after the rebase and aquisition of code from NAM-23*/
 					
 					Boolean useMarker = ServerConfigurationService.getBoolean("assignment.useMarker ", true);
 				     if (useMarker) 

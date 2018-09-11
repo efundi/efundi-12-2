@@ -16,7 +16,6 @@
 		 				}
 		 			}else{
 		 				$(this).removeProp('disabled');
-
 		 			}
 		 		});
 		 	});
@@ -25,7 +24,18 @@
 			SetMaxPoint(document.getElementById('$name_GradeType'), document.getElementById('$name_GradePoints'));
 		}
 		ASN.saveErrors("$tlang.getString('quota.assignment.table.input.error')", "$tlang.getString('quota.assignment.table.input.error2')", "$tlang.getString('quota.assignment.table.input.error4')");
-		ASN.setQuotaValues("$quota_values_list");
+		##if (!${assignmentMarkerSet})
+			##ASN.toggleMarker("true");
+			##foreach ($am in $assignmentMarkerSet)
+			##	#set($markerId = $am.markerUserId)
+			##	#set($markerQuota = $am.quotaPercentage)
+				##set($reassignMarkerId = $am.get) ##still to be created
+			##	ASN.setQuotaValues("$markerId", "$markerQuota", "Test Value");
+				ASN.setQuotaValues("$quota_values_list");
+			##end
+		##else
+			##ASN.toggleMarker("false");
+		##end
 	});
 
     function SetMaxPoint(obj_option, obj_textfield)
@@ -760,8 +770,6 @@
 						<td>
 							<label type="hidden" style="display:none" id="assignedMarker$velocityCount">$mapKey</label>
 							<label id="$mapKey">$tool_MarkerList.get($mapKey)</label>
-							#set($somevalue = "a\na")
-							<label>"$somevalue"</label>
 						</td>
 						<td>
 							#if ($tool_MarkerList.size() > 1)

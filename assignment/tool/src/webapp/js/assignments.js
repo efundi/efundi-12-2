@@ -86,22 +86,58 @@ ASN.saveQuotaValues = function() {
 	return list;
 }
 	
-ASN.setQuotaValues = function(quota_values_list) {
-	var array = quota_values_list.replace("[","").replace("]","").split(",");
-	if (array.length > 1) {
+ASN.toggleMarker = function(value) {
+	if (value == "true") {
 		document.getElementById('allowMarkerToggle').checked = true;
 		document.getElementById('pdfMarkerSettings').style = "display:block";
-		var i = 1;
-		var table = document.getElementById('quotaAssignmentTable');
-	    for (var r = 1, n = table.rows.length; r < n; r++) {
-	    	var a = table.rows[r];
-	        a.getElementsByTagName("input")[0].value = Number(array[i]);
-	        i+=2; //change to +=3 when reassign marker is implemented
-	        //change the selected option to the reassigned marker value
-	    }
 	} else {
 		document.getElementById('allowMarkerToggle').checked = false;
 		document.getElementById('pdfMarkerSettings').style = "display:none";
+	}
+}
+
+//TODO: change code when assignment marker object is sent through
+ASN.setQuotaValues = function(quota_values_list) {
+//ASN.setQuotaValues = function(markerId, markerQuota, reassignMarker) {
+	var array = quota_values_list.replace("[","").replace("]","").replace(" ", "").split(",").map(el => el.trim());
+	if (array.length > 1) {
+		ASN.toggleMarker("true");
+		var table = document.getElementById('quotaAssignmentTable');
+		//var quotaAssigned = false;
+	    for (var r = 1, n = table.rows.length; r < n; r++) {
+	    	var a = table.rows[r];
+	    	var labelId = a.getElementsByTagName("label")[1].id;
+	    	var id = array.indexOf(labelId);
+	        a.getElementsByTagName("input")[0].value = Number(array[(id+1)]);
+
+	        /*
+	    	if (labelId == markerId) {
+	    	var quota = a.getElementsByTagName("input")[0].value;
+		        if (quota != null) {
+		    		markerQuota += quota;
+		    	}
+	    		a.getElementsByTagName("input")[0].value = Number(markerQuota);
+	          	quotaAssigned = true;
+	          	
+	          	if (reassignMarker != "") {
+		        var reassignMarkerOptions = a.getElementsByTagName("select")[0].options;
+			        for (var opt, j = 0; opt = reassignMarkerOptions[j]; j++) {
+			        	if (opt.value == reassignMarker) {
+			        		a.getElementsByTagName("select")[0].selectedIndex = j;
+			        	    break;
+			        	}
+			        }
+		    	}
+	    	}
+		    */
+	    }
+	    /*
+	    if (!quotaAssigned) {
+	    	ASN.setQuotaValues(reassignMarker, markerQuota, "");
+	    }
+	    */
+	} else {
+		ASN.toggleMarker("false");
 	}
 }
 

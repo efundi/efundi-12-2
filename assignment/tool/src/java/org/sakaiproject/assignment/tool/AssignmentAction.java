@@ -2396,6 +2396,10 @@ public class AssignmentAction extends PagedResourceActionII {
             if (a != null) {
                 context.put("assignmentId", assignmentId);
                 context.put("assignment", a);
+                Set<AssignmentMarker> am = a.getMarkers();
+                if (am != null) {
+                	context.put("assignmentMarkerSet", am);
+                }
                 if (a.getIsGroup()) {
                     Collection<String> _dupUsers = usersInMultipleGroups(a);
                     if (_dupUsers.size() > 0) context.put("multipleGroupUsers", _dupUsers);
@@ -7685,25 +7689,37 @@ public class AssignmentAction extends PagedResourceActionII {
                     aProperties.put(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE, (String) state.getAttribute(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE));
                 }
 
-                Set<AssignmentMarker> markers = new HashSet<AssignmentMarker>();
-                
+                Set<AssignmentMarker> markers;
                 List<String> quotas = (List<String>) state.getAttribute(ASSIGNMENT_QUOTA_VALUES);
-                if (quotas.size() > 1) {
-                	AssignmentMarker asnMarker;
-	                for (int i = 0; i < quotas.size(); i+=3) {
-	                	asnMarker = new AssignmentMarker();
-	            		double quotaValue = Double.parseDouble(quotas.get(i+1).toString());
-                   		asnMarker.setContext(a.getContext());
-                 		asnMarker.setDateCreated(Instant.now());
-                    	asnMarker.setMarkerUserId(quotas.get(i));
-                    	asnMarker.setQuotaPercentage(quotaValue);
-                 	   	asnMarker.setAssignment(a);
-                 	   	//add reassigned marker set here
-                 	   	
-                 	    markers.add(asnMarker);
-                   	}
-            	}
                 
+                if (a.getMarkers().size() < 1) {
+                	markers = new HashSet<AssignmentMarker>();
+	                if (quotas.size() > 1) {
+	                	AssignmentMarker asnMarker;
+		                for (int i = 0; i < quotas.size(); i+=3) {
+		                	asnMarker = new AssignmentMarker();
+		            		double quotaValue = Double.parseDouble(quotas.get(i+1).toString());
+	                   		asnMarker.setContext(a.getContext());
+	                 		asnMarker.setDateCreated(Instant.now());
+	                    	asnMarker.setMarkerUserId(quotas.get(i));
+	                    	asnMarker.setQuotaPercentage(quotaValue);
+	                 	   	asnMarker.setAssignment(a);
+	                 	   	//add reassigned marker set here
+	                 	   	
+	                 	    markers.add(asnMarker);
+	                   	}
+	            	}
+                } else {
+                	markers = assignmentService.getMarkers(a);
+                	int i = 1;
+                	for (AssignmentMarker am : markers) {
+                		double quotaValue = Double.parseDouble(quotas.get(i).toString());
+                		am.setQuotaPercentage(quotaValue);
+                		i += 3;
+                		log.warn(am.getQuotaPercentage().toString());
+                	}
+                }
+	                
                 // persist the Assignment changes
                 commitAssignment(state, post, a, assignmentReference, title, submissionType, useReviewService, allowStudentViewReport,
                         gradeType, gradePoints, description, checkAddHonorPledge, attachments, section, range,
@@ -9078,7 +9094,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 // put the names and values into vm file
                 state.setAttribute(NEW_ASSIGNMENT_TITLE, a.getTitle());
                 state.setAttribute(NEW_ASSIGNMENT_ORDER, a.getPosition());
-                
+
                 state.setAttribute(ASSIGNMENT_QUOTA_VALUES, quotas);
                 
                 if (serverConfigurationService.getBoolean("assignment.visible.date.enabled", false)) {

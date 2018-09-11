@@ -8690,8 +8690,8 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 		} catch (IdUnusedException e) {
 			log.debug("Error removing user to group: {}, {}", groupRef, e.getMessage(), e);
 		}
-	}
-	
+	}	
+
 	/**
  	* SAK 23029 -  iterate through changed partiants to see how many would have maintain role if all roles, status and deletion changes went through
  	*
@@ -8794,9 +8794,10 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 				}
 
 				
+
 				//NAM-43
 				//Something similar to the above, check each user against the marker table, if any are present with marking assigned dispute the change.
-				log.error("########### - "+participants.toString());		
+					
 				if (ServerConfigurationService.getBoolean("assignment.useMarker ", true)) 
 			     {
 			    	AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
@@ -8831,8 +8832,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 					if (markersWithMarking.size() > 0)
 			    	 {
 			    		 log.error("Could not remove user from realm due to marking assignment");
-			    		 addAlert(state, rb.getFormattedMessage("useact.markercouldnot"));		    		 
-			    		 
+			    		 addAlert(state, rb.getFormattedMessage("useact.markercouldnot"));
 			    	 }
 			     }
 				// SAK23029 - proposed changes do not leave site w/o maintainers; proceed with any allowed updates

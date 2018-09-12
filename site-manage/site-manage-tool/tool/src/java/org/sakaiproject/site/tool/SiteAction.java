@@ -8765,7 +8765,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 		List<String> userUpdated = new Vector<String>();
 		// list of all removed user
 		List<String> usersDeleted = new Vector<String>();
-		// list of markers to prevent removal
+		// list of markers to prevent removal - empty set.
 		Set<String> markersWithMarking = new HashSet<>();
 		
 		if (authzGroupService.allowUpdate(realmId)
@@ -8794,9 +8794,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 				}
 
 				
-				//NAM-43
-				//Something similar to the above, check each user against the marker table, if any are present with marking assigned dispute the change.
-				log.error("########### - "+participants.toString());		
+				//NAM-43				
 				if (ServerConfigurationService.getBoolean("assignment.useMarker ", true)) 
 			     {
 			    	AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
@@ -8823,16 +8821,13 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 								deactivatedParticipants.add(activeGrantId);
 							}
 						}
-					}
-					log.error("TBR ---- " + removedParticipantIds.toString());
-					log.error("TBD ---- " + deactivatedParticipants.toString());
-					//NAM-43 We have the realm realmEdit, but need the assignment context.
-					markersWithMarking =  assignmentService.checkParticipantsForMarking(realmEdit, removedParticipantIds, deactivatedParticipants);
+					}								
+					markersWithMarking =  assignmentService.checkParticipantsForMarking(realmEdit.getId().toString(), removedParticipantIds, deactivatedParticipants);
 					log.error("Markers Set: " + markersWithMarking.toString());
 					if (markersWithMarking.size() > 0)
 			    	 {
 			    		 log.error("Could not remove user from realm due to marking assignment");
-			    		 addAlert(state, rb.getFormattedMessage("useact.markercouldnot"));		    		 
+			    		 addAlert(state, rb.getFormattedMessage("sitegen.siteinfolist.marker"));		    		 
 			    		 
 			    	 }
 			     }
@@ -8853,6 +8848,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 					id = participant.getUniqname();
 
 					//NAM-43 add check here to remove users in markerList from the participants being changed.
+					//This check prevents the marker from being inactivated.
 					if(markersWithMarking.contains(id))
 					{
 						 log.error("Prevented removal of Marker with ID "+id);	
@@ -8941,6 +8937,13 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 					state.setAttribute(STATE_SELECTED_USER_LIST, removals);
 					for (int i = 0; i < removals.size(); i++) {
 						String rId = (String) removals.get(i);
+						//NAM-43 add check here to remove users in markerList from the participants being changed.
+						//This check prevents the current ID pulled from participants being processed if it matches a marker in the site with marking.
+						if(markersWithMarking.contains(rId))
+						{
+							 log.error("Prevented removal of Marker with ID "+rId);	
+						}
+						else	
 						try {
 							User user = UserDirectoryService.getUser(rId);
 							 // save role for permission check

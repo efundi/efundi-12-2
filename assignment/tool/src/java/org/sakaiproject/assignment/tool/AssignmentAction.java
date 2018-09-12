@@ -7689,11 +7689,10 @@ public class AssignmentAction extends PagedResourceActionII {
                     aProperties.put(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE, (String) state.getAttribute(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE));
                 }
 
-                Set<AssignmentMarker> markers;
+                Set<AssignmentMarker> markers = assignmentService.getMarkers(a);
                 List<String> quotas = (List<String>) state.getAttribute(ASSIGNMENT_QUOTA_VALUES);
                 
-                if (a.getMarkers().size() < 1) {
-                	markers = new HashSet<AssignmentMarker>();
+                if (markers.isEmpty()) {
 	                if (quotas.size() > 1) {
 	                	AssignmentMarker asnMarker;
 		                for (int i = 0; i < quotas.size(); i+=3) {
@@ -7710,13 +7709,15 @@ public class AssignmentAction extends PagedResourceActionII {
 	                   	}
 	            	}
                 } else {
-                	markers = assignmentService.getMarkers(a);
-                	int i = 1;
                 	for (AssignmentMarker am : markers) {
-                		double quotaValue = Double.parseDouble(quotas.get(i).toString());
-                		am.setQuotaPercentage(quotaValue);
-                		i += 3;
-                		log.warn(am.getQuotaPercentage().toString());
+                		String [] quotaArray = quotas.toArray(new String[0]);
+                		for (int i = 0; i < quotaArray.length; i+=3) {
+                			if (quotaArray[i].replaceAll(" ", "").equals(am.getMarkerUserId())) {
+                				double quotaValue = Double.parseDouble(quotaArray[(i+1)]);
+                				am.setQuotaPercentage(quotaValue);
+                				am.setDateModified(Instant.now());
+                			}
+                		}
                 	}
                 }
 	                
@@ -8680,7 +8681,7 @@ public class AssignmentAction extends PagedResourceActionII {
             }
 
             
-            // only uploads the first marker in the Set
+            // uploads the markers in the Set
             a.setMarkers(markers);
             // commit the changes
             assignmentService.updateAssignment(a);

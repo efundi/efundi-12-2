@@ -8849,11 +8849,12 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 
 					//NAM-43 add check here to remove users in markerList from the participants being changed.
 					//This check prevents the marker from being inactivated.
-					if(markersWithMarking.contains(id))
+					if((s.getToolForCommonId("sakai.assignment.grades")!=null)&&(markersWithMarking.contains(id)))
 					{
-						 log.error("Prevented removal of Marker with ID "+id);	
+						//We do nothing here as we have already created an Alert and this just stops the processing for this user.	
 					}
-					else					
+					else
+					{
 					if (id != null) {
 						// get the newly assigned role
 						String inputRoleField = "role" + id;
@@ -8928,6 +8929,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 
 						}
 					}
+					}
 				}
 
 				 // remove selected users
@@ -8939,11 +8941,12 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 						String rId = (String) removals.get(i);
 						//NAM-43 add check here to remove users in markerList from the participants being changed.
 						//This check prevents the current ID pulled from participants being processed if it matches a marker in the site with marking.
-						if(markersWithMarking.contains(rId))
+						if((s.getToolForCommonId("sakai.assignment.grades")!=null)&&(markersWithMarking.contains(rId)))
 						{
-							 log.error("Prevented removal of Marker with ID "+rId);	
+							//We do nothing here as we have already created an Alert and this just stops the processing for this user.
 						}
-						else	
+						else
+						{
 						try {
 							User user = UserDirectoryService.getUser(rId);
 							 // save role for permission check
@@ -8976,6 +8979,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 								}
 							}
 						}
+					}
 					}
 				}
 

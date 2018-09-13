@@ -8795,7 +8795,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 
 				
 				//NAM-43				
-				if (ServerConfigurationService.getBoolean("assignment.useMarker ", true)) 
+				if (ServerConfigurationService.getBoolean("assignment.useMarker", false)) 
 			     {
 			    	AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
 			    	

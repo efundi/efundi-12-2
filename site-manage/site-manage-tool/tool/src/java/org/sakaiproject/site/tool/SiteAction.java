@@ -63,6 +63,7 @@ import org.sakaiproject.alias.api.AliasService;
 import org.sakaiproject.api.privacy.PrivacyManager;
 import org.sakaiproject.archive.api.ImportMetadata;
 import org.sakaiproject.archive.cover.ArchiveService;
+import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.authz.api.AuthzGroup;
 import org.sakaiproject.authz.api.AuthzPermissionException;
 import org.sakaiproject.authz.api.GroupNotDefinedException;
@@ -8691,7 +8692,6 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 		}
 	}
 	
-
 	/**
  	* SAK 23029 -  iterate through changed partiants to see how many would have maintain role if all roles, status and deletion changes went through
  	*
@@ -8765,7 +8765,9 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 		List<String> userUpdated = new Vector<String>();
 		// list of all removed user
 		List<String> usersDeleted = new Vector<String>();
-	
+		// list of markers to prevent removal - empty set.
+		Set<String> markersWithMarking = new HashSet<>();
+		
 		if (authzGroupService.allowUpdate(realmId)
 						|| SiteService.allowUpdateSiteMembership(s.getId())) {
 			try {
@@ -8791,6 +8793,44 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 					return;
 				}
 
+				
+				//NAM-43				
+				if (ServerConfigurationService.getBoolean("assignment.useMarker", false)) 
+			     {
+			    	AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
+			    	
+					// create list of all partcipants that have been 'Charles Bronson-ed'
+					Set<String> removedParticipantIds = new HashSet();
+					Set<String> deactivatedParticipants = new HashSet();
+					if (params.getStrings("selectedUser") != null) {
+						List removals = new ArrayList(Arrays.asList(params.getStrings("selectedUser")));
+						for (int i = 0; i < removals.size(); i++) {
+							String rId = (String) removals.get(i);
+							removedParticipantIds.add(rId);
+						}
+					}
+
+					// create list of all participants that have been deactivated
+					for(Object statusParticipant : participants ) {
+						String activeGrantId = ((Participant)statusParticipant).getUniqname();
+						String activeGrantField = "activeGrant" + activeGrantId;
+					
+						if (params.getString(activeGrantField) != null) { 
+							boolean activeStatus = params.getString(activeGrantField).equalsIgnoreCase("true") ? true : false;
+							if (activeStatus == false) {
+								deactivatedParticipants.add(activeGrantId);
+							}
+						}
+					}								
+					markersWithMarking =  assignmentService.checkParticipantsForMarking(realmEdit.getId().toString(), removedParticipantIds, deactivatedParticipants);
+					log.error("Markers Set: " + markersWithMarking.toString());
+					if (markersWithMarking.size() > 0)
+			    	 {
+			    		 log.error("Could not remove user from realm due to marking assignment");
+			    		 addAlert(state, rb.getFormattedMessage("sitegen.siteinfolist.marker"));		    		 
+			    		 
+			    	 }
+			     }
 				// SAK23029 - proposed changes do not leave site w/o maintainers; proceed with any allowed updates
 			
 				// list of roles being added or removed
@@ -8807,6 +8847,14 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 					Participant participant = (Participant) participants.get(i);
 					id = participant.getUniqname();
 
+					//NAM-43 add check here to remove users in markerList from the participants being changed.
+					//This check prevents the marker from being inactivated.
+					if((s.getToolForCommonId("sakai.assignment.grades")!=null)&&(markersWithMarking.contains(id)))
+					{
+						//We do nothing here as we have already created an Alert and this just stops the processing for this user.	
+					}
+					else
+					{
 					if (id != null) {
 						// get the newly assigned role
 						String inputRoleField = "role" + id;
@@ -8881,6 +8929,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 
 						}
 					}
+					}
 				}
 
 				 // remove selected users
@@ -8890,6 +8939,14 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 					state.setAttribute(STATE_SELECTED_USER_LIST, removals);
 					for (int i = 0; i < removals.size(); i++) {
 						String rId = (String) removals.get(i);
+						//NAM-43 add check here to remove users in markerList from the participants being changed.
+						//This check prevents the current ID pulled from participants being processed if it matches a marker in the site with marking.
+						if((s.getToolForCommonId("sakai.assignment.grades")!=null)&&(markersWithMarking.contains(rId)))
+						{
+							//We do nothing here as we have already created an Alert and this just stops the processing for this user.
+						}
+						else
+						{
 						try {
 							User user = UserDirectoryService.getUser(rId);
 							 // save role for permission check
@@ -8922,6 +8979,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 								}
 							}
 						}
+					}
 					}
 				}
 

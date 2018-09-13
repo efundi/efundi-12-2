@@ -4099,4 +4099,27 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		}
 		return userIds;
 	} 
+	/*NAM-43*/		
+	public Set<String> checkParticipantsForMarking(String realmContext, Set<String> removedParticipantIds, Set<String> deactivatedParticipants)
+	{	
+		Set<String> blockedChanges = new HashSet<String>();;
+		try {		
+		Site site = siteService.getSite(realmContext.substring(6, realmContext.length()));
+		Set<String> markersForSite = getMarkersForSite(site.getId());
+				
+		for (String user : removedParticipantIds) {
+			if (markersForSite.contains(user))
+					blockedChanges.add(user); 
+		}
+		for (String user : deactivatedParticipants) {
+			if (markersForSite.contains(user))
+					blockedChanges.add(user); 
+		}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return blockedChanges;
+	}
 }

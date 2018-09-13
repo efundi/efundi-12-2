@@ -51,6 +51,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.sakaiproject.announcement.api.*;
 import org.sakaiproject.assignment.api.*;
 import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.model.Assignment.SubmissionType;
 import org.sakaiproject.assignment.api.model.*;
 import org.sakaiproject.assignment.api.taggable.AssignmentActivityProducer;
 import org.sakaiproject.assignment.taggable.tool.DecoratedTaggingProvider;
@@ -2396,9 +2397,11 @@ public class AssignmentAction extends PagedResourceActionII {
             if (a != null) {
                 context.put("assignmentId", assignmentId);
                 context.put("assignment", a);
-                Set<AssignmentMarker> am = assignmentService.getMarkers(a);
-                if (am != null) {
-                	context.put("assignmentMarkerSet", am);
+                if (a.getTypeOfSubmission() == SubmissionType.PDF_ONLY_SUBMISSION) {
+	                Set<AssignmentMarker> am = assignmentService.getMarkers(a);
+	                if (am != null) {
+	                	context.put("assignmentMarkerSet", am);
+	                }
                 }
                 if (a.getIsGroup()) {
                     Collection<String> _dupUsers = usersInMultipleGroups(a);

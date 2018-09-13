@@ -24,17 +24,16 @@
 			SetMaxPoint(document.getElementById('$name_GradeType'), document.getElementById('$name_GradePoints'));
 		}
 		ASN.saveErrors("$tlang.getString('quota.assignment.table.input.error')", "$tlang.getString('quota.assignment.table.input.error2')", "$tlang.getString('quota.assignment.table.input.error4')");
-		#if (${assignmentMarkerSet.size()} > 0)
+		ASN.toggleMarker("false");
+		#if ($assignmentMarkerSet.size() > 0)
 			ASN.toggleMarker("true");
 			#foreach ($am in $assignmentMarkerSet)
 				#set($markerId = $am.markerUserId)
 				#set($markerQuota = $am.quotaPercentage)
-				#set($reassignMarkerId = $am.get) ##still to be created
+				##set($reassignMarkerId = $am.get) ##still to be created
 				ASN.setQuotaValues("$markerId", "$markerQuota", "Test Value");
 				##ASN.setQuotaValues("$quota_values_list");
 			#end
-		#else
-			ASN.toggleMarker("false");
 		#end
 	});
 

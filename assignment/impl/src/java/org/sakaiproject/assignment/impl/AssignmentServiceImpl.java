@@ -70,6 +70,7 @@ import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.assignment.api.AssignmentServiceConstants;
 import org.sakaiproject.assignment.api.ContentReviewResult;
 import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.model.Assignment.GradeType;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItem;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItemAccess;
 import org.sakaiproject.assignment.api.model.AssignmentModelAnswerItem;
@@ -609,7 +610,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
      * Check if user has marker role
      */
     @Override
-    public boolean allowMarkerAssignment(String context) {
+    public boolean allowUserMarkerDownloadAndStats(String context) {
         String resourceString = AssignmentReferenceReckoner.reckoner().context(context).reckon().getReference();
         if (permissionCheck(SECURE_ASSIGNMENT_MARKER, resourceString, null)) return true;
         // if not, see if the user has any groups to which adds are allowed
@@ -1436,6 +1437,16 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     public Set<AssignmentSubmission> getSubmissions(Assignment assignment) {
         assignmentRepository.initializeAssignment(assignment);
         return assignment.getSubmissions();
+    }
+    
+    /**
+     * NAM-36
+     * Method Implementation
+     */
+    @Override
+    public Set<AssignmentMarker> getMarkers(Assignment assignment) {
+    	assignmentRepository.initializeAssignment(assignment);
+    	return assignment.getMarkers();
     }
 
     @Override

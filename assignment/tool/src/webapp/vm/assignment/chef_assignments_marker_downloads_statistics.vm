@@ -1,4 +1,6 @@
+<script type="text/javascript">includeLatestJQuery('assignments');</script>
 <script>
+	var escapeList = [ 'toggleModel' ];
 	$(document).ready(function() {
 		$(document).on("click", ".glyphicon", function() {
 			$eventSource = $(this);
@@ -30,52 +32,70 @@
 		<div class="panel-default">
 			#set( $assignmentCount = 0 )
 			#foreach( $assignment in $assignments)
+				#set($markers = $!service.getMarkers($assignment))
 				#set ($assignmentReference = $!service.assignmentReference($assignment.Id))
 				#set($assignmentProperties=$!assignment.getProperties())
-				<div class="assignments" #if( $assignmentCount < ($NumberOfFoundAssignments - 1) ) style="margin-bottom: 5px" #end>	
-					<div class="panel-heading" style="background: #fafafa; padding-left: 5px;">
-						$tlang.getString("gen.asstit"):
-						<h4 style="margin-top: 0px; margin-bottom: 0px; display: inline-block">
-							$validator.escapeHtml($!assignment.Title)
-						</h4>
-						<span class="icon-container" style="display: block; float: right; font-size: 25px; cursor: pointer">
-							<span #if( $assignmentCount == 0 ) class="glyphicon glyphicon-chevron-up" #else class="glyphicon glyphicon-chevron-down" #end></span>
-						</span>
+				
+				## Only show other assignments if we have marker list > 0NumberOfFoundAssignments
+				
+				#if($markers.size() > 0)
+					<div class="assignments" #if( $assignmentCount 	lt ($NumberOfFoundAssignments - 1) ) style="margin-bottom: 5px" #end>
+						<form name="viewForm$assignmentCount" id="viewForm$assignmentCount" class="inlineForm" method="post" action="#toolForm("AssignmentAction")">
+							<input type="hidden" name="assignmentId" id = "assignmentId" value=$validator.escapeUrl($!assignmentReference) />
+							<input type="hidden" name="option" id="option" value="x" />
+							<input type="hidden" name="eventSubmit_doView_submission_list_option" value="x" />
+							<input type="hidden" name="search" value="" />
+							<input type="hidden" name="sakai_csrf_token" value="$sakai_csrf_token" />
+							
+							<div class="panel-heading" style="background: #fafafa; padding-left: 5px;">
+								$tlang.getString("gen.asstit"):
+								<h4 style="margin-top: 0px; margin-bottom: 0px; display: inline-block">
+									$validator.escapeHtml($!assignment.Title)
+								</h4>
+								<span class="icon-container" style="display: block; float: right; font-size: 25px; cursor: pointer">
+									<span #if( $assignmentCount == 0 ) class="glyphicon glyphicon-chevron-up" #else class="glyphicon glyphicon-chevron-down" #end></span>
+								</span>
+							</div>
+							<div class="panel-body"  #if( $assignmentCount == 0 ) style="display: block" #else style="display: none" #end>
+								<table class="table table-striped table-bordered">
+									<thead>
+										<tr style="background: #FAFAFA; font-weight: inherit">
+											<th>Name of Marker</th>
+											<th>Role</th>
+											<th>Download</th>
+											<th>Upload</th>
+											<th>Download All</th>
+											<th>In/Out/Total</th>
+										</tr>	
+									</thead>
+									<tbody>
+										## Set static markers
+										#set($counter = 0)
+										#set( $stats = ["2/20/25", "50/70/200", "3/10/100"] )
+										#foreach( $marker in $markers )
+											## Get the user object for displaying marker full name 
+											#set($markerUser = $userDirectoryService.getUser($!marker.markerUserId))
+											## Get the role object for displaying marker role
+											#set($markerUserRole = $realm.getUserRole($!marker.markerUserId))
+											#if(($!currentUserId.equals($markerUser.DisplayId)) || ($!currentUserRole.equals("maintain")))
+												<tr #if( $counter % 2 == 0) style="background: #fff" #else style="background: #f9f9f9" #end>
+													<td>$markerUser.DisplayName</td>
+													<td>$markerUserRole.Id.substring(0,1).toUpperCase()$markerUserRole.Id.substring(1)</td>
+													<td><a href="#">Download</a></td>
+													<td><a href="" id="uploadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'upload', null, null ); return false;" title="$!tlang.getString('uploadall.title')">$!tlang.getString('uploadall.title')</a></td>
+													<td><a href="" id="downloadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'download', null, null ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downall')</a></td>
+													<td>$stats.get($counter)</td>
+												</tr>
+											#end
+											#set( $counter = $counter + 1 )
+										#end
+									</tbody>	
+								</table>
+							</div>
+						</form>
 					</div>
-					<div class="panel-body"  #if( $assignmentCount == 0 ) style="display: block" #else style="display: none" #end>
-						<table class="table table-striped table-bordered">
-							<thead>
-								<tr style="background: #FAFAFA; font-weight: inherit">
-									<th>Name of Marker</th>
-									<th>Role</th>
-									<th>Download</th>
-									<th>Upload</th>
-									<th>Download All</th>
-									<th>In/Out/Total</th>
-								</tr>	
-							</thead>
-							<tbody>
-								## Set static markers
-								#set($counter = 0)
-								#set( $markers = ["Jansen van Vuuren, CJ (12345678)", "Knoetze, A (11111111)", "JSeemonster, S (22222222)"] )
-								#set( $roles = ["Instructor", "Teaching Assistant", "Marker"] )
-								#set( $stats = ["2/20/25", "50/70/200", "3/10/100"] )
-								#foreach( $marker in $markers )
-									<tr #if( $counter % 2 == 0) style="background: #fff" #else style="background: #f9f9f9" #end>
-										<td>$!marker</td>
-										<td>$roles.get($counter)</td>
-										<td><a href="#">Download</a></td>
-										<td><a href="#">Upload</a></td>
-										<td><a href="#">Download All</a></td>
-										<td>$stats.get($counter)</td>
-									</tr>
-									#set( $counter = $counter + 1 )
-								#end
-							</tbody>	
-						</table>
-					</div>
-				</div>
-				#set( $assignmentCount  = $assignmentCount + 1 )
+					#set( $assignmentCount  = $assignmentCount + 1 )
+				#end
 			#end
 		</div>
 	#end

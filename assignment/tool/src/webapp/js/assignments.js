@@ -945,8 +945,10 @@ ASN.submitForm = function( formID, option, submissionID, view, focusId )
         }
 
         // Do the submit() if the form has one
+        console.log("about to submit");
         if( form && form.submit )
         {
+        	console.log("submitting");
             form.submit();
         }
     }

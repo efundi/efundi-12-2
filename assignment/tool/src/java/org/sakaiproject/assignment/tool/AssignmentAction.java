@@ -2396,7 +2396,7 @@ public class AssignmentAction extends PagedResourceActionII {
             if (a != null) {
                 context.put("assignmentId", assignmentId);
                 context.put("assignment", a);
-                Set<AssignmentMarker> am = a.getMarkers();
+                Set<AssignmentMarker> am = assignmentService.getMarkers(a);
                 if (am != null) {
                 	context.put("assignmentMarkerSet", am);
                 }

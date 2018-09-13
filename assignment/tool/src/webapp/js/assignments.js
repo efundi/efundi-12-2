@@ -97,20 +97,20 @@ ASN.toggleMarker = function(value) {
 }
 
 //TODO: change code when assignment marker object is sent through
-ASN.setQuotaValues = function(quota_values_list) {
-//ASN.setQuotaValues = function(markerId, markerQuota, reassignMarker) {
-	var array = quota_values_list.replace("[","").replace("]","").replace(" ", "").split(",").map(el => el.trim());
-	if (array.length > 1) {
-		ASN.toggleMarker("true");
+//ASN.setQuotaValues = function(quota_values_list) {
+ASN.setQuotaValues = function(markerId, markerQuota, reassignMarker) {
+	//var array = quota_values_list.replace("[","").replace("]","").replace(" ", "").split(",").map(el => el.trim());
+	//if (array.length > 1) {
+		//ASN.toggleMarker("true");
 		var table = document.getElementById('quotaAssignmentTable');
-		//var quotaAssigned = false;
+		var quotaAssigned = false;
 	    for (var r = 1, n = table.rows.length; r < n; r++) {
 	    	var a = table.rows[r];
 	    	var labelId = a.getElementsByTagName("label")[1].id;
-	    	var id = array.indexOf(labelId);
-	        a.getElementsByTagName("input")[0].value = Number(array[(id+1)]);
+	    	//var id = array.indexOf(labelId);
+	        //a.getElementsByTagName("input")[0].value = Number(array[(id+1)]);
 
-	        /*
+	        
 	    	if (labelId == markerId) {
 	    	var quota = a.getElementsByTagName("input")[0].value;
 		        if (quota != null) {
@@ -129,16 +129,13 @@ ASN.setQuotaValues = function(quota_values_list) {
 			        }
 		    	}
 	    	}
-		    */
-	    }
-	    /*
+	    }  
 	    if (!quotaAssigned) {
 	    	ASN.setQuotaValues(reassignMarker, markerQuota, "");
 	    }
-	    */
-	} else {
-		ASN.toggleMarker("false");
-	}
+	//} else {
+		//ASN.toggleMarker("false");
+	//}
 }
 
 ASN.enableMarkingTool = function(value_totalMarkers) {

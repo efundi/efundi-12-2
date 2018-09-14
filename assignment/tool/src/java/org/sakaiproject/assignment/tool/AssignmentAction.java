@@ -4173,7 +4173,7 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("download_url_link_label", rb.getString("download_url_link_label"));
             state.removeAttribute(STATE_DOWNLOAD_URL);
         }
-
+        
         String template = (String) getContext(data).get("template");
 
         return template + TEMPLATE_INSTRUCTOR_GRADE_ASSIGNMENT;
@@ -4864,6 +4864,14 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("searchString", state.getAttribute(VIEW_SUBMISSION_SEARCH) != null ? state.getAttribute(VIEW_SUBMISSION_SEARCH) : "");
 
             context.put("showSubmissionByFilterSearchOnly", state.getAttribute(SUBMISSIONS_SEARCH_ONLY) != null && ((Boolean) state.getAttribute(SUBMISSIONS_SEARCH_ONLY)) ? Boolean.TRUE : Boolean.FALSE);
+            
+            // NAM-36
+	        if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS) && (((String) state.getAttribute("user_action")) != null) && ((String) state.getAttribute("user_action")).equals("download")) {
+	        	state.removeAttribute("user_action");
+	        	context.put("selectAll", Boolean.valueOf(true));
+	        } else {
+	        	context.put("selectAll", Boolean.valueOf(false));
+	        }
         }
 
         String template = getContext(data).get("template");
@@ -12922,7 +12930,14 @@ public class AssignmentAction extends PagedResourceActionII {
 
     public void doDownload_all(RunData data) {
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
-        state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_GRADE_ASSIGNMENT);
+        
+        // NAM-36
+        if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS)) {
+        	state.setAttribute(STATE_MODE, (String) state.getAttribute(STATE_CANCEL_MODE));
+        } else {
+        	state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_GRADE_ASSIGNMENT);
+        }
+        
         ParameterParser params = data.getParameters();
         String downloadUrl = params.getString("downloadUrl");
         state.setAttribute(STATE_DOWNLOAD_URL, downloadUrl);
@@ -13052,7 +13067,13 @@ public class AssignmentAction extends PagedResourceActionII {
         if (state.getAttribute(STATE_MESSAGE) == null) {
             // go back to the list of submissions view
             cleanUploadAllContext(state);
-            state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_GRADE_ASSIGNMENT);
+            
+            // NAM-36
+            if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS)) {
+            	state.setAttribute(STATE_MODE, (String) state.getAttribute(STATE_CANCEL_MODE));
+            } else {
+            	state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_GRADE_ASSIGNMENT);
+            }
         }
     }
 
@@ -13683,6 +13704,7 @@ public class AssignmentAction extends PagedResourceActionII {
     public void doCancel_download_upload_all(RunData data) {
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
         
+        // NAM-36
         if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS)) {
         	state.setAttribute(STATE_MODE, (String) state.getAttribute(STATE_CANCEL_MODE));
         } else {
@@ -13723,6 +13745,7 @@ public class AssignmentAction extends PagedResourceActionII {
 	        String assignmentReference = params.getString("assignmentId");
 	        state.setAttribute(EXPORT_ASSIGNMENT_REF, assignmentReference);
 	        state.setAttribute(STATE_CANCEL_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
+	        state.setAttribute("user_action", "download");
         } else {
         	state.setAttribute(STATE_CANCEL_MODE, VIEW_SUBMISSION_LIST_OPTION);
         }

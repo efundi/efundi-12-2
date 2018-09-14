@@ -8797,33 +8797,10 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 				//NAM-43				
 				if (ServerConfigurationService.getBoolean("assignment.useMarker", false)) 
 			     {
-			    	AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
-			    	
-					// create list of all partcipants that have been 'Charles Bronson-ed'
-					Set<String> removedParticipantIds = new HashSet();
-					Set<String> deactivatedParticipants = new HashSet();
-					if (params.getStrings("selectedUser") != null) {
-						List removals = new ArrayList(Arrays.asList(params.getStrings("selectedUser")));
-						for (int i = 0; i < removals.size(); i++) {
-							String rId = (String) removals.get(i);
-							removedParticipantIds.add(rId);
-						}
-					}
-
-					// create list of all participants that have been deactivated
-					for(Object statusParticipant : participants ) {
-						String activeGrantId = ((Participant)statusParticipant).getUniqname();
-						String activeGrantField = "activeGrant" + activeGrantId;
+					AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
+					Set<String> markersBeingAffected = testMarkersBeingChanged(participants, params, maintainRoleString);
+					markersWithMarking =  assignmentService.checkParticipantsForMarking(realmEdit.getId().toString(), markersBeingAffected);
 					
-						if (params.getString(activeGrantField) != null) { 
-							boolean activeStatus = params.getString(activeGrantField).equalsIgnoreCase("true") ? true : false;
-							if (activeStatus == false) {
-								deactivatedParticipants.add(activeGrantId);
-							}
-						}
-					}								
-					markersWithMarking =  assignmentService.checkParticipantsForMarking(realmEdit.getId().toString(), removedParticipantIds, deactivatedParticipants);
-					log.error("Markers Set: " + markersWithMarking.toString());
 					if (markersWithMarking.size() > 0)
 			    	 {
 			    		 log.error("Could not remove user from realm due to marking assignment");
@@ -9043,6 +9020,56 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 		}
 
 	} // doUpdate_participant
+	
+	//NAM-43
+	private Set<String> testMarkersBeingChanged(List<Participant> participants, ParameterParser params, String maintainRoleString)
+	{		
+		// create list of all partcipants that have been 'Charles Bronson-ed'
+		Set<String> removedParticipantIds = new HashSet();
+		Set<String> deactivatedParticipants = new HashSet();
+		Set<String> markerRoledParticipants = new HashSet();
+		if (params.getStrings("selectedUser") != null) {
+			List removals = new ArrayList(Arrays.asList(params.getStrings("selectedUser")));
+			for (int i = 0; i < removals.size(); i++) {
+				String rId = (String) removals.get(i);
+				removedParticipantIds.add(rId);
+			}
+		}
+		// create list of all participants that have been deactivated
+		for(Object statusParticipant : participants ) {
+			String activeGrantId = ((Participant)statusParticipant).getUniqname();
+			String activeGrantField = "activeGrant" + activeGrantId;
+		
+			if (params.getString(activeGrantField) != null) { 
+				boolean activeStatus = params.getString(activeGrantField).equalsIgnoreCase("true") ? true : false;
+				if (activeStatus == false) {
+					deactivatedParticipants.add(activeGrantId);
+				}
+			}
+		}
+		// create list of all participants that have role changes
+		for(Object roleParticipant : participants ) {
+			String id = ((Participant)roleParticipant).getUniqname();
+			String roleId = "role" + id;
+			String newRole = params.getString(roleId);			 
+			if ((deactivatedParticipants.contains(id)==false) && ((Participant)roleParticipant).isActive() != false) { // skip any that are not already inactive or are not  candidates for deactivation
+				 if (removedParticipantIds.contains(id) == false) {
+					if (newRole != null){
+						if (!newRole.equals(maintainRoleString)) {
+							markerRoledParticipants.add(roleId+":"+id); // we need the roleID and the userID in the set.
+						}								
+					}
+				}
+			}	
+		}
+		
+		Set<String> markersAffected = new HashSet();
+		markersAffected.addAll(removedParticipantIds);
+		markersAffected.addAll(deactivatedParticipants);
+		markersAffected.addAll(markerRoledParticipants);
+		
+		return markersAffected;
+	}
 
 	/**
 	 * update realted group realm setting according to parent site realm changes

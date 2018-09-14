@@ -4100,21 +4100,37 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		return userIds;
 	} 
 	/*NAM-43*/		
-	public Set<String> checkParticipantsForMarking(String realmContext, Set<String> removedParticipantIds, Set<String> deactivatedParticipants)
+	public Set<String> checkParticipantsForMarking(String realmContext, Set<String> markersBeingAffected)
 	{	
 		Set<String> blockedChanges = new HashSet<String>();;
-		try {		
-		Site site = siteService.getSite(realmContext.substring(6, realmContext.length()));
-		Set<String> markersForSite = getMarkersForSite(site.getId());
-				
-		for (String user : removedParticipantIds) {
-			if (markersForSite.contains(user))
-					blockedChanges.add(user); 
-		}
-		for (String user : deactivatedParticipants) {
-			if (markersForSite.contains(user))
-					blockedChanges.add(user); 
-		}
+		try {
+			String site = realmContext.substring(6);
+		AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(site));
+        Set<String> allowedMakers = getMarkersForSite(site); // gets markers with marking for this site.
+        Set<String> allowedMakerRoles = realm.getRolesIsAllowed(SECURE_ASSIGNMENT_MARKER); //gets all roles with permission
+
+        for (String user : markersBeingAffected) {
+			if ((user.contains(":"))) //checks if this is a role change user
+					{
+						String role = user.substring(0, user.indexOf(":"));
+						String userID = user.substring(user.indexOf(":")+1); //gets newRole and userID for checking
+						if (!allowedMakerRoles.contains(role))
+						{
+							if (allowedMakers.contains(userID))
+							{								
+								blockedChanges.add(userID);
+							}							
+						}
+					}
+			else
+			{ //no role change, just check against marker list
+			if (allowedMakers.contains(user))
+				{
+					log.error("NoRole: " + user);
+					blockedChanges.add(user);
+				}
+			}
+		}		
 		}
 		catch(Exception e)
 		{

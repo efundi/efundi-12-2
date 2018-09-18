@@ -740,7 +740,15 @@ public interface AssignmentService extends EntityProducer {
 
     public List<ContentReviewResult> getContentReviewResults(AssignmentSubmission submission);
     
+
     public Set<AssignmentMarker> getAssignmentMarkersForSite(String siteId);    
 
-	public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment);
+	  public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment);
+
+    public Boolean hasMarkingAssigned(String contextString, String role);
+    
+  //  public Boolean hasMarkingAssignedSingleUser(String contextString, String userID);
+    
+    public Set<String> checkParticipantsForMarking(String realmContext, Set<String> markersBeingAffected);
+
 }

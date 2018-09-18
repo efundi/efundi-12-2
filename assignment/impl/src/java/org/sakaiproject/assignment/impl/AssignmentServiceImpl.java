@@ -73,12 +73,14 @@ import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItem;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItemAccess;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentModelAnswerItem;
 import org.sakaiproject.assignment.api.model.AssignmentNoteItem;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemAttachment;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemService;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.impl.sort.AnonymousSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.AssignmentSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.UserComparator;
@@ -207,6 +209,8 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     @Setter private ToolManager toolManager;
     @Setter private UserDirectoryService userDirectoryService;
     @Setter private UserTimeService userTimeService;
+    
+    @Setter private AssignmentMarker assignmentMarker;
 
     private boolean allowSubmitByInstructor;
 
@@ -4114,5 +4118,76 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 			}	
 		}        
         return siteAssignmentMarkers;
+
+    //NAM-23
+	public Boolean hasMarkingAssigned(String contextString, String role) {
+
+		try {
+			Site site = siteService.getSite(contextString);
+			Set<String> siteMarkers = getMarkersForSite(contextString);
+			Set<String> siteUsersHasRole = site.getUsersHasRole(role);		
+			for (String user : siteMarkers) {
+				if (siteUsersHasRole.contains(user)) {
+					return true;
+				}
+			}
+		} catch (IdUnusedException e) {
+			log.error("Error encountered in hasMarkingAssigned Check - Error: " + e);
+		}
+		return false;
+	}
+
+	private Set<String> getMarkersForSite(String contextString) {
+
+		Collection<Assignment> asnCollection = getAssignmentsForContext(contextString);
+		Set<String> userIds = new HashSet<String>();
+		for (Assignment assignmentObj : asnCollection) {
+
+			Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();			
+			for (AssignmentMarker asnMarker : asnMrks) {
+				String id = asnMarker.getMarkerUserId();
+				userIds.add(id);
+			}
+		}
+		return userIds;
+	} 
+	/*NAM-43*/		
+	public Set<String> checkParticipantsForMarking(String realmContext, Set<String> markersBeingAffected)
+	{	
+		Set<String> blockedChanges = new HashSet<String>();;
+		try {
+			String site = realmContext.substring(6);
+		AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(site));
+        Set<String> allowedMakers = getMarkersForSite(site); // gets markers with marking for this site.
+        Set<String> allowedMakerRoles = realm.getRolesIsAllowed(SECURE_ASSIGNMENT_MARKER); //gets all roles with permission
+
+        for (String user : markersBeingAffected) {
+			if ((user.contains(":"))) //checks if this is a role change user
+					{
+						String role = user.substring(0, user.indexOf(":"));
+						String userID = user.substring(user.indexOf(":")+1); //gets newRole and userID for checking
+						if (!allowedMakerRoles.contains(role))
+						{
+							if (allowedMakers.contains(userID))
+							{								
+								blockedChanges.add(userID);
+							}							
+						}
+					}
+			else
+			{ //no role change, just check against marker list
+			if (allowedMakers.contains(user))
+				{
+					log.error("NoRole: " + user);
+					blockedChanges.add(user);
+				}
+			}
+		}		
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return blockedChanges;
 	}
 }

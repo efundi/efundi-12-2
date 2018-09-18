@@ -16,6 +16,7 @@
 package org.sakaiproject.assignment.impl.persistence;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +26,10 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
+import org.sakaiproject.assignment.api.model.AssignmentMarkerHistory;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.assignment.api.persistence.AssignmentRepository;
@@ -70,8 +74,10 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
 
     @Override
     @Transactional
-    public void newAssignment(Assignment assignment) {
-        if (!existsAssignment(assignment.getId())) {
+    public void newAssignment(Assignment assignment) 
+    {
+        if (!existsAssignment(assignment.getId())) 
+        {
             assignment.setDateCreated(Instant.now());
             sessionFactory.getCurrentSession().persist(assignment);
         }
@@ -206,4 +212,33 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
             sessionFactory.getCache().evictEntity(Assignment.class, assignment.getId());
         }
     }
+    
+    
+    /**
+     * NAM-35 
+     *
+     * Transactional method for logging assignmentMarkerHistory.
+     * Create new object of AssignmentMarkerHistory
+     * Assign variables
+     * Use sessionFactory.getCurrentSession().persist(obj);
+     */
+    
+    @Override
+    @Transactional
+    public void logMarkerChanges(Assignment assignment, AssignmentMarker oldAssignmentMarker, AssignmentMarker newAssignmentMarker,  String context
+    		, double oldQuota, double newQuota, String modifier)
+    {
+ 	   	   	AssignmentMarkerHistory asnMH = new AssignmentMarkerHistory();
+    	
+ 	   	asnMH.setAssignment(assignment);
+ 	   	asnMH.setContext(context);
+ 	   	asnMH.setOldAssignmentMarker(oldAssignmentMarker);
+ 	   	asnMH.setNewAssignmentMarker(newAssignmentMarker);
+ 	   	asnMH.setOldQuotaPercentage(oldQuota);
+ 	   	asnMH.setNewQuotaPercentage(newQuota);
+ 	   	asnMH.setModifier(modifier); 	   
+        
+        sessionFactory.getCurrentSession().persist(asnMH);
+    }
+    
 }

@@ -90,7 +90,7 @@ import org.hibernate.annotations.Type;
 @Table(name = "ASN_ASSIGNMENT")
 @Data
 @NoArgsConstructor
-@ToString(exclude = {"authors", "submissions", "groups", "properties", "attachments"})
+@ToString(exclude = {"authors", "submissions", "groups", "properties", "attachments", "markers"})
 @EqualsAndHashCode(of = "id")
 public class Assignment {
 

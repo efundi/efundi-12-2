@@ -495,6 +495,7 @@ public class AssignmentAction extends PagedResourceActionII {
     private static final String NEW_ASSIGNMENT_ATTACHMENT = "new_assignment_attachment";
     private static final String NEW_ASSIGNMENT_SECTION = "new_assignment_section";
     private static final String NEW_ASSIGNMENT_SUBMISSION_TYPE = "new_assignment_submission_type";
+    private static final String NEW_ASSIGNMENT_MARKERS = "new_assignment_markers";
     private static final String NEW_ASSIGNMENT_CATEGORY = "new_assignment_category";
     private static final String NEW_ASSIGNMENT_GRADE_TYPE = "new_assignment_grade_type";
     private static final String NEW_ASSIGNMENT_GRADE_POINTS = "new_assignment_grade_points";
@@ -541,8 +542,7 @@ public class AssignmentAction extends PagedResourceActionII {
      * The list view of assignments
      */
     private static final String MODE_LIST_ASSIGNMENTS = "lisofass1"; // set in velocity template
-    /*************************** assignment quota values *******************/
-    private static final String ASSIGNMENT_QUOTA_VALUES = "quota_values";
+
     /** **************************** modes *************************** */
     /**
      * The student view of an assignment submission
@@ -913,10 +913,6 @@ public class AssignmentAction extends PagedResourceActionII {
     private String prevWithSubmissionRef = "";
     private String nextUngradedWithSubmissionRef = "";
     private String prevUngradedWithSubmissionRef = "";
-
-    /******** NAM-29 *********/
-    private int markerTableSize;
-    
     private AnnouncementService announcementService;
     private AssignmentActivityProducer assignmentActivityProducer;
     private AssignmentPeerAssessmentService assignmentPeerAssessmentService;
@@ -2386,8 +2382,6 @@ public class AssignmentAction extends PagedResourceActionII {
             log.debug("Failed to find if anonymous grading is forced.");
         }
         context.put("forceAnonGrading", forceAnonGrading);
-
-        //NAM-32 Check Here
         
         // is the assignment an new assignment
         String assignmentId = (String) state.getAttribute(EDIT_ASSIGNMENT_ID);
@@ -2488,10 +2482,6 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("name_OpenDateNotification", AssignmentConstants.ASSIGNMENT_OPENDATE_NOTIFICATION);
         }
         context.put("name_CheckAddHonorPledge", NEW_ASSIGNMENT_CHECK_ADD_HONOR_PLEDGE);
-        
-        //NAM-29
-        context.put("tool_MarkerList", getSiteMarkers(state));
-
         // SAK-17606
         context.put("name_CheckAnonymousGrading", NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING);
 
@@ -2517,8 +2507,6 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("value_year_from", state.getAttribute(NEW_ASSIGNMENT_YEAR_RANGE_FROM));
         context.put("value_year_to", state.getAttribute(NEW_ASSIGNMENT_YEAR_RANGE_TO));
         context.put("value_title", state.getAttribute(NEW_ASSIGNMENT_TITLE));
-        //NAM-32
-        context.put("quota_values_list", state.getAttribute(ASSIGNMENT_QUOTA_VALUES));
         context.put("value_position_order", state.getAttribute(NEW_ASSIGNMENT_ORDER));
 
         context.put("value_EnableCloseDate", state.getAttribute(NEW_ASSIGNMENT_ENABLECLOSEDATE));
@@ -2739,6 +2727,14 @@ public class AssignmentAction extends PagedResourceActionII {
 
             context.put("groups", new SortedIterator(groupList.iterator(), comp));
             context.put("assignmentGroups", state.getAttribute(NEW_ASSIGNMENT_GROUPS));
+        }
+        
+        //NAM-32        
+        if(serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+            if (state.getAttribute(NEW_ASSIGNMENT_MARKERS) == null) {
+            	state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.getAssignmentMarkersForSite(contextString));
+            }
+            context.put("assignmentMarkers", state.getAttribute(NEW_ASSIGNMENT_MARKERS));
         }
 
         context.put("allowGroupAssignmentsInGradebook", Boolean.TRUE);
@@ -6158,18 +6154,6 @@ public class AssignmentAction extends PagedResourceActionII {
 
                         // set the resubmission properties
                         setResubmissionProperties(a, submission);
-                        
-                        //set assignment marker properties
-                        if (params.getBoolean("allowMarkerToggle")) {
-                        	String [] list = params.getString("quota_values").split(",");
-                        	for (int i = 0; i < list.length; i+=2) {
-                        		String id = list[i];
-                        		float quota = Float.parseFloat(list[i+1]);
-                        		Date createdDate = Date.from(submission.getDateCreated());
-                        		Date modifiedDate = Date.from(submission.getDateModified());
-                        		String siteID = (String) state.getAttribute(STATE_CONTEXT_STRING);
-                        	}
-                        }
                     } catch (PermissionException e) {
                         log.warn("Could not add submission for assignment/submitter: {}/{}, {}", a.getId(), submitterId, e.getMessage());
                         addAlert(state, rb.getString("youarenot13"));
@@ -6518,20 +6502,6 @@ public class AssignmentAction extends PagedResourceActionII {
     } // doReorder
 
     /**
-     * Checks and saves the assigned quota's
-     *
-     * @param form info
-     */
-    private void check_save_quotas(RunData data, SessionState state) {
-    	addAlert(state, "Works");
-    }
-    
-    //To be modified in NAM-32
-    private void quotaMethod(SessionState state, ParameterParser params) {
-    	
-    }
-    
-    /**
      * Action is to save the input infos for assignment fields
      *
      * @param validify Need to validify the inputs or not
@@ -6542,14 +6512,6 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String assignmentRef = params.getString("assignmentId");
-		
-        //To be modified in NAM-32
-        //quotaMethod(state, params);
-        
-        //put the quota values into the state attribute
-        List<String> quotas = new ArrayList<String>(Arrays.asList(params.getString(ASSIGNMENT_QUOTA_VALUES).split(",")));
-        state.setAttribute(ASSIGNMENT_QUOTA_VALUES, quotas);
-        
         // put the input value into the state attributes
         String title = params.getString(NEW_ASSIGNMENT_TITLE);
         state.setAttribute(NEW_ASSIGNMENT_TITLE, title);
@@ -6936,7 +6898,28 @@ public class AssignmentAction extends PagedResourceActionII {
                 log.warn("{}", sb.toString());
                 addAlert(state, sb.toString());
             }
-        }
+        } 
+              
+		if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+
+			if (state.getAttribute(NEW_ASSIGNMENT_MARKERS) != null) {
+				Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
+				Set<AssignmentMarker> assignmentMarkers = (Set<AssignmentMarker>) state
+						.getAttribute(NEW_ASSIGNMENT_MARKERS);
+				Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
+				int index = 0;
+				while (assignmentMarkerSetIter.hasNext()) {
+					AssignmentMarker marker = assignmentMarkerSetIter.next();
+					marker.setQuotaPercentage(Double.valueOf(params.getString("quota" + (index + 1))));
+					marker.setDateCreated(Instant.now());
+					siteAssignmentMarkers.add(marker);
+					index++;
+				}
+				if (CollectionUtils.isNotEmpty(siteAssignmentMarkers)) {
+					state.setAttribute(NEW_ASSIGNMENT_MARKERS, siteAssignmentMarkers);
+				}
+			}
+		} 						
 
         // allow resubmission numbers
         if (params.getString("allowResToggle") != null && params.getString(AssignmentConstants.ALLOW_RESUBMIT_NUMBER) != null) {
@@ -7705,23 +7688,23 @@ public class AssignmentAction extends PagedResourceActionII {
                     aProperties.put(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE, (String) state.getAttribute(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE));
                 }
 
-                Set<AssignmentMarker> markers = new HashSet<AssignmentMarker>();
-                
-                List<String> quotas = (List<String>) state.getAttribute(ASSIGNMENT_QUOTA_VALUES);
-                if (quotas.size() > 1) {
-                	AssignmentMarker asnMarker;
-	                for (int i = 0; i < quotas.size(); i+=2) {
-	                	asnMarker = new AssignmentMarker();
-	            		double quotaValue = Double.parseDouble(quotas.get(i+1).toString());
-                   		asnMarker.setContext(a.getContext());
-                 		asnMarker.setDateCreated(Instant.now());
-                    	asnMarker.setMarkerUserId(quotas.get(i));
-                    	asnMarker.setQuotaPercentage(quotaValue);
-                 	   	asnMarker.setAssignment(a);
-                 	   	
-                 	    markers.add(asnMarker);
-                   	}
-            	}
+                //NAM-32
+                Set<AssignmentMarker> assignmentMarkers = null;        
+                if(serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+
+    				Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
+                	assignmentMarkers = (Set<AssignmentMarker>) state.getAttribute(NEW_ASSIGNMENT_MARKERS);
+    				Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
+    				int index = 0;
+    				while (assignmentMarkerSetIter.hasNext()) {
+    					AssignmentMarker marker = assignmentMarkerSetIter.next();
+    					marker.setAssignment(a);
+    					siteAssignmentMarkers.add(marker);
+    				}
+    				if (CollectionUtils.isNotEmpty(siteAssignmentMarkers)) {
+    					assignmentMarkers = siteAssignmentMarkers;
+    				}
+                }                       
                 
                 // persist the Assignment changes
                 commitAssignment(state, post, a, assignmentReference, title, submissionType, useReviewService, allowStudentViewReport,
@@ -7729,7 +7712,7 @@ public class AssignmentAction extends PagedResourceActionII {
                         visibleTime, openTime, dueTime, closeTime, hideDueDate, enableCloseDate, isGroupSubmit, groups,
                         usePeerAssessment, peerPeriodTime, peerAssessmentAnonEval, peerAssessmentStudentViewReviews, peerAssessmentNumReviews, peerAssessmentInstructions,
                         submitReviewRepo, generateOriginalityReport, checkTurnitin, checkInternet, checkPublications, checkInstitution,
-                        excludeBibliographic, excludeQuoted, excludeSelfPlag, storeInstIndex, studentPreview, excludeType, excludeValue, markers);
+                        excludeBibliographic, excludeQuoted, excludeSelfPlag, storeInstIndex, studentPreview, excludeType, excludeValue, assignmentMarkers);
 
                 // Locking and unlocking groups
                 List<String> lockedGroupsReferences = new ArrayList<String>();
@@ -8681,9 +8664,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 a.setTypeOfAccess(Assignment.Access.GROUP);
                 a.setGroups(groups.stream().map(Group::getReference).collect(Collectors.toSet()));
             }
-
             
-            // only uploads the first marker in the Set
             a.setMarkers(markers);
             // commit the changes
             assignmentService.updateAssignment(a);
@@ -9087,7 +9068,9 @@ public class AssignmentAction extends PagedResourceActionII {
                 // put the names and values into vm file
                 state.setAttribute(NEW_ASSIGNMENT_TITLE, a.getTitle());
                 state.setAttribute(NEW_ASSIGNMENT_ORDER, a.getPosition());
-
+                                
+                state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.getMarkersForAssignment(a));
+                
                 if (serverConfigurationService.getBoolean("assignment.visible.date.enabled", false)) {
                     putTimePropertiesInState(state, a.getVisibleDate(), NEW_ASSIGNMENT_VISIBLEMONTH, NEW_ASSIGNMENT_VISIBLEDAY, NEW_ASSIGNMENT_VISIBLEYEAR, NEW_ASSIGNMENT_VISIBLEHOUR, NEW_ASSIGNMENT_VISIBLEMIN);
                     state.setAttribute(NEW_ASSIGNMENT_VISIBLETOGGLE, a.getVisibleDate() != null);
@@ -11294,6 +11277,10 @@ public class AssignmentAction extends PagedResourceActionII {
 
         state.setAttribute(NEW_ASSIGNMENT_FOCUS, NEW_ASSIGNMENT_TITLE);
 
+        if(serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+            state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.getAssignmentMarkersForSite(toolManager.getCurrentPlacement().getContext()));
+        }
+
         state.removeAttribute(NEW_ASSIGNMENT_DESCRIPTION_EMPTY);
 
         // reset the global navigaion alert flag
@@ -11447,7 +11434,7 @@ public class AssignmentAction extends PagedResourceActionII {
         state.removeAttribute(PROP_ASSIGNMENT_ASSOCIATE_GRADEBOOK_ASSIGNMENT);
 
         //NAM-32
-        state.removeAttribute(ASSIGNMENT_QUOTA_VALUES);
+        state.removeAttribute(NEW_ASSIGNMENT_MARKERS);
     } // resetNewAssignment
 
     /**
@@ -11499,56 +11486,13 @@ public class AssignmentAction extends PagedResourceActionII {
         submissionTypeTable.put(5, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_SINGLE_ATTACHMENT_PROP));
         
         //NAM-28 Checks if the pdf marker tool should be displayed or not
-        Boolean useMarker = serverConfigurationService.getBoolean("assignment.useMarker ", true);
+        Boolean useMarker = serverConfigurationService.getBoolean("assignment.useMarker", true);
         if (useMarker) {
         	submissionTypeTable.put(6, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_PDF_ONLY_PROP)); //NAM-26 adding new submission type to table data
         }
 
         return submissionTypeTable;
     } // submissionTypeTable
-    
-    /**
-     * construct a HashMap using the integer as the key and marker name String as the value
-     */
-    private HashMap<String, String> getSiteMarkers(SessionState state) {
-    	
-    	String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
-
-    	HashMap<String, String> markerUsers = new HashMap<String, String>();
-        try {
-            AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
-            Set<Role> roles = realm.getRoles();
-            for (Iterator iRoles = roles.iterator(); iRoles.hasNext(); ) {
-                Role r = (Role) iRoles.next();
-                if (r.isAllowed("asn.marker")) {
-                	Set<String> users = realm.getUsersHasRole(r.getId());
-                	if (users != null && users.size() > 0) {
-                        List<User> usersList = new ArrayList<>();
-                        for (Iterator<String> iUsers = users.iterator(); iUsers.hasNext(); ) {
-                        	String userID = iUsers.next();
-                        	User user = userDirectoryService.getUser(userID);
-                        	if (!(user.getEid().equals("admin"))) {
-                        		String displayName = user.getEid() + " (" + user.getDisplayName() + ")";
-                                if (!markerUsers.containsKey(userID)) {
-                                	markerUsers.put(userID, displayName);
-                                }
-                        	}
-                        }
-                        if (markerUsers.isEmpty()) {
-                        	User user = userDirectoryService.getUser("admin");
-                        	String displayName = user.getEid() + " (" + user.getDisplayName() + ")";
-                        	markerUsers.put("admin", displayName);
-                        }
-                	}
-                }
-            }
-        } catch (Exception e) {
-            log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
-        }
-        
-        markerTableSize = markerUsers.size();
-        return markerUsers;
-    } // markerTable
 
     /**
      * Add the list of categories from the gradebook tool

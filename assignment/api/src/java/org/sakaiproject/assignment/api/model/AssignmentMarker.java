@@ -2,13 +2,10 @@ package org.sakaiproject.assignment.api.model;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -36,7 +34,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "ASN_MARKER_T")
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode
 public class AssignmentMarker {
 
 	@Id
@@ -56,7 +54,7 @@ public class AssignmentMarker {
 	private Assignment assignment;
 	
     @Column(name = "QUOTA_PERCENTAGE")
-    private Double quotaPercentage;
+    private Double quotaPercentage = 0.0;
 
     @Column(name = "ORDER_NUM")
     private Integer orderNumber;
@@ -82,16 +80,6 @@ public class AssignmentMarker {
     @OneToMany(mappedBy = "assignmentMarker", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AssignmentSubmissionMarker> submissionMarkers = new HashSet<>();
     
-    @Override
-    public boolean equals(Object o) {
-    	return (o instanceof AssignmentMarker) && 
-    			((AssignmentMarker)o).getId().equals(this.id) && 
-    			((AssignmentMarker)o).getDateCreated().equals(this.dateCreated);
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(markerUserId, dateCreated);
-    }
-    
+    @Transient
+    private String userDisplayName;
 }

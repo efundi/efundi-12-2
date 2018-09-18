@@ -26,6 +26,7 @@ import java.time.Instant;
 import java.util.*;
 
 import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.entity.api.Entity;
@@ -738,4 +739,8 @@ public interface AssignmentService extends EntityProducer {
     String getUsersLocalDateTimeString(Instant date);
 
     public List<ContentReviewResult> getContentReviewResults(AssignmentSubmission submission);
+    
+    public Set<AssignmentMarker> getAssignmentMarkersForSite(String siteId);    
+
+	public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment);
 }

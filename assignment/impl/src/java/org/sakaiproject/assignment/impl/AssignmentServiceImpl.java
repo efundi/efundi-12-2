@@ -4065,4 +4065,54 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
         return errorMessage;
     }
+
+	@Override
+	public Set<AssignmentMarker> getAssignmentMarkersForSite(String siteId) {
+		Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
+		try {
+			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(siteId));
+	        Set<String> allowedMakers = realm.getUsersIsAllowed(SECURE_ASSIGNMENT_MARKER);        
+	        AssignmentMarker assignmentMarker = null;   
+	        User user = null;
+	        for (String userId : allowedMakers) {
+				try {
+					user = userDirectoryService.getUser(userId);
+		        	if (user != null && !securityService.isSuperUser(user.getEid())) {
+			        	assignmentMarker = new AssignmentMarker();
+			        	assignmentMarker.setContext(siteId);
+		            	assignmentMarker.setMarkerUserId(user.getEid());
+		            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+		            	siteAssignmentMarkers.add(assignmentMarker);
+		        	}        
+				} catch (UserNotDefinedException e) {
+					log.error("Could not find user with id = {}, {}", userId, e.getMessage());
+				}	
+			}        
+		} catch (GroupNotDefinedException e) {
+            log.warn("Cannot get authz group for site = {}, {}", siteId, e.getMessage());
+		} 
+        return siteAssignmentMarkers;
+	}
+
+	@Override
+	public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment) {
+		Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
+        Set<AssignmentMarker> assignmentMarkers = assignment.getMarkers();        
+        AssignmentMarker assignmentMarker = null;   
+        User user = null;
+        Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();		
+		while (assignmentMarkerSetIter.hasNext()) {
+			assignmentMarker = assignmentMarkerSetIter.next();
+			try {
+				user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
+	        	if (user != null) {
+	            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+	            	siteAssignmentMarkers.add(assignmentMarker);
+	        	}        
+			} catch (UserNotDefinedException e) {
+				log.error("Could not find user with id = {}, {}", assignmentMarker.getMarkerUserId(), e.getMessage());
+			}	
+		}        
+        return siteAssignmentMarkers;
+	}
 }

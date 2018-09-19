@@ -8799,7 +8799,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 			     {
 					AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
 					Set<String> markersBeingAffected = testMarkersBeingChanged(participants, params, maintainRoleString);
-					markersWithMarking =  assignmentService.checkParticipantsForMarking(realmEdit.getId().toString(), markersBeingAffected);
+					markersWithMarking =  assignmentService.checkParticipantsForMarking(s.getId(), markersBeingAffected);
 					
 					if (markersWithMarking.size() > 0)
 			    	 {

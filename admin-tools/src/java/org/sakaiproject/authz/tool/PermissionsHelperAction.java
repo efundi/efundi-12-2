@@ -714,15 +714,19 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 						String assignmentContext = (String) state.getAttribute("Assignment.context_string");
 						String roleID = role.getId();
 						if (assignmentContext != null) {
-						if (serverConfigurationService.getBoolean("assignment.useMarker ", true)) {						
-								if (lock.equals("asn.marker")) {																	
-										AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
-										Boolean hasAssigned = assignmentService.hasMarkingAssigned(assignmentContext, roleID);
-										if (hasAssigned) {
-											log.warn("PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission for role "+ roleID, roleID, "Excpetion");
-											addAlert(state, rb.getFormattedMessage("alert_marker"));
-											return;
-										}									
+							if (serverConfigurationService.getBoolean("assignment.useMarker ", true)) {
+								if (lock.equals("asn.marker")) {
+									AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
+									Boolean hasAssigned = assignmentService.hasMarkingAssigned(assignmentContext,
+											roleID);
+									if (hasAssigned) {
+										log.warn(
+												"PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission for role "
+														+ roleID,
+												roleID, "Excpetion");
+										addAlert(state, rb.getFormattedMessage("alert_marker"));
+										return;
+									}
 								}
 							}
 						}

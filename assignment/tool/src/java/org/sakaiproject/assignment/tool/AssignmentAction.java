@@ -197,7 +197,15 @@ public class AssignmentAction extends PagedResourceActionII {
      * The state mode
      */
     private static final String STATE_MODE = "Assignment.mode";
+    
     /**
+     * NAM-36
+     * Cancel Mode
+     */
+    private static final String STATE_CANCEL_MODE = "Assignment.cancel_mode";
+    
+    /**
+     *
      * The context string
      */
     private static final String STATE_CONTEXT_STRING = "Assignment.context_string";
@@ -1090,24 +1098,17 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("cheffeedbackhelper", this);
         context.put("service", assignmentService);
         
-        // NAM-34 check if current user has marker permissions
+        // NAM-34 and NAM-36 check if current user has marker permissions and the marker property is set to true in sakai.properties
         String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
-        boolean allowAssignmentMarker = false;
-        try {
-    	    AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
-    	    User user = userDirectoryService.getCurrentUser();
-    	    
-    	    allowAssignmentMarker = (realm.isAllowed(user.getId(), SECURE_ASSIGNMENT_MARKER)) ? true: false;
-        } catch (Exception e) {
-            log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
-        }
         
-        context.put("allowAssignmentMarker", allowAssignmentMarker);
+        // allow marker assignment?
+        boolean allowUserMarkerDownloadAndStats = assignmentService.allowUserMarkerDownloadAndStats(contextString);
+        context.put("allowUserMarkerDownloadAndStats", Boolean.valueOf(allowUserMarkerDownloadAndStats));
         
-     // check if assignment marker is enabled?
+        // check if assignment marker is enabled?
         boolean isEnabledAssignmentMarker = serverConfigurationService.getBoolean("assignment.useMarker", false);
         context.put("isEnabledAssignmentMarker", isEnabledAssignmentMarker);
-
+        
         // allow add assignment?
         boolean allowAddAssignment = assignmentService.allowAddAssignment(contextString);
         context.put("allowAddAssignment", Boolean.valueOf(allowAddAssignment));
@@ -4172,7 +4173,7 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("download_url_link_label", rb.getString("download_url_link_label"));
             state.removeAttribute(STATE_DOWNLOAD_URL);
         }
-
+        
         String template = (String) getContext(data).get("template");
 
         return template + TEMPLATE_INSTRUCTOR_GRADE_ASSIGNMENT;
@@ -4863,6 +4864,14 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("searchString", state.getAttribute(VIEW_SUBMISSION_SEARCH) != null ? state.getAttribute(VIEW_SUBMISSION_SEARCH) : "");
 
             context.put("showSubmissionByFilterSearchOnly", state.getAttribute(SUBMISSIONS_SEARCH_ONLY) != null && ((Boolean) state.getAttribute(SUBMISSIONS_SEARCH_ONLY)) ? Boolean.TRUE : Boolean.FALSE);
+            
+            // NAM-36
+	        if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS) && (((String) state.getAttribute("user_action")) != null) && ((String) state.getAttribute("user_action")).equals("download")) {
+	        	state.removeAttribute("user_action");
+	        	context.put("selectAll", Boolean.valueOf(true));
+	        } else {
+	        	context.put("selectAll", Boolean.valueOf(false));
+	        }
         }
 
         String template = getContext(data).get("template");
@@ -12921,7 +12930,14 @@ public class AssignmentAction extends PagedResourceActionII {
 
     public void doDownload_all(RunData data) {
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
-        state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_GRADE_ASSIGNMENT);
+        
+        // NAM-36
+        if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS)) {
+        	state.setAttribute(STATE_MODE, (String) state.getAttribute(STATE_CANCEL_MODE));
+        } else {
+        	state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_GRADE_ASSIGNMENT);
+        }
+        
         ParameterParser params = data.getParameters();
         String downloadUrl = params.getString("downloadUrl");
         state.setAttribute(STATE_DOWNLOAD_URL, downloadUrl);
@@ -13051,7 +13067,13 @@ public class AssignmentAction extends PagedResourceActionII {
         if (state.getAttribute(STATE_MESSAGE) == null) {
             // go back to the list of submissions view
             cleanUploadAllContext(state);
-            state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_GRADE_ASSIGNMENT);
+            
+            // NAM-36
+            if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS)) {
+            	state.setAttribute(STATE_MODE, (String) state.getAttribute(STATE_CANCEL_MODE));
+            } else {
+            	state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_GRADE_ASSIGNMENT);
+            }
         }
     }
 
@@ -13681,7 +13703,14 @@ public class AssignmentAction extends PagedResourceActionII {
      */
     public void doCancel_download_upload_all(RunData data) {
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
-        state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_GRADE_ASSIGNMENT);
+        
+        // NAM-36
+        if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS)) {
+        	state.setAttribute(STATE_MODE, (String) state.getAttribute(STATE_CANCEL_MODE));
+        } else {
+        	state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_GRADE_ASSIGNMENT);
+        }
+        
         cleanUploadAllContext(state);
     }
 
@@ -13698,7 +13727,9 @@ public class AssignmentAction extends PagedResourceActionII {
         state.removeAttribute(UPLOAD_ALL_HAS_COMMENTS);
         state.removeAttribute(UPLOAD_ALL_WITHOUT_FOLDERS);
         state.removeAttribute(UPLOAD_ALL_RELEASE_GRADES);
-
+        
+        //NAM-36
+        state.removeAttribute(STATE_CANCEL_MODE);
     }
 
     /**
@@ -13708,8 +13739,19 @@ public class AssignmentAction extends PagedResourceActionII {
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
         ParameterParser params = data.getParameters();
         String view = params.getString("view");
+        
+        // NAM-36
+        if(((String) state.getAttribute(STATE_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS)) {
+	        String assignmentReference = params.getString("assignmentId");
+	        state.setAttribute(EXPORT_ASSIGNMENT_REF, assignmentReference);
+	        state.setAttribute(STATE_CANCEL_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
+	        state.setAttribute("user_action", "download");
+        } else {
+        	state.setAttribute(STATE_CANCEL_MODE, VIEW_SUBMISSION_LIST_OPTION);
+        }
+	    
         state.setAttribute(VIEW_SUBMISSION_LIST_OPTION, view);
-        state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_DOWNLOAD_ALL);
+	    state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_DOWNLOAD_ALL);
 
     } // doPrep_download_all
 
@@ -13719,6 +13761,16 @@ public class AssignmentAction extends PagedResourceActionII {
     public void doPrep_upload_all(RunData data) {
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
         ParameterParser params = data.getParameters();
+        
+        // NAM-36
+        if(((String) state.getAttribute(STATE_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS)) {
+	        String assignmentReference = params.getString("assignmentId");
+	        state.setAttribute(EXPORT_ASSIGNMENT_REF, assignmentReference);
+	        state.setAttribute(STATE_CANCEL_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
+        } else {
+        	state.setAttribute(STATE_CANCEL_MODE, VIEW_SUBMISSION_LIST_OPTION);
+        }
+        
         state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_UPLOAD_ALL);
 
     } // doPrep_upload_all
@@ -14245,22 +14297,15 @@ public class AssignmentAction extends PagedResourceActionII {
      */
     protected void doMarkerDownStats(RunData data) {
         SessionState state = ((JetspeedRunData) data).getPortletSessionState(((JetspeedRunData) data).getJs_peid());
-        String siteId = toolManager.getCurrentPlacement().getContext();
-        try {
-            Site site = siteService.getSite(siteId);
-            ToolConfiguration tc = site.getToolForCommonId(ASSIGNMENT_TOOL_ID);
-        } catch (IdUnusedException e) {
-            log.warn(this + ":doMarkerDownStats  Cannot find site with id " + siteId);
-        }
-
+        
         if (!alertGlobalNavigation(state, data)) {
-            if (siteService.allowUpdateSite((String) state.getAttribute(STATE_CONTEXT_STRING))) {
-                state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
-            } else {
-                addAlert(state, rb.getString("youarenot_marker_downloads_statistics"));
-            }
-
-            // reset the global navigaion alert flag
+	        if(assignmentService.allowUserMarkerDownloadAndStats((String) state.getAttribute(STATE_CONTEXT_STRING))) {
+	        	state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
+	        } else {
+	            addAlert(state, rb.getString("youarenot_marker_downloads_statistics"));
+	        }
+	        
+	        // reset the global navigaion alert flag
             if (state.getAttribute(ALERT_GLOBAL_NAVIGATION) != null) {
                 state.removeAttribute(ALERT_GLOBAL_NAVIGATION);
             }
@@ -14287,14 +14332,31 @@ public class AssignmentAction extends PagedResourceActionII {
     protected String build_marker_downloads_statistics_context(VelocityPortlet portlet, Context context, RunData data, SessionState state) {
     	state.setAttribute(STATE_MODE, MODE_LIST_ASSIGNMENTS);
     	context.put("context", state.getAttribute(STATE_CONTEXT_STRING));
+    	String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
     	
     	List<Assignment> assignments = prepPage(state);
         context.put("assignments", assignments.iterator());
+        
+        AuthzGroup realm = null;
+        try {
+        	realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
+        } catch (Exception e) {
+        	log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
+        }
+        
+        context.put("realm", realm);
+        context.put("userDirectoryService", userDirectoryService);
+        context.put("currentUserId", userDirectoryService.getCurrentUser().getDisplayId());
+        context.put("currentUserRole", realm.getUserRole(userDirectoryService.getCurrentUser().getId()).getId());
         context.put("NumberOfFoundAssignments", assignments.size());
         
-        state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
-        String template = (String) getContext(data).get("template");
-        return template + TEMPLATE_MARKER_DOWNLOADS_STATISTICS;
+        if(assignmentService.allowUserMarkerDownloadAndStats(contextString)) {
+	        state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
+	        String template = (String) getContext(data).get("template");
+	        return template + TEMPLATE_MARKER_DOWNLOADS_STATISTICS;
+        }
+        
+        return null;
     }
 
     /**

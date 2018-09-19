@@ -26,6 +26,7 @@ import java.time.Instant;
 import java.util.*;
 
 import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.entity.api.Entity;
@@ -85,7 +86,17 @@ public interface AssignmentService extends EntityProducer {
      *                Describes the portlet context - generated with DefaultId.getChannel().
      * @return True if the current User is allowed to add an Assignment, false if not.
      */
-    public boolean allowAddAssignment(String context);
+     public boolean allowAddAssignment(String context);
+     
+    /**
+     * NAM-34 AND NAM-36
+     * Check permissions for marker role for an Assignment exists.
+     *
+     * @param context -
+     *                Describes the portlet context - generated with DefaultId.getChannel().
+     * @return True if the current User is allowed as marker for an Assignment, false if not.
+     */
+     public boolean allowUserMarkerDownloadAndStats(String context);
 
     /**
      * Check permissions for updating an Assignment based on context.
@@ -472,7 +483,16 @@ public interface AssignmentService extends EntityProducer {
      * @return List over all the submissions for an Assignment.
      */
     public Set<AssignmentSubmission> getSubmissions(Assignment assignment);
-
+    
+    /**
+     * Get assignment markers
+     * NAM-36
+     * @param assignment -
+     * 						The assignment containing markers.
+     * @return List over all markers for given Assignment.
+     */
+    public Set<AssignmentMarker> getMarkers(Assignment assignment);
+    
     /**
      * @param assignmentId
      * @return

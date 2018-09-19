@@ -768,6 +768,6 @@ public interface AssignmentService extends EntityProducer {
     
   //  public Boolean hasMarkingAssignedSingleUser(String contextString, String userID);
     
-    public Set<String> checkParticipantsForMarking(String realmContext, Set<String> markersBeingAffected);
+    public Set<String> checkParticipantsForMarking(String siteId, Set<String> markersBeingAffected);
 
 }

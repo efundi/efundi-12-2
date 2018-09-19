@@ -4098,10 +4098,10 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
 		try {
 			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(siteId));
-	        Set<String> allowedMakers = realm.getUsersIsAllowed(SECURE_ASSIGNMENT_MARKER);        
+	        Set<String> allowedMarkers = realm.getUsersIsAllowed(SECURE_ASSIGNMENT_MARKER);        
 	        AssignmentMarker assignmentMarker = null;   
 	        User user = null;
-	        for (String userId : allowedMakers) {
+	        for (String userId : allowedMarkers) {
 				try {
 					user = userDirectoryService.getUser(userId);
 		        	if (user != null && !securityService.isSuperUser(user.getEid())) {
@@ -4143,75 +4143,45 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         return siteAssignmentMarkers;
 	}
 
-    //NAM-23
+	// NAM-23
 	public Boolean hasMarkingAssigned(String contextString, String role) {
-
 		try {
-			Site site = siteService.getSite(contextString);
-			Set<String> siteMarkers = getMarkersForSite(contextString);
-			Set<String> siteUsersHasRole = site.getUsersHasRole(role);		
-			for (String user : siteMarkers) {
-				if (siteUsersHasRole.contains(user)) {
-					return true;
-				}
+			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
+			Set<String> allowedMarkerRoles = realm.getRolesIsAllowed(SECURE_ASSIGNMENT_MARKER); // gets all roles with marker permission
+			if (allowedMarkerRoles.contains(role)) {
+				return true;
 			}
-		} catch (IdUnusedException e) {
-			log.error("Error encountered in hasMarkingAssigned Check - Error: " + e);
+		} catch (GroupNotDefinedException e) {
+			log.warn("Cannot get authz group for site = {}, {}", contextString, e.getMessage());
 		}
 		return false;
 	}
 
-	private Set<String> getMarkersForSite(String contextString) {
-
-		Collection<Assignment> asnCollection = getAssignmentsForContext(contextString);
-		Set<String> userIds = new HashSet<String>();
-		for (Assignment assignmentObj : asnCollection) {
-
-			Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();			
-			for (AssignmentMarker asnMarker : asnMrks) {
-				String id = asnMarker.getMarkerUserId();
-				userIds.add(id);
-			}
-		}
-		return userIds;
-	} 
-	
-	/*NAM-43*/		
-	public Set<String> checkParticipantsForMarking(String realmContext, Set<String> markersBeingAffected)
-	{	
-		Set<String> blockedChanges = new HashSet<String>();;
+	/* NAM-43 */
+	public Set<String> checkParticipantsForMarking(String siteId, Set<String> markersBeingAffected) {
+		Set<String> blockedChanges = new HashSet<String>();
 		try {
-			String site = realmContext.substring(6);
-			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(site));
-	        Set<String> allowedMakers = getMarkersForSite(site); // gets markers with marking for this site.
-	        Set<String> allowedMakerRoles = realm.getRolesIsAllowed(SECURE_ASSIGNMENT_MARKER); //gets all roles with permission
-	
-	        for (String user : markersBeingAffected) {
-				if ((user.contains(":"))) //checks if this is a role change user
-						{
-							String role = user.substring(0, user.indexOf(":"));
-							String userID = user.substring(user.indexOf(":")+1); //gets newRole and userID for checking
-							if (!allowedMakerRoles.contains(role))
-							{
-								if (allowedMakers.contains(userID))
-								{								
-									blockedChanges.add(userID);
-								}							
-							}
+			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(siteId));
+			Set<String> allowedMarkers = realm.getUsersIsAllowed(SECURE_ASSIGNMENT_MARKER); // gets markers with marking for this site.
+			Set<String> allowedMarkerRoles = realm.getRolesIsAllowed(SECURE_ASSIGNMENT_MARKER); // gets all roles with permission
+			for (String user : markersBeingAffected) {
+				if ((user.contains(":"))) { // checks if this is a role change user
+					String role = user.substring(0, user.indexOf(":"));
+					String userID = user.substring(user.indexOf(":") + 1); // gets newRole and userID for checking
+					if (!allowedMarkerRoles.contains(role)) {
+						if (allowedMarkers.contains(userID)) {
+							blockedChanges.add(userID);
 						}
-				else
-				{ //no role change, just check against marker list
-				if (allowedMakers.contains(user))
-					{
+					}
+				} else { // no role change, just check against marker list
+					if (allowedMarkers.contains(user)) {
 						log.error("NoRole: " + user);
 						blockedChanges.add(user);
 					}
 				}
-			}		
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
+			}
+		} catch (GroupNotDefinedException e) {
+			log.warn("Cannot get authz group for site = {}, {}", siteId, e.getMessage());
 		}
 		return blockedChanges;
 	}

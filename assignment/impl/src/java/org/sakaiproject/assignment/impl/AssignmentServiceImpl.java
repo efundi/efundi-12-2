@@ -70,6 +70,7 @@ import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.assignment.api.AssignmentServiceConstants;
 import org.sakaiproject.assignment.api.ContentReviewResult;
 import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.Assignment.GradeType;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItem;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItemAccess;
@@ -740,7 +741,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     public boolean allowGradeSubmission(String assignmentReference) {
         return permissionCheck(SECURE_GRADE_ASSIGNMENT_SUBMISSION, assignmentReference, null);
     }
-
+    
     @Override
     @Transactional
     public Assignment addAssignment(String context) throws PermissionException {
@@ -748,15 +749,16 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         if (!allowAddAssignment(context)) {
             throw new PermissionException(sessionManager.getCurrentSessionUserId(), SECURE_ADD_ASSIGNMENT, null);
         }
-
+        
         Assignment assignment = new Assignment();
         assignment.setContext(context);
         assignment.setAuthor(sessionManager.getCurrentSessionUserId());
         assignment.setPosition(0);
+        
         assignmentRepository.newAssignment(assignment);
-
+        
         log.debug("Created new assignment {}", assignment.getId());
-
+        
         // String reference = AssignmentReferenceReckoner.reckoner().assignment(assignment).reckon().getReference();
         // AssignmentAction#post_save_assignment contains the logic for adding a new assignment
         // the event should come at the end of that logic, eventually that logic should be moved here
@@ -4090,6 +4092,56 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
         return errorMessage;
     }
+
+	@Override
+	public Set<AssignmentMarker> getAssignmentMarkersForSite(String siteId) {
+		Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
+		try {
+			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(siteId));
+	        Set<String> allowedMakers = realm.getUsersIsAllowed(SECURE_ASSIGNMENT_MARKER);        
+	        AssignmentMarker assignmentMarker = null;   
+	        User user = null;
+	        for (String userId : allowedMakers) {
+				try {
+					user = userDirectoryService.getUser(userId);
+		        	if (user != null && !securityService.isSuperUser(user.getEid())) {
+			        	assignmentMarker = new AssignmentMarker();
+			        	assignmentMarker.setContext(siteId);
+		            	assignmentMarker.setMarkerUserId(user.getEid());
+		            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+		            	siteAssignmentMarkers.add(assignmentMarker);
+		        	}        
+				} catch (UserNotDefinedException e) {
+					log.error("Could not find user with id = {}, {}", userId, e.getMessage());
+				}	
+			}        
+		} catch (GroupNotDefinedException e) {
+            log.warn("Cannot get authz group for site = {}, {}", siteId, e.getMessage());
+		} 
+        return siteAssignmentMarkers;
+	}
+
+	@Override
+	public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment) {
+		Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
+        Set<AssignmentMarker> assignmentMarkers = assignment.getMarkers();        
+        AssignmentMarker assignmentMarker = null;   
+        User user = null;
+        Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();		
+		while (assignmentMarkerSetIter.hasNext()) {
+			assignmentMarker = assignmentMarkerSetIter.next();
+			try {
+				user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
+	        	if (user != null) {
+	            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+	            	siteAssignmentMarkers.add(assignmentMarker);
+	        	}        
+			} catch (UserNotDefinedException e) {
+				log.error("Could not find user with id = {}, {}", assignmentMarker.getMarkerUserId(), e.getMessage());
+			}	
+		}        
+        return siteAssignmentMarkers;
+
     //NAM-23
 	public Boolean hasMarkingAssigned(String contextString, String role) {
 

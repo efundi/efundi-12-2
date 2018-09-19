@@ -5,9 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -35,7 +34,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "ASN_MARKER_T")
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode
 public class AssignmentMarker {
 
 	@Id
@@ -55,7 +54,7 @@ public class AssignmentMarker {
 	private Assignment assignment;
 	
     @Column(name = "QUOTA_PERCENTAGE")
-    private Double quotaPercentage;
+    private Double quotaPercentage = 0.0;
 
     @Column(name = "ORDER_NUM")
     private Integer orderNumber;
@@ -80,4 +79,7 @@ public class AssignmentMarker {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "assignmentMarker", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AssignmentSubmissionMarker> submissionMarkers = new HashSet<>();
+    
+    @Transient
+    private String userDisplayName;
 }

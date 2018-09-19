@@ -62,19 +62,12 @@ ASN.quotaCalculation = function(value_totalMarkers)
 		ASN.displayError(quotaId, totalLessThanError);
 		ASN.disableButtons();
 	}
-	
-	if (Number(sum) <= 100) {
-		document.getElementById("quotaTotal").value=sum;
-	}
 };
 
-ASN.enableMarkingTool = function(value_totalMarkers) {
+ASN.enableMarkingTool = function() {
 	if (document.getElementById("allowMarkerToggle").checked) {
-		document.getElementById("useMarkingTool").value="true";
 		document.getElementById('pdfMarkerSettings').style.display = 'block';
-		ASN.quotaCalculation(value_totalMarkers);
 	} else {
-		document.getElementById("useMarkingTool").value="false";
 		document.getElementById('pdfMarkerSettings').style.display = 'none';
 		ASN.enableButtons();
 	}
@@ -90,14 +83,12 @@ ASN.disableButtons = function()
 {
 	document.getElementsByName("post")[0].disabled = true;
 	document.getElementsByName("preview")[0].disabled = true;
-	document.getElementsByName("save")[0].disabled = true;
 };
 
 ASN.enableButtons = function()
 {
 	document.getElementsByName("post")[0].disabled = false;
 	document.getElementsByName("preview")[0].disabled = false;
-	document.getElementsByName("save")[0].disabled = false;
 };
 
 ASN.getSelect = function(selectBox) {

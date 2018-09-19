@@ -71,10 +71,6 @@
 				useReview.disabled=false;
 				lblUseReview.style.display = 'block';
 			#end
-			if (document.getElementById('subType').value == 6) 
-			{
-				document.getElementById('allowPdfMarker').style.display = 'block';
-			}
 			document.getElementById('tempAllowRes').parentNode.parentNode.style.display = 'block';
 			if (document.getElementById('allowResToggle').checked)
 			{
@@ -85,6 +81,8 @@
 			}
 			if (document.getElementById('subType').value == 6) 
 			{
+				document.getElementById('allowPdfMarker').style.display = 'block';
+				
 				if (document.getElementById('allowMarkerToggle').checked)
 				{
 					document.getElementById('pdfMarkerSettings').style.display = 'block';
@@ -164,9 +162,6 @@
 		<input type="hidden" name="eventSubmit_doAssignment_form" value="" />
 		<input type="hidden" name="option" id="option" value="" />
 		<input type="hidden" name="view" id="view" value="" />
-		<input type="hidden" name="quotaTotal" id="quotaTotal" value="" /> ##remove once NAM-30 is started
-		<input type="hidden" name="useMarkingTool" id="useMarkingTool" value="" />##remove once NAM-30 is started
-		<input type="hidden" name="markerTotal" id="markerTotal" value="" />##remove once NAM-30 is started
 		<input type="hidden" name="$name_order" id="$name_order" value="$!value_position_order" />
 
 		<div class="form-group row form-required">
@@ -743,7 +738,7 @@
 			</label>
 			<div class="col-sm-10">
 				<div id="tempAllowMarker" #if ($value_SubmissionType == 4) style = "display:none"#end>
-					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!value_SubmissionType == 6) checked="checked"#end onclick="ASN.enableMarkingTool($tool_MarkerList.size()); ASN.resizeFrame();" />
+					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!value_SubmissionType == 6) checked="checked"#end onclick="ASN.enableMarkingTool(); ASN.resizeFrame();" />
 				</div>
 			</div>
 		</div>
@@ -757,34 +752,25 @@
 						<th>$tlang.getString("quota.assignment.table.column.quota")</th>
 						<th>$tlang.getString("quota.assignment.table.column.reassign")</th>
 					</tr>
-					#set($max = 100)
-					#foreach ($mapKey in $tool_MarkerList.keySet())
-					<tr>	
-						<td>
-							<label value="assignedMarker" id="$mapKey">$tool_MarkerList.get($mapKey)</label>
-						</td>
-						<td>
-							#if ($tool_MarkerList.size() > 1)
-								<input type="number" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
-							#else
-								<input type="number" value=100 class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($tool_MarkerList.size())">
-							#end	
-						</td>
-						<td>
-							#if ($tool_MarkerList.size() > 1)
-								<select class="select-quota">
-									#foreach ($mapEntryList in $tool_MarkerList.keySet())
-										#if("$tool_MarkerList.get($mapEntryList)" != "$tool_MarkerList.get($mapKey)")
-											<option id="$mapEntryList" value="reassignedMarker">$tool_MarkerList.get($mapEntryList)</option>
+					#foreach ($assignmentMarker in $assignmentMarkers)
+						<tr>	
+							<td>
+								$assignmentMarker.userDisplayName
+							</td>
+							<td>
+								<input type="number" value="$assignmentMarker.quotaPercentage" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($assignmentMarkers.size())">
+							</td>
+							<td>
+								<select class="select-quota" id="reassignSelect$velocityCount">
+									<option  value="">$tlang.getString("marker.reassign.select")</option>
+									#foreach ($assignmentMarkerReassign in $assignmentMarkers)
+										#if("$assignmentMarker.markerUserId" != "$assignmentMarkerReassign.markerUserId")
+											<option value="$assignmentMarkerReassign.markerUserId">$assignmentMarkerReassign.userDisplayName</option>
 										#end	
 									#end
 								</select>
-							#else
-								<select class="select-quota" disabled=true/>
-							#end
-							
-						</td>
-					</tr>
+							</td>
+						</tr>
 					#end
 				</table>
 			</div>

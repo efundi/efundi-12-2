@@ -71,6 +71,7 @@ import org.sakaiproject.assignment.api.AssignmentServiceConstants;
 import org.sakaiproject.assignment.api.ContentReviewResult;
 import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentMarker;
+import org.sakaiproject.assignment.api.model.Assignment.GradeType;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItem;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItemAccess;
 import org.sakaiproject.assignment.api.model.AssignmentMarker;
@@ -602,6 +603,18 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     public boolean allowAddAssignment(String context) {
         String resourceString = AssignmentReferenceReckoner.reckoner().context(context).reckon().getReference();
         if (permissionCheck(SECURE_ADD_ASSIGNMENT, resourceString, null)) return true;
+        // if not, see if the user has any groups to which adds are allowed
+        return (!getGroupsAllowAddAssignment(context).isEmpty());
+    }
+    
+    /**
+     * NAM-34 AND NAM-36
+     * Check if user has marker role
+     */
+    @Override
+    public boolean allowUserMarkerDownloadAndStats(String context) {
+        String resourceString = AssignmentReferenceReckoner.reckoner().context(context).reckon().getReference();
+        if (permissionCheck(SECURE_ASSIGNMENT_MARKER, resourceString, null)) return true;
         // if not, see if the user has any groups to which adds are allowed
         return (!getGroupsAllowAddAssignment(context).isEmpty());
     }
@@ -1427,6 +1440,16 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     public Set<AssignmentSubmission> getSubmissions(Assignment assignment) {
         assignmentRepository.initializeAssignment(assignment);
         return assignment.getSubmissions();
+    }
+    
+    /**
+     * NAM-36
+     * Method Implementation
+     */
+    @Override
+    public Set<AssignmentMarker> getMarkers(Assignment assignment) {
+    	assignmentRepository.initializeAssignment(assignment);
+    	return assignment.getMarkers();
     }
 
     @Override

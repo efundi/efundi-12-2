@@ -4,6 +4,14 @@ var decimalError;
 var totalError;
 var totalLessThanError;
 
+ASN.showFileName = function() {
+	var input = document.getElementById('file');
+	var infoArea = document.getElementById('file-upload-filename');
+	var fileName = input.files[0].name;
+	
+	infoArea.textContent = 'File name: ' + fileName;
+}
+
 // http://stackoverflow.com/a/6021027/3708872
 ASN.updateQueryStringParameter = function(uri, key, value) {
   var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");

@@ -13729,7 +13729,7 @@ public class AssignmentAction extends PagedResourceActionII {
         state.removeAttribute(UPLOAD_ALL_RELEASE_GRADES);
         
         //NAM-36
-        state.removeAttribute(STATE_CANCEL_MODE);
+        //state.removeAttribute(STATE_CANCEL_MODE);
     }
 
     /**

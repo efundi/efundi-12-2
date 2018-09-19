@@ -4141,6 +4141,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 			}	
 		}        
         return siteAssignmentMarkers;
+	}
 
     //NAM-23
 	public Boolean hasMarkingAssigned(String contextString, String role) {
@@ -4174,38 +4175,39 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		}
 		return userIds;
 	} 
+	
 	/*NAM-43*/		
 	public Set<String> checkParticipantsForMarking(String realmContext, Set<String> markersBeingAffected)
 	{	
 		Set<String> blockedChanges = new HashSet<String>();;
 		try {
 			String site = realmContext.substring(6);
-		AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(site));
-        Set<String> allowedMakers = getMarkersForSite(site); // gets markers with marking for this site.
-        Set<String> allowedMakerRoles = realm.getRolesIsAllowed(SECURE_ASSIGNMENT_MARKER); //gets all roles with permission
-
-        for (String user : markersBeingAffected) {
-			if ((user.contains(":"))) //checks if this is a role change user
-					{
-						String role = user.substring(0, user.indexOf(":"));
-						String userID = user.substring(user.indexOf(":")+1); //gets newRole and userID for checking
-						if (!allowedMakerRoles.contains(role))
+			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(site));
+	        Set<String> allowedMakers = getMarkersForSite(site); // gets markers with marking for this site.
+	        Set<String> allowedMakerRoles = realm.getRolesIsAllowed(SECURE_ASSIGNMENT_MARKER); //gets all roles with permission
+	
+	        for (String user : markersBeingAffected) {
+				if ((user.contains(":"))) //checks if this is a role change user
 						{
-							if (allowedMakers.contains(userID))
-							{								
-								blockedChanges.add(userID);
-							}							
+							String role = user.substring(0, user.indexOf(":"));
+							String userID = user.substring(user.indexOf(":")+1); //gets newRole and userID for checking
+							if (!allowedMakerRoles.contains(role))
+							{
+								if (allowedMakers.contains(userID))
+								{								
+									blockedChanges.add(userID);
+								}							
+							}
 						}
+				else
+				{ //no role change, just check against marker list
+				if (allowedMakers.contains(user))
+					{
+						log.error("NoRole: " + user);
+						blockedChanges.add(user);
 					}
-			else
-			{ //no role change, just check against marker list
-			if (allowedMakers.contains(user))
-				{
-					log.error("NoRole: " + user);
-					blockedChanges.add(user);
 				}
-			}
-		}		
+			}		
 		}
 		catch(Exception e)
 		{

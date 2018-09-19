@@ -893,7 +893,7 @@ ASN.enableSubmitUnlessNoFile = function(checkForFile)
     }
 };
 
-ASN.submitForm = function( formID, option, submissionID, view, focusId )
+ASN.submitForm = function( formID, option, submissionID, view, focusId, option_type )
 {
     // Get the form
     var form = document.getElementById( formID );
@@ -933,6 +933,14 @@ ASN.submitForm = function( formID, option, submissionID, view, focusId )
             {
                 viewElement.value = view;
             }
+        }
+        
+        // if
+        if(option_type !== undefined) {
+        	var optionTypeElement = document.getElementById( "option_type" );
+        	if ( optionTypeElement !== null ) {
+        		optionTypeElement.value = option_type;
+        	}
         }
 
         // Do the submit() if the form has one

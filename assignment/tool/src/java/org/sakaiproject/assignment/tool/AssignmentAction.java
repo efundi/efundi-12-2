@@ -4869,10 +4869,11 @@ public class AssignmentAction extends PagedResourceActionII {
             // NAM-36
 	        if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS) && (((String) state.getAttribute("user_action")) != null)) {
 	        	context.put("fromMarkerPage", Boolean.valueOf(true));
-	        	if(((String) state.getAttribute("user_action")).equals("download")) {
+	        	if(((String) state.getAttribute("user_action")).equals("downloadAll")) {
 		        	context.put("selectAll", Boolean.valueOf(true));
+	        	} else {
+	        		context.put("selectAll", Boolean.valueOf(false));
 	        	}
-	        	state.removeAttribute("user_action");
 	        } else {
 	        	context.put("fromMarkerPage", Boolean.valueOf(false));
 	        	context.put("selectAll", Boolean.valueOf(false));
@@ -5255,6 +5256,7 @@ public class AssignmentAction extends PagedResourceActionII {
         } else if ("clearSearch".equals(option)) {
             state.removeAttribute(VIEW_SUBMISSION_SEARCH);
         } else if ("download".equals(option)) {
+        	state.removeAttribute("user_action");
             // go to download all page
             doPrep_download_all(data);
         } else if ("upload".equals(option)) {
@@ -13729,7 +13731,7 @@ public class AssignmentAction extends PagedResourceActionII {
         state.removeAttribute(UPLOAD_ALL_RELEASE_GRADES);
         
         //NAM-36
-        state.removeAttribute(STATE_CANCEL_MODE);
+        //state.removeAttribute(STATE_CANCEL_MODE);
     }
 
     /**
@@ -13745,7 +13747,12 @@ public class AssignmentAction extends PagedResourceActionII {
 	        String assignmentReference = params.getString("assignmentId");
 	        state.setAttribute(EXPORT_ASSIGNMENT_REF, assignmentReference);
 	        state.setAttribute(STATE_CANCEL_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
-	        state.setAttribute("user_action", "download");
+	        String option_type = params.getString("option_type");
+	        
+        	if(option_type != null) {
+        		state.setAttribute("user_action", option_type);
+        	}
+	        
         } else {
         	state.setAttribute(STATE_CANCEL_MODE, VIEW_SUBMISSION_LIST_OPTION);
         }
@@ -13767,7 +13774,7 @@ public class AssignmentAction extends PagedResourceActionII {
 	        String assignmentReference = params.getString("assignmentId");
 	        state.setAttribute(EXPORT_ASSIGNMENT_REF, assignmentReference);
 	        state.setAttribute(STATE_CANCEL_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
-	        state.setAttribute("user_action", "upload");
+	        state.setAttribute("user_action", "uploadAll");
         } else {
         	state.setAttribute(STATE_CANCEL_MODE, VIEW_SUBMISSION_LIST_OPTION);
         }

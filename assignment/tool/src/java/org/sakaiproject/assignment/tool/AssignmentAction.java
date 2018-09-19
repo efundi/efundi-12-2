@@ -4867,10 +4867,14 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("showSubmissionByFilterSearchOnly", state.getAttribute(SUBMISSIONS_SEARCH_ONLY) != null && ((Boolean) state.getAttribute(SUBMISSIONS_SEARCH_ONLY)) ? Boolean.TRUE : Boolean.FALSE);
             
             // NAM-36
-	        if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS) && (((String) state.getAttribute("user_action")) != null) && ((String) state.getAttribute("user_action")).equals("download")) {
+	        if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS) && (((String) state.getAttribute("user_action")) != null)) {
+	        	context.put("fromMarkerPage", Boolean.valueOf(true));
+	        	if(((String) state.getAttribute("user_action")).equals("download")) {
+		        	context.put("selectAll", Boolean.valueOf(true));
+	        	}
 	        	state.removeAttribute("user_action");
-	        	context.put("selectAll", Boolean.valueOf(true));
 	        } else {
+	        	context.put("fromMarkerPage", Boolean.valueOf(false));
 	        	context.put("selectAll", Boolean.valueOf(false));
 	        }
         }
@@ -13763,6 +13767,7 @@ public class AssignmentAction extends PagedResourceActionII {
 	        String assignmentReference = params.getString("assignmentId");
 	        state.setAttribute(EXPORT_ASSIGNMENT_REF, assignmentReference);
 	        state.setAttribute(STATE_CANCEL_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
+	        state.setAttribute("user_action", "upload");
         } else {
         	state.setAttribute(STATE_CANCEL_MODE, VIEW_SUBMISSION_LIST_OPTION);
         }

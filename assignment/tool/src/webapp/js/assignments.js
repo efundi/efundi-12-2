@@ -848,6 +848,15 @@ ASN.invokeDownloadUrl = function(accessPointUrl, actionString, alertMessage, par
     {
         extraInfoArray[extraInfoArray.length]="includeNotSubmitted=true";
     }
+    if (document.getElementById('fromMarker')!=null)
+    {
+    		extraInfoArray[extraInfoArray.length]=document.getElementById(('fromMarker'));
+    }
+    if (document.getElementById('fromMarkerSelectAll')!=null)
+	{
+		extraInfoArray[extraInfoArray.length]=document.getElementById(('fromMarkerSelectAll'));
+	}
+
     if (extraInfoArray.length === 0)
     {
         alert(alertMessage);
@@ -906,7 +915,7 @@ ASN.submitForm = function( formID, option, submissionID, view, focusId, option_t
     // Get the form
     var form = document.getElementById( formID );
     if( form !== null )
-    {
+    {	
         // Apply the submission ID to the form's action if one is supplied
         if( submissionID !== null )
         {

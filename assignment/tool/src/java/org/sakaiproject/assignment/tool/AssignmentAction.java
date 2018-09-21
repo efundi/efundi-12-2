@@ -4856,10 +4856,10 @@ public class AssignmentAction extends PagedResourceActionII {
 
             Assignment.SubmissionType submissionType = a.getTypeOfSubmission();
             // if the assignment is of text-only or allow both text and attachment, include option for uploading student submit text
-            context.put("includeSubmissionText", Assignment.SubmissionType.TEXT_ONLY_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.TEXT_AND_ATTACHMENT_ASSIGNMENT_SUBMISSION == submissionType);
+            context.put("includeSubmissionText", Assignment.SubmissionType.TEXT_ONLY_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.TEXT_AND_ATTACHMENT_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.PDF_ONLY_SUBMISSION == submissionType); //Here.
 
             // if the assignment is of attachment-only or allow both text and attachment, include option for uploading student attachment
-            context.put("includeSubmissionAttachment", Assignment.SubmissionType.ATTACHMENT_ONLY_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.TEXT_AND_ATTACHMENT_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.SINGLE_ATTACHMENT_SUBMISSION == submissionType);
+            context.put("includeSubmissionAttachment", Assignment.SubmissionType.ATTACHMENT_ONLY_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.TEXT_AND_ATTACHMENT_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.SINGLE_ATTACHMENT_SUBMISSION == submissionType || Assignment.SubmissionType.PDF_ONLY_SUBMISSION == submissionType);
 
             context.put("viewString", state.getAttribute(VIEW_SUBMISSION_LIST_OPTION) != null ? state.getAttribute(VIEW_SUBMISSION_LIST_OPTION) : "");
 

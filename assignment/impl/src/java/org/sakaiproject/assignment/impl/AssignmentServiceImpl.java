@@ -61,6 +61,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.hsqldb.Session;
 import org.sakaiproject.announcement.api.AnnouncementChannel;
 import org.sakaiproject.announcement.api.AnnouncementService;
 import org.sakaiproject.assignment.api.AssignmentConstants;
@@ -78,10 +79,10 @@ import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentModelAnswerItem;
 import org.sakaiproject.assignment.api.model.AssignmentNoteItem;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
+import org.sakaiproject.assignment.api.model.AssignmentSubmissionMarker;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemAttachment;
 import org.sakaiproject.assignment.api.model.AssignmentSupplementItemService;
-import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.impl.sort.AnonymousSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.AssignmentSubmissionComparator;
 import org.sakaiproject.assignment.impl.sort.UserComparator;
@@ -139,6 +140,7 @@ import org.sakaiproject.service.gradebook.shared.GradebookNotFoundException;
 import org.sakaiproject.service.gradebook.shared.GradebookService;
 import org.sakaiproject.site.api.Group;
 import org.sakaiproject.site.api.Site;
+import org.sakaiproject.site.api.SitePage;
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.site.api.ToolConfiguration;
 import org.sakaiproject.taggable.api.TaggingManager;
@@ -147,6 +149,7 @@ import org.sakaiproject.time.api.UserTimeService;
 import org.sakaiproject.tool.api.SessionManager;
 import org.sakaiproject.tool.api.Tool;
 import org.sakaiproject.tool.api.ToolManager;
+import org.sakaiproject.tool.api.ToolSession;
 import org.sakaiproject.user.api.CandidateDetailProvider;
 import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;
@@ -212,7 +215,8 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     @Setter private UserTimeService userTimeService;
     
     @Setter private AssignmentMarker assignmentMarker;
-
+    @Setter private AssignmentSubmissionMarker assignmentSubmissionMarker;
+    
     private boolean allowSubmitByInstructor;
 
     public void init() {
@@ -471,6 +475,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                         case REF_TYPE_ASSIGNMENT:
                             String date = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").withZone(userTimeService.getLocalTimeZone().toZoneId()).format(ZonedDateTime.now());
                             String queryString = req.getQueryString();
+                            
                             if (StringUtils.isNotBlank(refReckoner.getId())) {
                                 // if subtype is assignment then were downloading all submissions for an assignment
                                 try {
@@ -1616,6 +1621,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         String contextString = "";
         String searchString = "";
         String searchFilterOnly = "";
+        
+        boolean fromMarker = false;
+        boolean fromMarkerSellectAll = false;
 
         if (query != null) {
             StringTokenizer queryTokens = new StringTokenizer(query, "&");
@@ -1666,6 +1674,14 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                 } else if (token.contains("searchFilterOnly")) {
                     // search and group filter only
                     searchFilterOnly = token.contains("=") ? token.substring(token.indexOf("=") + 1) : "";
+                }
+                if (token.contains("fromMarker")) {
+                    // should contain student submission text information
+                	fromMarker = true;
+                }
+                if (token.contains("fromMarkerSelect")) {
+                    // should contain student submission text information
+                	fromMarker = true;
                 }
             }
         }
@@ -1753,7 +1769,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                 withoutFolders,
                                 gradeFileFormat,
                                 includeNotSubmitted,
-                                assignment.getContext());
+                                assignment.getContext(),
+                                fromMarker,
+                                fromMarkerSellectAll);
                         if (exceptionMessage.length() > 0) {
                             log.warn("Encountered and issue while zipping submissions for ref = {}, exception message {}", reference, exceptionMessage);
                         }
@@ -2778,7 +2796,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     }
 
     // TODO zipSubmissions and zipGroupSubmissions should be combined
-    private void zipSubmissions(String assignmentReference, String assignmentTitle, Assignment.GradeType gradeType, Assignment.SubmissionType typeOfSubmission, Iterator submissions, OutputStream outputStream, StringBuilder exceptionMessage, boolean withStudentSubmissionText, boolean withStudentSubmissionAttachment, boolean withGradeFile, boolean withFeedbackText, boolean withFeedbackComment, boolean withFeedbackAttachment, boolean withoutFolders, String gradeFileFormat, boolean includeNotSubmitted, String siteId) {
+    private void zipSubmissions(String assignmentReference, String assignmentTitle, Assignment.GradeType gradeType, Assignment.SubmissionType typeOfSubmission, Iterator submissions, OutputStream outputStream, StringBuilder exceptionMessage, boolean withStudentSubmissionText, boolean withStudentSubmissionAttachment, boolean withGradeFile, boolean withFeedbackText, boolean withFeedbackComment, boolean withFeedbackAttachment, boolean withoutFolders, String gradeFileFormat, boolean includeNotSubmitted, String siteId, Boolean fromMarker, Boolean fromMarkerSellectAll) {
         ZipOutputStream out = null;
 
         boolean isAdditionalNotesEnabled = false;
@@ -2822,11 +2840,42 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             String caughtException = null;
             String caughtStackTrace = null;
             String submittersAdditionalNotesHtml = "";
-
+            OUTER:
             while (submissions.hasNext()) {
                 AssignmentSubmission s = (AssignmentSubmission) submissions.next();
                 boolean isAnon = assignmentUsesAnonymousGrading(s.getAssignment());
                 //SAK-29314 added a new value where it's by default submitted but is marked when the user submits
+                
+                //NAM-51 Partial Download - Idea is to use existing methods. This is a work in progress and may need fixing.
+				if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+					try {
+						if (fromMarker) // check here for the context of partial download
+						{
+							if (!fromMarkerSellectAll) // check here for the context of partial download													
+							{	
+								Set<AssignmentMarker> asnSet = getAssignmentMarkersForSite(siteId);
+								Set<String> asnMarkerSet = new HashSet<String>();
+								for (AssignmentMarker assignmentMarker : asnSet) {
+									if (assignmentMarker.getId()
+											.equals(userDirectoryService.getCurrentUser().getId())) {
+										Set<AssignmentSubmissionMarker> markerLoopSet = assignmentMarker
+												.getSubmissionMarkers();
+										for (AssignmentSubmissionMarker subId : markerLoopSet) {
+											asnMarkerSet.add(subId.getId());
+										}
+										break;
+									}
+								}
+								if (!(asnMarkerSet.contains(s.getId()))) {
+									break OUTER;
+								}
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+              	
                 if ((s.getSubmitted() && s.getUserSubmission()) || includeNotSubmitted) {
                     // get the submitter who submitted the submission see if the user is still in site
                     Optional<AssignmentSubmissionSubmitter> assignmentSubmitter = s.getSubmitters().stream().findAny();

@@ -750,7 +750,9 @@
 					<tr>
 						<th>$tlang.getString("quota.assignment.table.column.name")</th>
 						<th>$tlang.getString("quota.assignment.table.column.quota")</th>
-						<th>$tlang.getString("quota.assignment.table.column.reassign")</th>
+						#if ($!pageContext)
+							<th>$tlang.getString("quota.assignment.table.column.reassign")</th>
+						#end
 					</tr>
 					#foreach ($assignmentMarker in $assignmentMarkers)
 						<tr>	
@@ -760,16 +762,18 @@
 							<td>
 								<input type="number" value="$assignmentMarker.quotaPercentage" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($assignmentMarkers.size())">
 							</td>
-							<td>
-								<select class="select-quota" id="reassignSelect$velocityCount">
-									<option  value="">$tlang.getString("marker.reassign.select")</option>
-									#foreach ($assignmentMarkerReassign in $assignmentMarkers)
-										#if("$assignmentMarker.markerUserId" != "$assignmentMarkerReassign.markerUserId")
-											<option value="$assignmentMarkerReassign.markerUserId">$assignmentMarkerReassign.userDisplayName</option>
-										#end	
-									#end
-								</select>
-							</td>
+							#if ($!pageContext)
+								<td>
+									<select class="select-quota" id="reassignSelect$velocityCount">
+										<option  value="">$tlang.getString("marker.reassign.select")</option>
+										#foreach ($assignmentMarkerReassign in $assignmentMarkers)
+											#if("$assignmentMarker.markerUserId" != "$assignmentMarkerReassign.markerUserId")
+												<option value="$assignmentMarkerReassign.markerUserId">$assignmentMarkerReassign.userDisplayName</option>
+											#end	
+										#end
+									</select>
+								</td>
+							#end
 						</tr>
 					#end
 				</table>

@@ -72,6 +72,7 @@ import org.sakaiproject.assignment.api.AssignmentServiceConstants;
 import org.sakaiproject.assignment.api.ContentReviewResult;
 import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentMarker;
+import org.sakaiproject.assignment.api.model.AssignmentMarkerHistory;
 import org.sakaiproject.assignment.api.model.Assignment.GradeType;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItem;
 import org.sakaiproject.assignment.api.model.AssignmentAllPurposeItemAccess;
@@ -4233,5 +4234,10 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 			log.warn("Cannot get authz group for site = {}, {}", siteId, e.getMessage());
 		}
 		return blockedChanges;
+	}
+	
+	public void logMarkerChanges (AssignmentMarkerHistory amh) {
+		assignmentRepository.logMarkerChanges(amh.getAssignment(), amh.getOldAssignmentMarker(),
+				amh.getNewAssignmentMarker(), amh.getContext(), amh.getOldQuotaPercentage(), amh.getNewQuotaPercentage(), amh.getModifier());
 	}
 }

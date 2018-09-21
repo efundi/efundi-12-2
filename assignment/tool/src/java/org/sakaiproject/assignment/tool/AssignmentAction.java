@@ -2529,6 +2529,7 @@ public class AssignmentAction extends PagedResourceActionII {
         String assignmentRef = (String) state.getAttribute(EDIT_ASSIGNMENT_ID);
         if (assignmentRef != null) {
             a = getAssignment(assignmentRef, "setAssignmentFormContext", state);
+            context.put("pageContext", "edit"); //change here
         }
 
         // put the re-submission info into context

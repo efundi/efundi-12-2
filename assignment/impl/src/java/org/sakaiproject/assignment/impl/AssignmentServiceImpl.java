@@ -4214,7 +4214,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		while (assignmentMarkerSetIter.hasNext()) {
 			assignmentMarker = assignmentMarkerSetIter.next();
 			try {
-				user = userDirectoryService.getUser(assignmentMarker.getMarkerUserId());
+				user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
 	        	if (user != null) {
 	            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
 	            	siteAssignmentMarkers.add(assignmentMarker);

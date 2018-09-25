@@ -551,11 +551,4 @@ public interface AuthzGroupService extends EntityProducer
      * @return String Set containing all maintain roles.
      */
     public Set<String> getMaintainRoles();
-    /**
-     * Boolean if marker in site has assigned marking
-     *
-     * @return boolean true if there are assignments to the marker
-     */
-    public boolean checkAssignedMarkersForSite();    
-    
 }

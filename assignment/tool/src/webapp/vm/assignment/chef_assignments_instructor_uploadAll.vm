@@ -32,6 +32,8 @@
 			<input type="hidden" name="assignmentReference" id="assignmentReference" value="$aRef" />
 			<input type="hidden" name="view" id="view" value="$view" />
 			<input type="hidden" name="downloadUrl" id="downloadUrl" value="" />
+			<input type="hidden" name="fromMarkerPage" id="fromMarkerPage" value="$!fromMarkerPage" />
+			<input type="hidden" name="fromMarkerSelectAll" id="fromMarkerSelectAll" value="$!selectAll" />
 			<div class="highlightPanel">
 				#if (!$!download)
 					<div class="shorttext">

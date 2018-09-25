@@ -51,6 +51,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.sakaiproject.announcement.api.*;
 import org.sakaiproject.assignment.api.*;
 import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.persistence.AssignmentRepository;
 import org.sakaiproject.assignment.api.model.*;
 import org.sakaiproject.assignment.api.taggable.AssignmentActivityProducer;
 import org.sakaiproject.assignment.taggable.tool.DecoratedTaggingProvider;
@@ -2529,6 +2530,7 @@ public class AssignmentAction extends PagedResourceActionII {
         String assignmentRef = (String) state.getAttribute(EDIT_ASSIGNMENT_ID);
         if (assignmentRef != null) {
             a = getAssignment(assignmentRef, "setAssignmentFormContext", state);
+            context.put("pageContext", "edit"); //change here
         }
 
         // put the re-submission info into context
@@ -4855,10 +4857,10 @@ public class AssignmentAction extends PagedResourceActionII {
 
             Assignment.SubmissionType submissionType = a.getTypeOfSubmission();
             // if the assignment is of text-only or allow both text and attachment, include option for uploading student submit text
-            context.put("includeSubmissionText", Assignment.SubmissionType.TEXT_ONLY_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.TEXT_AND_ATTACHMENT_ASSIGNMENT_SUBMISSION == submissionType);
+            context.put("includeSubmissionText", Assignment.SubmissionType.TEXT_ONLY_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.TEXT_AND_ATTACHMENT_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.PDF_ONLY_SUBMISSION == submissionType); //Here.
 
             // if the assignment is of attachment-only or allow both text and attachment, include option for uploading student attachment
-            context.put("includeSubmissionAttachment", Assignment.SubmissionType.ATTACHMENT_ONLY_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.TEXT_AND_ATTACHMENT_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.SINGLE_ATTACHMENT_SUBMISSION == submissionType);
+            context.put("includeSubmissionAttachment", Assignment.SubmissionType.ATTACHMENT_ONLY_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.TEXT_AND_ATTACHMENT_ASSIGNMENT_SUBMISSION == submissionType || Assignment.SubmissionType.SINGLE_ATTACHMENT_SUBMISSION == submissionType || Assignment.SubmissionType.PDF_ONLY_SUBMISSION == submissionType);
 
             context.put("viewString", state.getAttribute(VIEW_SUBMISSION_LIST_OPTION) != null ? state.getAttribute(VIEW_SUBMISSION_LIST_OPTION) : "");
 
@@ -8708,6 +8710,34 @@ public class AssignmentAction extends PagedResourceActionII {
                 a.setTypeOfAccess(Assignment.Access.GROUP);
                 a.setGroups(groups.stream().map(Group::getReference).collect(Collectors.toSet()));
             }
+
+            Iterator<AssignmentMarker> oldAssignmentMarkerSetIter = ((Set<AssignmentMarker>) state.getAttribute(NEW_ASSIGNMENT_MARKERS)).iterator();
+
+            //loop through old marker set
+			while (oldAssignmentMarkerSetIter.hasNext()) {
+				AssignmentMarker oldMarker = oldAssignmentMarkerSetIter.next();
+				Iterator<AssignmentMarker> newAssignmentMarkerSetIter = markers.iterator();
+				while (newAssignmentMarkerSetIter.hasNext()) {
+					AssignmentMarker newMarker = newAssignmentMarkerSetIter.next();
+					if (oldMarker.getId().equals(newMarker.getId())) {
+						//compare the quota values
+						if (oldMarker.getQuotaPercentage() < newMarker.getQuotaPercentage() || oldMarker.getQuotaPercentage() > newMarker.getQuotaPercentage()) {
+							//if they are different, save the change to the assignment marker history table
+							AssignmentMarkerHistory amh = new AssignmentMarkerHistory();
+							amh.setAssignment(a);
+							amh.setContext(a.getContext());
+							amh.setDateModified(Instant.now());
+							amh.setNewAssignmentMarker(newMarker);
+							amh.setNewQuotaPercentage(newMarker.getQuotaPercentage());
+							amh.setOldAssignmentMarker(oldMarker);
+							amh.setOldQuotaPercentage(oldMarker.getQuotaPercentage());
+							amh.setModifier(userDirectoryService.getCurrentUser().getId());
+							
+							assignmentService.logMarkerChanges(amh);
+						}
+					}
+				}
+			}
             
             a.setMarkers(markers);
             // commit the changes

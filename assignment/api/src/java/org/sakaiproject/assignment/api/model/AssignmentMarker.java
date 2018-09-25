@@ -82,4 +82,10 @@ public class AssignmentMarker {
     
     @Transient
     private String userDisplayName;
+    
+    @Transient
+    private String userRole;
+    
+    @Transient
+    private String userDisplayId;
 }

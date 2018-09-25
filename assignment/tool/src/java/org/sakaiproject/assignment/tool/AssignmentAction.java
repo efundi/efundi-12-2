@@ -14345,6 +14345,10 @@ public class AssignmentAction extends PagedResourceActionII {
     	List<Assignment> assignments = prepPage(state);
         context.put("assignments", assignments.iterator());
         
+        for(Assignment assignment: assignments) {
+        	assignmentService.getMarkers(assignment, contextString);
+        }
+        
         AuthzGroup realm = null;
         try {
         	realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
@@ -14352,8 +14356,6 @@ public class AssignmentAction extends PagedResourceActionII {
         	log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
         }
         
-        context.put("realm", realm);
-        context.put("userDirectoryService", userDirectoryService);
         context.put("currentUserId", userDirectoryService.getCurrentUser().getDisplayId());
         context.put("currentUserRole", realm.getUserRole(userDirectoryService.getCurrentUser().getId()).getId());
         context.put("NumberOfFoundAssignments", assignments.size());

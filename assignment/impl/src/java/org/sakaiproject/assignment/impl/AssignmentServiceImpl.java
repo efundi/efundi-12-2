@@ -1447,9 +1447,42 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
      * Method Implementation
      */
     @Override
-    public Set<AssignmentMarker> getMarkers(Assignment assignment) {
+    public Set<AssignmentMarker> getMarkers(Assignment assignment, String contextString) {
     	assignmentRepository.initializeAssignment(assignment);
-    	return assignment.getMarkers();
+    	Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
+        Set<AssignmentMarker> assignmentMarkers = assignment.getMarkers();
+        AssignmentMarker assignmentMarker = null;   
+        User user = null;
+        String markerRole  = null;
+        
+        Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();		
+		while (assignmentMarkerSetIter.hasNext()) {
+			assignmentMarker = assignmentMarkerSetIter.next();
+			try {
+				user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
+	        	if (user != null) {
+	            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+	            	assignmentMarker.setUserDisplayId(user.getEid());
+	            	
+	            	AuthzGroup realm = null;
+		            try {
+		            	realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
+		            } catch (Exception e) {
+		            	log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
+		            }
+		            
+		            markerRole = realm.getUserRole(user.getId()).getId();
+		            if(markerRole != null) {
+		            	assignmentMarker.setUserRole(markerRole.substring(0,1).toUpperCase() + markerRole.substring(1));
+		            }
+	            	
+	            	siteAssignmentMarkers.add(assignmentMarker);
+	        	}
+			} catch (UserNotDefinedException e) {
+				log.error("Could not find user with id = {}, {}", assignmentMarker.getMarkerUserId(), e.getMessage());
+			}	
+		}
+        return siteAssignmentMarkers;
     }
 
     @Override
@@ -4131,7 +4164,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		while (assignmentMarkerSetIter.hasNext()) {
 			assignmentMarker = assignmentMarkerSetIter.next();
 			try {
-				user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
+				user = userDirectoryService.getUser(assignmentMarker.getMarkerUserId());
 	        	if (user != null) {
 	            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
 	            	siteAssignmentMarkers.add(assignmentMarker);

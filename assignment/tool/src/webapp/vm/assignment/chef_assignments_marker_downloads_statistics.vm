@@ -32,13 +32,12 @@
 		<div class="panel-default">
 			#set( $assignmentCount = 0 )
 			#foreach( $assignment in $assignments)
-				#set($markers = $!service.getMarkers($assignment))
 				#set ($assignmentReference = $!service.assignmentReference($assignment.Id))
 				#set($assignmentProperties=$!assignment.getProperties())
 				
 				## Only show other assignments if we have marker list > 0NumberOfFoundAssignments
 				
-				#if($markers.size() > 0)
+				#if($assignment.markers.size() > 0)
 					<div class="assignments" #if( $assignmentCount 	lt ($NumberOfFoundAssignments - 1) ) style="margin-bottom: 5px" #end>
 						<form name="viewForm$assignmentCount" id="viewForm$assignmentCount" class="inlineForm" method="post" action="#toolForm("AssignmentAction")">
 							<input type="hidden" name="assignmentId" id = "assignmentId" value=$validator.escapeUrl($!assignmentReference) />
@@ -73,15 +72,11 @@
 										## Set static markers
 										#set($counter = 0)
 										#set( $stats = ["2/20/25", "50/70/200", "3/10/100"] )
-										#foreach( $marker in $markers )
-											## Get the user object for displaying marker full name 
-											#set($markerUser = $userDirectoryService.getUser($!marker.markerUserId))
-											## Get the role object for displaying marker role
-											#set($markerUserRole = $realm.getUserRole($!marker.markerUserId))
-											#if(($!currentUserId.equals($markerUser.DisplayId)) || ($!currentUserRole.equals("maintain")))
+										#foreach( $marker in $assignment.markers )
+											#if(($!currentUserId.equals($marker.UserDisplayId)) || ($!currentUserRole.equals("maintain")))
 												<tr #if( $counter % 2 == 0) style="background: #fff" #else style="background: #f9f9f9" #end>
-													<td>$markerUser.DisplayName</td>
-													<td>$markerUserRole.Id.substring(0,1).toUpperCase()$markerUserRole.Id.substring(1)</td>
+													<td>$marker.UserDisplayName</td>
+													<td>$marker.UserRole</td>
 													<td><a href="#" id="download" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'download', null, null, null, 'download' ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downloadall.button.download')</a></td>
 													<td><a href="" id="uploadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'upload', null, null, null, 'uploadAll' ); return false;" title="$!tlang.getString('uploadall.title')">$!tlang.getString('uploadall.button.upload')</a></td>
 													<td><a href="" id="downloadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'download', null, null, null, 'downloadAll' ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downall')</a></td>

@@ -95,7 +95,7 @@
 			##Only show this on the download, upload takes it all
 			#if ($download)
 			<hr/>
-				<label for="includeNotSubmitted" style="font-weight:bold;"><input id="includeNotSubmitted" type="checkbox" value="includeNotSubmitted" name="choices" #if($!hasIncludeNotSubmitted)checked="checked"#end /> $tlang.getString("uploadall.choose.file.includeNotSubmitted")</label><br/>
+				<label for="includeNotSubmitted" style="font-weight:bold;"><input id="includeNotSubmitted" type="checkbox" value="includeNotSubmitted" name="choices" #if($!hasIncludeNotSubmitted || $selectAll) checked="checked" disabled="disabled" #end /> $tlang.getString("uploadall.choose.file.includeNotSubmitted")</label><br/>
 			#end
 
 			</p>

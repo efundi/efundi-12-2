@@ -491,7 +491,7 @@ public interface AssignmentService extends EntityProducer {
      * 						The assignment containing markers.
      * @return List over all markers for given Assignment.
      */
-    public Set<AssignmentMarker> getMarkers(Assignment assignment);
+    public Set<AssignmentMarker> getMarkers(Assignment assignment, String contextString);
     
     /**
      * @param assignmentId

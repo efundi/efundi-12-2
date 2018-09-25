@@ -1709,7 +1709,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                     // search and group filter only
                     searchFilterOnly = token.contains("=") ? token.substring(token.indexOf("=") + 1) : "";
                 }
-                if (token.contains("fromMarker")) {
+                if (token.contains("fromMarkerPage")) {
                     // should contain student submission text information
                 	fromMarker = true;
                 }
@@ -2883,15 +2883,20 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                 //NAM-51 Partial Download - Idea is to use existing methods. This is a work in progress and may need fixing.
 				if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
 					try {
-						if (fromMarker) // check here for the context of partial download
+						if (fromMarker) // check here for the context of partial
+										// download
 						{
-							if (!fromMarkerSellectAll) // check here for the context of partial download													
-							{	
-								Set<AssignmentMarker> asnSet = getAssignmentMarkersForSite(siteId);
+							if (!fromMarkerSellectAll) // check here for the
+														// context of partial
+														// download
+							{
+								String curUser = userDirectoryService.getCurrentUser().getEid();
+								Assignment a = new Assignment();
+								a.setContext(assignmentReference);
+								Set<AssignmentMarker> asnSet = getMarkersForAssignment(a);
 								Set<String> asnMarkerSet = new HashSet<String>();
 								for (AssignmentMarker assignmentMarker : asnSet) {
-									if (assignmentMarker.getId()
-											.equals(userDirectoryService.getCurrentUser().getId())) {
+									if (assignmentMarker.getMarkerUserId().equals(curUser)) {
 										Set<AssignmentSubmissionMarker> markerLoopSet = assignmentMarker
 												.getSubmissionMarkers();
 										for (AssignmentSubmissionMarker subId : markerLoopSet) {
@@ -2908,8 +2913,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-				}
-              	
+				}				
                 if ((s.getSubmitted() && s.getUserSubmission()) || includeNotSubmitted) {
                     // get the submitter who submitted the submission see if the user is still in site
                     Optional<AssignmentSubmissionSubmitter> assignmentSubmitter = s.getSubmitters().stream().findAny();

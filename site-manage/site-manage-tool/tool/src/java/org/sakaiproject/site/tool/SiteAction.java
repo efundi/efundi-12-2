@@ -9037,7 +9037,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 		}
 		// create list of all participants that have been deactivated
 		for(Object statusParticipant : participants ) {
-			String activeGrantId = ((Participant)statusParticipant).getUniqname();
+			String activeGrantId = ((Participant)statusParticipant).getEid();
 			String activeGrantField = "activeGrant" + activeGrantId;
 		
 			if (params.getString(activeGrantField) != null) { 
@@ -9049,7 +9049,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 		}
 		// create list of all participants that have role changes
 		for(Object roleParticipant : participants ) {
-			String id = ((Participant)roleParticipant).getUniqname();
+			String id = ((Participant)roleParticipant).getEid();
 			String roleId = "role" + id;
 			String newRole = params.getString(roleId);			 
 			if ((deactivatedParticipants.contains(id)==false) && ((Participant)roleParticipant).isActive() != false) { // skip any that are not already inactive or are not  candidates for deactivation

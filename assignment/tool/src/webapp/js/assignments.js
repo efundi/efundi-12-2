@@ -848,11 +848,11 @@ ASN.invokeDownloadUrl = function(accessPointUrl, actionString, alertMessage, par
     {
         extraInfoArray[extraInfoArray.length]="includeNotSubmitted=true";
     }
-    if (document.getElementById('fromMarker')!=null)
+    if (document.getElementById('fromMarkerPage'))
     {
-    		extraInfoArray[extraInfoArray.length]=document.getElementById(('fromMarker'));
+    		extraInfoArray[extraInfoArray.length]="fromMarkerPage";
     }
-    if (document.getElementById('fromMarkerSelectAll')!=null)
+    if (document.getElementById('fromMarkerSelectAll'))
 	{
 		extraInfoArray[extraInfoArray.length]=document.getElementById(('fromMarkerSelectAll'));
 	}

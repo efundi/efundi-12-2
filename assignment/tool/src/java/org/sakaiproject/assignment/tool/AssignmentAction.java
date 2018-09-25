@@ -51,7 +51,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.sakaiproject.announcement.api.*;
 import org.sakaiproject.assignment.api.*;
 import org.sakaiproject.assignment.api.model.Assignment;
-import org.sakaiproject.assignment.api.persistence.AssignmentRepository;
 import org.sakaiproject.assignment.api.model.*;
 import org.sakaiproject.assignment.api.taggable.AssignmentActivityProducer;
 import org.sakaiproject.assignment.taggable.tool.DecoratedTaggingProvider;
@@ -7758,7 +7757,7 @@ public class AssignmentAction extends PagedResourceActionII {
                         visibleTime, openTime, dueTime, closeTime, hideDueDate, enableCloseDate, isGroupSubmit, groups,
                         usePeerAssessment, peerPeriodTime, peerAssessmentAnonEval, peerAssessmentStudentViewReviews, peerAssessmentNumReviews, peerAssessmentInstructions,
                         submitReviewRepo, generateOriginalityReport, checkTurnitin, checkInternet, checkPublications, checkInstitution,
-                        excludeBibliographic, excludeQuoted, excludeSelfPlag, storeInstIndex, studentPreview, excludeType, excludeValue, assignmentMarkers);
+                        excludeBibliographic, excludeQuoted, excludeSelfPlag, storeInstIndex, studentPreview, excludeType, excludeValue, assignmentMarkers, params);
 
                 // Locking and unlocking groups
                 List<String> lockedGroupsReferences = new ArrayList<String>();
@@ -8622,7 +8621,8 @@ public class AssignmentAction extends PagedResourceActionII {
                                   boolean studentPreview,
                                   int excludeType,
                                   int excludeValue,
-                                  Set <AssignmentMarker> markers) {
+                                  Set <AssignmentMarker> markers,
+                                  ParameterParser params) {
         a.setTitle(title);
         a.setContext((String) state.getAttribute(STATE_CONTEXT_STRING));
         a.setSection(section);
@@ -8711,33 +8711,51 @@ public class AssignmentAction extends PagedResourceActionII {
                 a.setGroups(groups.stream().map(Group::getReference).collect(Collectors.toSet()));
             }
 
-            Iterator<AssignmentMarker> oldAssignmentMarkerSetIter = ((Set<AssignmentMarker>) state.getAttribute(NEW_ASSIGNMENT_MARKERS)).iterator();
+            AssignmentMarkerHistory amh;
+            
+            //checking if the marker tool is enabled as well as if there are values in assignment marker
+            if (serverConfigurationService.getBoolean("assignment.useMarker", false) && CollectionUtils.isNotEmpty(markers)) {
+            	//two iterators, one for the current marker loop and one for the reassign marker loop
+    			Iterator<AssignmentMarker> markerIter = markers.iterator();
+    			Iterator<AssignmentMarker> reassignIter;
+    			int index = 1;
+    			String value;
+    			//loop through current markers in assignment marker
+    			while (markerIter.hasNext()) {
+    				//get the reassign marker value
+    				value = params.getString("reassignSelect" + index);
+    				index++;
+    				AssignmentMarker marker = markerIter.next();
+    				//if the reassign marker value isn't the default value
+    				if (!value.equals("") && value != null) {
+    					//set assignment marker history values
+    					reassignIter = markers.iterator();
+    					amh = new AssignmentMarkerHistory();
+    					amh.setAssignment(a);
+    					amh.setContext(a.getContext());
+    					amh.setDateModified(Instant.now());
+    					//loop through reassign marker iterator to assign the new quota percentage
+    					while (reassignIter.hasNext()) {
+    						AssignmentMarker reassignMarker = reassignIter.next();
+    						if (value.equals(reassignMarker.getMarkerUserId())) {
+    							amh.setNewAssignmentMarker(reassignMarker);
+    							Double newQuota = Double.sum(reassignMarker.getQuotaPercentage(), marker.getQuotaPercentage());
+    	    					amh.setNewQuotaPercentage(newQuota);
+    	    					//assign the new quota value to the new/reassigned marker
+    	    					reassignMarker.setQuotaPercentage(newQuota);
+    						}
+    					}
+    					amh.setOldAssignmentMarker(marker);
+    					amh.setOldQuotaPercentage(marker.getQuotaPercentage());
+    					amh.setModifier(userDirectoryService.getCurrentUser().getId());
 
-            //loop through old marker set
-			while (oldAssignmentMarkerSetIter.hasNext()) {
-				AssignmentMarker oldMarker = oldAssignmentMarkerSetIter.next();
-				Iterator<AssignmentMarker> newAssignmentMarkerSetIter = markers.iterator();
-				while (newAssignmentMarkerSetIter.hasNext()) {
-					AssignmentMarker newMarker = newAssignmentMarkerSetIter.next();
-					if (oldMarker.getId().equals(newMarker.getId())) {
-						//compare the quota values
-						if (oldMarker.getQuotaPercentage() < newMarker.getQuotaPercentage() || oldMarker.getQuotaPercentage() > newMarker.getQuotaPercentage()) {
-							//if they are different, save the change to the assignment marker history table
-							AssignmentMarkerHistory amh = new AssignmentMarkerHistory();
-							amh.setAssignment(a);
-							amh.setContext(a.getContext());
-							amh.setDateModified(Instant.now());
-							amh.setNewAssignmentMarker(newMarker);
-							amh.setNewQuotaPercentage(newMarker.getQuotaPercentage());
-							amh.setOldAssignmentMarker(oldMarker);
-							amh.setOldQuotaPercentage(oldMarker.getQuotaPercentage());
-							amh.setModifier(userDirectoryService.getCurrentUser().getId());
-							
-							assignmentService.logMarkerChanges(amh);
-						}
-					}
-				}
-			}
+    					//assign the original marker with a 0 quota value
+    					marker.setQuotaPercentage(new Double(0));
+    					
+    					assignmentService.logMarkerChanges(amh);
+    				}
+    			}
+    		}
             
             a.setMarkers(markers);
             // commit the changes

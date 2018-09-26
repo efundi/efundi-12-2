@@ -486,15 +486,6 @@ public interface AssignmentService extends EntityProducer {
     public Set<AssignmentSubmission> getSubmissions(Assignment assignment);
     
     /**
-     * Get assignment markers
-     * NAM-36
-     * @param assignment -
-     * 						The assignment containing markers.
-     * @return List over all markers for given Assignment.
-     */
-    public Set<AssignmentMarker> getMarkers(Assignment assignment, String contextString);
-    
-    /**
      * @param assignmentId
      * @return
      */
@@ -772,4 +763,13 @@ public interface AssignmentService extends EntityProducer {
     public Set<String> checkParticipantsForMarking(String siteId, Set<String> markersBeingAffected);
     
     public void logMarkerChanges(AssignmentMarkerHistory amh);
+    
+    /**
+     * Get assignment markers
+     * NAM-36
+     * @param assignment -
+     * 						The assignment containing markers.
+     * @return List over all markers for given Assignment.
+     */
+    public void populateAssignmentMarkers(Assignment assignment);
 }

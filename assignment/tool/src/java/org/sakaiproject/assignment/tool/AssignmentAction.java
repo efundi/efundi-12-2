@@ -14406,19 +14406,10 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("assignments", assignments.iterator());
         
         for(Assignment assignment: assignments) {
-        	assignmentService.getMarkers(assignment, contextString);
+        	assignmentService.populateAssignmentMarkers(assignment);
         }
         
-        AuthzGroup realm = null;
-        try {
-        	realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
-        } catch (Exception e) {
-        	log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
-        }
-        
-        context.put("currentUserId", userDirectoryService.getCurrentUser().getDisplayId());
-        context.put("currentUserRole", realm.getUserRole(userDirectoryService.getCurrentUser().getId()).getId());
-        context.put("NumberOfFoundAssignments", assignments.size());
+        context.put("sizeOfAssignments", assignments.size());
         
         if(assignmentService.allowUserMarkerDownloadAndStats(contextString)) {
 	        state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);

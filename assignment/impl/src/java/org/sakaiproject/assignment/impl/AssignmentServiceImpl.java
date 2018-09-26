@@ -1447,49 +1447,6 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         assignmentRepository.initializeAssignment(assignment);
         return assignment.getSubmissions();
     }
-    
-    /**
-     * NAM-36
-     * Method Implementation
-     */
-    @Override
-    public Set<AssignmentMarker> getMarkers(Assignment assignment, String contextString) {
-    	assignmentRepository.initializeAssignment(assignment);
-    	Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
-        Set<AssignmentMarker> assignmentMarkers = assignment.getMarkers();
-        AssignmentMarker assignmentMarker = null;   
-        User user = null;
-        String markerRole  = null;
-        
-        Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();		
-		while (assignmentMarkerSetIter.hasNext()) {
-			assignmentMarker = assignmentMarkerSetIter.next();
-			try {
-				user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
-	        	if (user != null) {
-	            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
-	            	assignmentMarker.setUserDisplayId(user.getEid());
-	            	
-	            	AuthzGroup realm = null;
-		            try {
-		            	realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
-		            } catch (Exception e) {
-		            	log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + contextString);
-		            }
-		            
-		            markerRole = realm.getUserRole(user.getId()).getId();
-		            if(markerRole != null) {
-		            	assignmentMarker.setUserRole(markerRole.substring(0,1).toUpperCase() + markerRole.substring(1));
-		            }
-	            	
-	            	siteAssignmentMarkers.add(assignmentMarker);
-	        	}
-			} catch (UserNotDefinedException e) {
-				log.error("Could not find user with id = {}, {}", assignmentMarker.getMarkerUserId(), e.getMessage());
-			}	
-		}
-        return siteAssignmentMarkers;
-    }
 
     @Override
     public String getAssignmentStatus(String assignmentId) {
@@ -4277,4 +4234,56 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		assignmentRepository.logMarkerChanges(amh.getAssignment(), amh.getOldAssignmentMarker(),
 				amh.getNewAssignmentMarker(), amh.getContext(), amh.getOldQuotaPercentage(), amh.getNewQuotaPercentage(), amh.getModifier());
 	}
+	
+	/**
+     * NAM-36
+     * Method Implementation
+     */
+    @Override
+    public void populateAssignmentMarkers(Assignment assignment) {
+    	assignmentRepository.initializeAssignment(assignment);
+    	Set<AssignmentMarker> assignmentMarkersByPermissions = new HashSet<AssignmentMarker>();
+        Set<AssignmentMarker> assignmentMarkers = assignment.getMarkers();
+        AssignmentMarker assignmentMarker = null;   
+        User user = null;
+        String markerRole  = null;
+        String currentLoggedInUserDisplayId = null;
+        String currentLoggedInUserRole = null;
+        
+        AuthzGroup realm = null;
+        try {
+        	realm = authzGroupService.getAuthzGroup(siteService.siteReference(assignment.getContext()));
+        } catch (Exception e) {
+        	log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + assignment.getContext());
+        }
+        
+        // Get Display Id and Role of User currently logged in
+        currentLoggedInUserDisplayId = userDirectoryService.getCurrentUser().getDisplayId();
+        currentLoggedInUserRole = realm.getUserRole(userDirectoryService.getCurrentUser().getId()).getId();
+        
+        Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();		
+		while (assignmentMarkerSetIter.hasNext()) {
+			assignmentMarker = assignmentMarkerSetIter.next();
+			try {
+				user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
+	        	if (user != null) {
+
+	        		if(securityService.isSuperUser() || currentLoggedInUserDisplayId.equals(user.getEid())) {
+
+		            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+		            	assignmentMarker.setUserDisplayId(user.getEid());
+			            
+			            markerRole = realm.getUserRole(user.getId()).getId();
+			            if(markerRole != null) {
+			            	assignmentMarker.setUserRole(markerRole.substring(0,1).toUpperCase() + markerRole.substring(1));
+			            }
+	        			assignmentMarkersByPermissions.add(assignmentMarker);
+	        		}
+	        	}
+			} catch (UserNotDefinedException e) {
+				log.error("Could not find user with id = {}, {}", assignmentMarker.getMarkerUserId(), e.getMessage());
+			}	
+		}
+		assignment.setMarkers(assignmentMarkersByPermissions);
+    }
 }

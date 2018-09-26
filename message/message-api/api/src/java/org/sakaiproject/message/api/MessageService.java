@@ -75,10 +75,6 @@ public interface MessageService extends EntityProducer, EntitySummary
 
 	/** The Reference type for a messgae. */
 	public static final String REF_TYPE_MESSAGE = "msg";
-	
-	//NAM-24 Marker Permission
-	public static final String SECURE_ASSIGNMENT_MARKER = "marker";
-
 
 	/**
 	 * Return a list of all the defined channels.

@@ -750,7 +750,7 @@
 					<tr>
 						<th>$tlang.getString("quota.assignment.table.column.name")</th>
 						<th>$tlang.getString("quota.assignment.table.column.quota")</th>
-						#if ($!pageContext)
+						#if($!assignment)
 							<th>$tlang.getString("quota.assignment.table.column.reassign")</th>
 						#end
 					</tr>
@@ -762,7 +762,7 @@
 							<td>
 								<input type="number" value="$assignmentMarker.quotaPercentage" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($assignmentMarkers.size())">
 							</td>
-							#if ($!pageContext)
+							#if($!assignment)
 								<td>
 									<select class="select-quota" name="reassignSelect$velocityCount" id="reassignSelect$velocityCount" #if($assignmentMarker.quotaPercentage == 0)disabled#end>
 										<option  value="">$tlang.getString("marker.reassign.select")</option>

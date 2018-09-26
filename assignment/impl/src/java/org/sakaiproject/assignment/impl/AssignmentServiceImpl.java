@@ -1614,7 +1614,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         String searchFilterOnly = "";
         
         boolean fromMarker = false;
-        boolean fromMarkerSelectAll = false;
+        boolean fromMarkerSellectAll = false;
 
         if (query != null) {
             StringTokenizer queryTokens = new StringTokenizer(query, "&");
@@ -1670,9 +1670,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                     // should contain student submission text information
                 	fromMarker = true;
                 }
-                if (token.contains("fromMarkerSelectAll")) {
+                if (token.contains("fromMarkerSelect")) {
                     // should contain student submission text information
-                	fromMarkerSelectAll = true;
+                	fromMarker = true;
                 }
             }
         }
@@ -1762,7 +1762,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                 includeNotSubmitted,
                                 assignment.getContext(),
                                 fromMarker,
-                                fromMarkerSelectAll);
+                                fromMarkerSellectAll);
                         if (exceptionMessage.length() > 0) {
                             log.warn("Encountered and issue while zipping submissions for ref = {}, exception message {}", reference, exceptionMessage);
                         }
@@ -2787,7 +2787,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     }
 
     // TODO zipSubmissions and zipGroupSubmissions should be combined
-    private void zipSubmissions(String assignmentReference, String assignmentTitle, Assignment.GradeType gradeType, Assignment.SubmissionType typeOfSubmission, Iterator submissions, OutputStream outputStream, StringBuilder exceptionMessage, boolean withStudentSubmissionText, boolean withStudentSubmissionAttachment, boolean withGradeFile, boolean withFeedbackText, boolean withFeedbackComment, boolean withFeedbackAttachment, boolean withoutFolders, String gradeFileFormat, boolean includeNotSubmitted, String siteId, Boolean fromMarker, Boolean fromMarkerSelectAll) {
+    private void zipSubmissions(String assignmentReference, String assignmentTitle, Assignment.GradeType gradeType, Assignment.SubmissionType typeOfSubmission, Iterator submissions, OutputStream outputStream, StringBuilder exceptionMessage, boolean withStudentSubmissionText, boolean withStudentSubmissionAttachment, boolean withGradeFile, boolean withFeedbackText, boolean withFeedbackComment, boolean withFeedbackAttachment, boolean withoutFolders, String gradeFileFormat, boolean includeNotSubmitted, String siteId, Boolean fromMarker, Boolean fromMarkerSellectAll) {
         ZipOutputStream out = null;
 
         boolean isAdditionalNotesEnabled = false;
@@ -2843,7 +2843,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 						if (fromMarker) // check here for the context of partial
 										// download
 						{
-							if (!fromMarkerSelectAll) // check here for the
+							if (!fromMarkerSellectAll) // check here for the
 														// context of partial
 														// download
 							{

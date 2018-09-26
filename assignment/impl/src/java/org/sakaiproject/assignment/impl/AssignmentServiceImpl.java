@@ -2847,22 +2847,10 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 														// context of partial
 														// download
 							{
-								String curUser = userDirectoryService.getCurrentUser().getEid();
-								Assignment a = new Assignment();
-								a.setContext(assignmentReference);
-								Set<AssignmentMarker> asnSet = getMarkersForAssignment(a);
-								Set<String> asnMarkerSet = new HashSet<String>();
-								for (AssignmentMarker assignmentMarker : asnSet) {
-									if (assignmentMarker.getMarkerUserId().equals(curUser)) {
-										Set<AssignmentSubmissionMarker> markerLoopSet = assignmentMarker
-												.getSubmissionMarkers();
-										for (AssignmentSubmissionMarker subId : markerLoopSet) {
-											asnMarkerSet.add(subId.getId());
-										}
-										break;
-									}
-								}
-								if (!(asnMarkerSet.contains(s.getId()))) {
+								Assignment asn = s.getAssignment();
+								Set<String> asnMarkerSubmissionSet = getSubmissionListForMarker(asn); // This is paused for the quote. Submssion List is currently genrated as null
+								
+								if (!(asnMarkerSubmissionSet.contains(s.getId()))) {
 									break OUTER;
 								}
 							}
@@ -3150,8 +3138,27 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             }
         }
     }
+    // NAM-51 Download Partial. This is paused for the quote. Submssion List is currently genrated as null
+    private Set<String> getSubmissionListForMarker(Assignment asn) {
+    	
+    	String curUser = userDirectoryService.getCurrentUser().getEid();						
+		
+		Set<AssignmentMarker> asnSet = getMarkersForAssignment(asn);
+		Set<String> asnMarkerSubmissionSet = new HashSet<String>();
+		for (AssignmentMarker assignmentMarker : asnSet) {
+			if (assignmentMarker.getMarkerUserId().equals(curUser)) {
+				Set<AssignmentSubmissionMarker> markerLoopSet = assignmentMarker.getSubmissionMarkers();
+				for (AssignmentSubmissionMarker subId : markerLoopSet) {
+					asnMarkerSubmissionSet.add(subId.getId());
+				}
+				break;
+			}
+		}
+		
+		return asnMarkerSubmissionSet;
+	}
 
-    // TODO zipSubmissions and zipGroupSubmissions should be combined
+	// TODO zipSubmissions and zipGroupSubmissions should be combined
     protected void zipGroupSubmissions(String assignmentReference, String assignmentTitle, String gradeTypeString, Assignment.SubmissionType typeOfSubmission, Iterator submissions, OutputStream outputStream, StringBuilder exceptionMessage, boolean withStudentSubmissionText, boolean withStudentSubmissionAttachment, boolean withGradeFile, boolean withFeedbackText, boolean withFeedbackComment, boolean withFeedbackAttachment, String gradeFileFormat, boolean includeNotSubmitted) {
         ZipOutputStream out = null;
         try {

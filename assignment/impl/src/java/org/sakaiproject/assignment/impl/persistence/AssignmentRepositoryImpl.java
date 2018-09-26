@@ -225,20 +225,10 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
     
     @Override
     @Transactional
-    public void logMarkerChanges(Assignment assignment, AssignmentMarker oldAssignmentMarker, AssignmentMarker newAssignmentMarker,  String context
-    		, double oldQuota, double newQuota, String modifier)
+    public void logMarkerChanges(AssignmentMarkerHistory amh)
     {
- 	   	   	AssignmentMarkerHistory asnMH = new AssignmentMarkerHistory();
-    	
- 	   	asnMH.setAssignment(assignment);
- 	   	asnMH.setContext(context);
- 	   	asnMH.setOldAssignmentMarker(oldAssignmentMarker);
- 	   	asnMH.setNewAssignmentMarker(newAssignmentMarker);
- 	   	asnMH.setOldQuotaPercentage(oldQuota);
- 	   	asnMH.setNewQuotaPercentage(newQuota);
- 	   	asnMH.setModifier(modifier); 	   
-        
-        sessionFactory.getCurrentSession().persist(asnMH);
+        sessionFactory.getCurrentSession().persist(amh);
+        sessionFactory.getCurrentSession().save(amh);
     }
     
 }

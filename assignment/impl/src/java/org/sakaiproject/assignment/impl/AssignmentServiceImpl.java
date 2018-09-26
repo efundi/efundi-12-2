@@ -4231,8 +4231,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 	}
 	
 	public void logMarkerChanges (AssignmentMarkerHistory amh) {
-		assignmentRepository.logMarkerChanges(amh.getAssignment(), amh.getOldAssignmentMarker(),
-				amh.getNewAssignmentMarker(), amh.getContext(), amh.getOldQuotaPercentage(), amh.getNewQuotaPercentage(), amh.getModifier());
+		assignmentRepository.logMarkerChanges(amh);
 	}
 	
 	/**

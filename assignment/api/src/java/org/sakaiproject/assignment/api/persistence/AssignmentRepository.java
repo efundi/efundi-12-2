@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentMarker;
+import org.sakaiproject.assignment.api.model.AssignmentMarkerHistory;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.serialization.SerializableRepository;
@@ -87,6 +88,5 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
      * NAM-35
      */
     
-	void logMarkerChanges(Assignment assignment, AssignmentMarker oldAssignmentMarker,
-			AssignmentMarker newAssignmentMarker, String context, double oldQuota, double newQuota, String modifier);
+	void logMarkerChanges(AssignmentMarkerHistory amh);
 }

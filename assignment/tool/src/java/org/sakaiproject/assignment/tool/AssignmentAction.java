@@ -8703,6 +8703,8 @@ public class AssignmentAction extends PagedResourceActionII {
         a.setPeerAssessmentNumberReviews(peerAssessmentNumReviews);
         a.setPeerAssessmentInstructions(peerAssessmentInstructions);
 
+        Set <AssignmentMarkerHistory> historySet = new HashSet <AssignmentMarkerHistory>();
+        
         try {
             if (Assignment.Access.SITE.toString().equals(range)) {
                 a.setTypeOfAccess(Assignment.Access.SITE);
@@ -8714,7 +8716,9 @@ public class AssignmentAction extends PagedResourceActionII {
             AssignmentMarkerHistory amh;
             
             //checking if the marker tool is enabled as well as if there are values in assignment marker
-            if (serverConfigurationService.getBoolean("assignment.useMarker", false) && CollectionUtils.isNotEmpty(markers)) {
+            if (serverConfigurationService.getBoolean("assignment.useMarker", false) 
+            		&& !params.getString("assignmentId").equals("")
+            		&& CollectionUtils.isNotEmpty(markers)) {
             	//two iterators, one for the current marker loop and one for the reassign marker loop
     			Iterator<AssignmentMarker> markerIter = markers.iterator();
     			Iterator<AssignmentMarker> reassignIter;
@@ -8752,7 +8756,7 @@ public class AssignmentAction extends PagedResourceActionII {
     					//assign the original marker with a 0 quota value
     					marker.setQuotaPercentage(new Double(0));
     					
-    					assignmentService.logMarkerChanges(amh);
+    					historySet.add(amh);
     				}
     			}
     		}
@@ -8779,6 +8783,14 @@ public class AssignmentAction extends PagedResourceActionII {
                 addAlert(state, rb.getString("group.user.multiple.error"));
                 log.warn(":post_save_assignment at least one user in multiple groups.");
             }
+        }
+        
+        if (historySet != null && CollectionUtils.isNotEmpty(historySet)) {
+        	Iterator<AssignmentMarkerHistory> history = historySet.iterator();
+        	while (history.hasNext()) {
+        		AssignmentMarkerHistory entry = history.next();
+        		assignmentService.logMarkerChanges(entry);
+        	}
         }
 
         if(!a.getDraft() && a.getAllowPeerAssessment()){

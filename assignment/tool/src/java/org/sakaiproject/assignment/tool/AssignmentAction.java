@@ -13077,7 +13077,7 @@ public class AssignmentAction extends PagedResourceActionII {
                     boolean withoutFolders = uploadAll_readChoice(choices, "withoutFolders"); // SAK-19147
                     // release
                     boolean releaseGrades = params.getString("release") != null && params.getBoolean("release");
-
+                   
                     state.setAttribute(UPLOAD_ALL_HAS_SUBMISSION_TEXT, Boolean.valueOf(hasSubmissionText));
                     state.setAttribute(UPLOAD_ALL_HAS_SUBMISSION_ATTACHMENT, Boolean.valueOf(hasSubmissionAttachment));
                     state.setAttribute(UPLOAD_ALL_HAS_GRADEFILE, Boolean.valueOf(hasGradeFile));
@@ -13127,6 +13127,17 @@ public class AssignmentAction extends PagedResourceActionII {
                                 hasFeedbackAttachment, releaseGrades,
                                 submissionTable, submissions, assignment);
                     }
+                
+                    if (serverConfigurationService.getBoolean("assignment.useMarker", false))
+                    {
+                    	 // NAM-44 Trying to get fromMarkerPage paramater 
+                        boolean fromMarker = params.getString("fromMarkerPage") != null && params.getBoolean("fromMarkerPage");
+                        if(fromMarker)
+                        {
+                        	 eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_UPLOAD, aReference, true));	
+                        }
+                    }
+                    
                 }
             }
         }

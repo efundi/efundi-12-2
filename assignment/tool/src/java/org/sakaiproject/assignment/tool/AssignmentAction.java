@@ -8719,6 +8719,9 @@ public class AssignmentAction extends PagedResourceActionII {
             if (serverConfigurationService.getBoolean("assignment.useMarker", false) 
             		&& !params.getString("assignmentId").equals("")
             		&& CollectionUtils.isNotEmpty(markers)) {
+            	//NAM-44 Event Logging
+            	 eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_REASSIGN, assignmentRef, true));
+            	
             	//two iterators, one for the current marker loop and one for the reassign marker loop
     			Iterator<AssignmentMarker> markerIter = markers.iterator();
     			Iterator<AssignmentMarker> reassignIter;

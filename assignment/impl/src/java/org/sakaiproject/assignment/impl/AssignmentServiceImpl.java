@@ -2835,10 +2835,11 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             while (submissions.hasNext()) {
                 AssignmentSubmission s = (AssignmentSubmission) submissions.next();
                 boolean isAnon = assignmentUsesAnonymousGrading(s.getAssignment());
-                //SAK-29314 added a new value where it's by default submitted but is marked when the user submits
-                
+                //SAK-29314 added a new value where it's by default submitted but is marked when the user submits                
                 //NAM-51 Partial Download - Idea is to use existing methods. This is a work in progress and may need fixing.
 				if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+					//NAM-44 Event Logging 
+					eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_DOWNLOAD, assignmentReference, true));
 					try {
 						if (fromMarker) // check here for the context of partial
 										// download

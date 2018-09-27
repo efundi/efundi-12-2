@@ -8718,10 +8718,7 @@ public class AssignmentAction extends PagedResourceActionII {
             //checking if the marker tool is enabled as well as if there are values in assignment marker
             if (serverConfigurationService.getBoolean("assignment.useMarker", false) 
             		&& !params.getString("assignmentId").equals("")
-            		&& CollectionUtils.isNotEmpty(markers)) {
-            	//NAM-44 Event Logging
-            	 eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_REASSIGN, assignmentRef, true));
-            	
+            		&& CollectionUtils.isNotEmpty(markers)) {            	            	
             	//two iterators, one for the current marker loop and one for the reassign marker loop
     			Iterator<AssignmentMarker> markerIter = markers.iterator();
     			Iterator<AssignmentMarker> reassignIter;
@@ -8760,8 +8757,13 @@ public class AssignmentAction extends PagedResourceActionII {
     					marker.setQuotaPercentage(new Double(0));
     					
     					historySet.add(amh);
+    					
+    					//NAM-44 Event Logging
+    					eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_REASSIGN, assignmentRef, true));
     				}
     			}
+    			//NAM-44 Event Logging
+           	 	eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_ADD, assignmentRef, true));
     		}
             
             a.setMarkers(markers);
@@ -13608,7 +13610,7 @@ public class AssignmentAction extends PagedResourceActionII {
                         }
                     } catch (PermissionException e) {
                         log.warn("Could not update submission: {}, {}", submission.getId(), e.getMessage());
-                    }
+                    }                    
                 }
             }
         }

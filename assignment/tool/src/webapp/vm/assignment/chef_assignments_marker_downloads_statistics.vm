@@ -52,10 +52,10 @@
 									$validator.escapeHtml($!assignment.Title)
 								</h4>
 								<span class="icon-container" style="display: block; float: right; font-size: 25px; cursor: pointer">
-									<span #if( $assignmentCount == 0 ) class="glyphicon glyphicon-chevron-up" #else class="glyphicon glyphicon-chevron-down" #end></span>
+									<span class="glyphicon glyphicon-chevron-up"></span>
 								</span>
 							</div>
-							<div class="panel-body"  #if( $assignmentCount == 0 ) style="display: block" #else style="display: none" #end>
+							<div class="panel-body">
 								<table class="table table-striped table-bordered">
 									<thead>
 										<tr style="background: #FAFAFA; font-weight: inherit">

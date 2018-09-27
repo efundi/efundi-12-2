@@ -764,7 +764,7 @@
 							</td>
 							#if ($!pageContext)
 								<td>
-									<select class="select-quota" name="reassignSelect$velocityCount" id="reassignSelect$velocityCount">
+									<select class="select-quota" name="reassignSelect$velocityCount" id="reassignSelect$velocityCount" #if($assignmentMarker.quotaPercentage == 0)disabled#end>
 										<option  value="">$tlang.getString("marker.reassign.select")</option>
 										#foreach ($assignmentMarkerReassign in $assignmentMarkers)
 											#if("$assignmentMarker.markerUserId" != "$assignmentMarkerReassign.markerUserId")

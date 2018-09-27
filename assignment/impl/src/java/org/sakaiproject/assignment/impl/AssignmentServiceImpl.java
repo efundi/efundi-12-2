@@ -4176,22 +4176,61 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 	@Override
 	public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment) {
 		Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
-        Set<AssignmentMarker> assignmentMarkers = assignment.getMarkers();        
+        Set<AssignmentMarker> assignmentMarkers = assignment.getMarkers();    
+        Set<AssignmentMarker> allSiteMarkers = getAssignmentMarkersForSite(assignment.getContext()); //new
+        Set<AssignmentMarker> tempAllSiteMarkers = getAssignmentMarkersForSite(assignment.getContext()); //new
         AssignmentMarker assignmentMarker = null;   
         User user = null;
-        Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();		
-		while (assignmentMarkerSetIter.hasNext()) {
+        Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
+        Iterator<AssignmentMarker> allAssignmentMarkersSetIter; //new
+           
+        while (assignmentMarkerSetIter.hasNext()) {
 			assignmentMarker = assignmentMarkerSetIter.next();
+			allAssignmentMarkersSetIter = allSiteMarkers.iterator(); //new
 			try {
+				while (allAssignmentMarkersSetIter.hasNext()) { //new
+					AssignmentMarker marker = allAssignmentMarkersSetIter.next(); //new
+					if (marker.getMarkerUserId().equals(assignmentMarker.getMarkerUserId())) { //new
+						tempAllSiteMarkers.remove(marker);
+					}	
+				}
+				
 				user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
-	        	if (user != null) {
-	            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
-	            	siteAssignmentMarkers.add(assignmentMarker);
-	        	}        
+				
+				if (user != null) {
+					assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+					siteAssignmentMarkers.add(assignmentMarker);
+				}
 			} catch (UserNotDefinedException e) {
 				log.error("Could not find user with id = {}, {}", assignmentMarker.getMarkerUserId(), e.getMessage());
 			}	
-		}        
+		}  
+        
+        if (CollectionUtils.isNotEmpty(tempAllSiteMarkers)) {
+        	Iterator<AssignmentMarker> newAssignmentMarkerSetIter = tempAllSiteMarkers.iterator();
+	        while (newAssignmentMarkerSetIter.hasNext()) {
+	        	AssignmentMarker marker = newAssignmentMarkerSetIter.next();
+	        	marker.setQuotaPercentage(new Double(0)); //new
+	        	try {
+					user = userDirectoryService.getUserByEid(marker.getMarkerUserId());
+					if (user != null) {
+						marker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+						//assignment.getMarkers().add(marker);
+						siteAssignmentMarkers.add(marker);
+					}
+	        	} catch (UserNotDefinedException e) {
+					log.error("Could not find user with id = {}, {}", marker.getMarkerUserId(), e.getMessage());
+				}
+	        }
+        }
+
+        assignment.setMarkers(siteAssignmentMarkers);
+        try {
+			updateAssignment(assignment);
+		} catch (PermissionException e) {
+			log.error("Could not update assignment = {}, {}", assignment, e.getMessage());
+		}
+		 
         return siteAssignmentMarkers;
 	}
 

@@ -2853,12 +2853,13 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 									break OUTER;
 								}
 							}
+							
+							//NAM-44 Event Logging 
+							eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_DOWNLOAD, assignmentReference, true));							
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
-					}
-					//NAM-44 Event Logging 
-					eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_DOWNLOAD, assignmentReference, true));
+					}					
 				}				
                 if ((s.getSubmitted() && s.getUserSubmission()) || includeNotSubmitted) {
                     // get the submitter who submitted the submission see if the user is still in site

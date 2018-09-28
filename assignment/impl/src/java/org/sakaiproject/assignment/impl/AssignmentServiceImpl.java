@@ -4213,14 +4213,12 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 						User user = userDirectoryService.getUserByEid(userId);
 						if (user != null && !securityService.isSuperUser(user.getEid())) {
 							AssignmentMarker newAssignmentMarker = new AssignmentMarker();
-							newAssignmentMarker.setQuotaPercentage(new Double(0));
-							newAssignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");						
-							newAssignmentMarker.setContext(siteId);
+							newAssignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
 							newAssignmentMarker.setMarkerUserId(user.getEid());						
 							assignmentMarkers.add(newAssignmentMarker);
 						}
 					} catch (UserNotDefinedException e) {
-						log.error("Could not find user with id = {}, {}", assignmentMarker.getMarkerUserId(), e.getMessage());
+						log.error("Could not find user with id = {}, {}", userId, e.getMessage());
 					}
 		        }
 		        found = false;
@@ -4274,8 +4272,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		return blockedChanges;
 	}
 	
-	public void logMarkerChanges (AssignmentMarkerHistory amh) {
-		assignmentRepository.logMarkerChanges(amh);
+	public void logMarkerChanges (AssignmentMarkerHistory assignmentMarkerHistory) {
+		assignmentRepository.logMarkerChanges(assignmentMarkerHistory);
+        eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_REASSIGN, assignmentMarkerHistory.getId(), false));
 	}
 	
 	/**

@@ -1305,6 +1305,11 @@ public class AssignmentAction extends PagedResourceActionII {
         }else if(mode.equals(MODE_MARKER_DOWNLOADS_STATISTICS)) {
         	// build the options page
             template = build_marker_downloads_statistics_context(portlet, context, data, state);
+            if (securityService.isSuperUser()) {
+            	context.put("userType", "admin");
+            } else {
+            	context.put("userType", userDirectoryService.getCurrentUser().getType());
+            }
         } else if (mode.equals(MODE_STUDENT_REVIEW_EDIT)) {
             template = build_student_review_edit_context(portlet, context, data, state);
         } else if (MODE_LIST_DELETED_ASSIGNMENTS.equals(mode)) {
@@ -4174,6 +4179,12 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("download_url_link", downloadUrl);
             context.put("download_url_link_label", rb.getString("download_url_link_label"));
             state.removeAttribute(STATE_DOWNLOAD_URL);
+        }
+        
+        if (!serverConfigurationService.getBoolean("assignment.useMarker", false) 
+        		&& Assignment.SubmissionType.PDF_ONLY_SUBMISSION != assignment.getTypeOfSubmission()
+        		&& CollectionUtils.isEmpty(assignment.getMarkers())) {
+        	context.put("markerToolDisabled", "");
         }
         
         String template = (String) getContext(data).get("template");

@@ -755,12 +755,15 @@
 						#end
 					</tr>
 					#foreach ($assignmentMarker in $assignmentMarkers)
+					
+						#if($assignmentMarker.markerUserId) <input type="hidden" name="assignmentMarkerUserId$velocityCount" value="$assignmentMarker.markerUserId" /> #end
+									
 						<tr>	
 							<td>
 								$assignmentMarker.userDisplayName
 							</td>
 							<td>
-								<input type="number" value="$assignmentMarker.quotaPercentage" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($assignmentMarkers.size())">
+								<input type="number" value="$assignmentMarker.quotaPercentage" #if($assignment) disabled="disabled" #end class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($assignmentMarkers.size())">
 							</td>
 							#if($!assignment)
 								<td>

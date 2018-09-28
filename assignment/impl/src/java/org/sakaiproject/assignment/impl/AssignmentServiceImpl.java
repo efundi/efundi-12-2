@@ -4285,7 +4285,6 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         User user = null;
         String markerRole  = null;
         String currentLoggedInUserDisplayId = null;
-        String currentLoggedInUserRole = null;
         
         AuthzGroup realm = null;
         try {
@@ -4296,7 +4295,6 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         
         // Get Display Id and Role of User currently logged in
         currentLoggedInUserDisplayId = userDirectoryService.getCurrentUser().getDisplayId();
-        currentLoggedInUserRole = realm.getUserRole(userDirectoryService.getCurrentUser().getId()).getId();
         
         Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();		
 		while (assignmentMarkerSetIter.hasNext()) {

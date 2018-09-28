@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "ASN_SUBMISSION_MARKER")
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode
 public class AssignmentSubmissionMarker {
 	
 	@Id

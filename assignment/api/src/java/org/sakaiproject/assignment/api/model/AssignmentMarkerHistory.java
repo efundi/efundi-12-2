@@ -1,17 +1,11 @@
 package org.sakaiproject.assignment.api.model;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -26,18 +20,12 @@ import lombok.NoArgsConstructor;
 /**
  * AssignmentSubmissionMarkerHisotry represents a History of Markers for an Assignment submission.
  */
-
-/**
- * NAM-35
- */
-
-
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "ASN_SUBMISSION_MARKER_HISTORY")
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode
 public class AssignmentMarkerHistory {
 	
 	@Id
@@ -46,20 +34,14 @@ public class AssignmentMarkerHistory {
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private String id;
 	
-    @ManyToOne
-    @JoinColumn(name = "OLD_MARKER_ID")
-    private AssignmentMarker oldAssignmentMarker;
+    @Column(name = "OLD_MARKER_ID", length = 36)
+    private String oldMarkerId;
     
-    @ManyToOne
-    @JoinColumn(name = "NEW_MARKER_ID")
-    private AssignmentMarker newAssignmentMarker;
+    @Column(name = "NEW_MARKER_ID", length = 36)
+    private String newMarkerId;
     
 	@Column(name = "CONTEXT", length = 99, nullable = false)
 	private String context;
-
-	@ManyToOne
-	@JoinColumn(name = "ASSIGNMENT_ID")
-	private Assignment assignment;
    
     @Column(name="OLD_QUOTA")
     private Double oldQuotaPercentage;

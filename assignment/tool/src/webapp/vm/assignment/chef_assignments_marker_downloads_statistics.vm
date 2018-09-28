@@ -35,9 +35,8 @@
 				#set ($assignmentReference = $!service.assignmentReference($assignment.Id))
 				#set($assignmentProperties=$!assignment.getProperties())
 				
-				## Only show other assignments if we have marker list > sizeOfAssignments
 				#if($assignment.markers.size() > 0)
-					<div class="assignments" #if( $assignmentCount 	lt ($sizeOfAssignments - 1) ) style="margin-bottom: 5px" #end>
+					<div class="assignments" style="margin-bottom: 5px">
 						<form name="viewForm$assignmentCount" id="viewForm$assignmentCount" class="inlineForm" method="post" action="#toolForm("AssignmentAction")">
 							<input type="hidden" name="assignmentId" id = "assignmentId" value=$validator.escapeUrl($!assignmentReference) />
 							<input type="hidden" name="option" id="option" value="x" />

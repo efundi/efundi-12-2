@@ -504,6 +504,7 @@ public class AssignmentAction extends PagedResourceActionII {
     private static final String NEW_ASSIGNMENT_SECTION = "new_assignment_section";
     private static final String NEW_ASSIGNMENT_SUBMISSION_TYPE = "new_assignment_submission_type";
     private static final String NEW_ASSIGNMENT_MARKERS = "new_assignment_markers";
+    private static final String NEW_ASSIGNMENT_MARKERS_HISTORY = "new_assignment_markers_history";
     private static final String NEW_ASSIGNMENT_CATEGORY = "new_assignment_category";
     private static final String NEW_ASSIGNMENT_GRADE_TYPE = "new_assignment_grade_type";
     private static final String NEW_ASSIGNMENT_GRADE_POINTS = "new_assignment_grade_points";
@@ -6944,24 +6945,75 @@ public class AssignmentAction extends PagedResourceActionII {
             }
         } 
               
-		if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+		if (serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == Assignment.SubmissionType.values()[(Integer) state.getAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE)]
+				&& StringUtils.isNotBlank(params.getString("allowMarkerToggle")) )  {
 
 			if (state.getAttribute(NEW_ASSIGNMENT_MARKERS) != null) {
 				Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
+				Set<AssignmentMarkerHistory> markerHistorySet = new HashSet<AssignmentMarkerHistory>();
 				Set<AssignmentMarker> assignmentMarkers = (Set<AssignmentMarker>) state
 						.getAttribute(NEW_ASSIGNMENT_MARKERS);
 				Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
-				int index = 0;
+				int index = 1;
+				AssignmentMarker marker = null;
+				Map<String, AssignmentMarker> assignmentMarkersMap = new HashMap<>();
+				Double quotaPercentage = 0.0;
 				while (assignmentMarkerSetIter.hasNext()) {
-					AssignmentMarker marker = assignmentMarkerSetIter.next();
-					marker.setQuotaPercentage(Double.valueOf(params.getString("quota" + (index + 1))));
+					marker = assignmentMarkerSetIter.next();
+					
+					if(StringUtils.isNotBlank(params.getString("quota" + index))) {
+						quotaPercentage = Double.valueOf(params.getString("quota" + index));
+					} else {
+						quotaPercentage = marker.getQuotaPercentage();
+					}
+					
+					marker.setQuotaPercentage(quotaPercentage);
 					marker.setDateCreated(Instant.now());
 					siteAssignmentMarkers.add(marker);
+					assignmentMarkersMap.put(marker.getMarkerUserId(), marker);
 					index++;
 				}
+
+				int indexHist = 1;
+				assignmentMarkerSetIter = assignmentMarkers.iterator();
+				while (assignmentMarkerSetIter.hasNext()) {
+					marker = assignmentMarkerSetIter.next();
+					if (StringUtils.isNotBlank(params.getString("reassignSelect" + indexHist))
+							&& StringUtils.isNotBlank(params.getString("assignmentMarkerUserId" + indexHist))) {
+						AssignmentMarkerHistory markerHistory = null;
+						String reassignMarkerId = params.getString("reassignSelect" + indexHist);
+						String currentMarkerId = params.getString("assignmentMarkerUserId" + indexHist);
+						markerHistory = new AssignmentMarkerHistory();
+
+						AssignmentMarker newAssignmentMarker = assignmentMarkersMap.get(reassignMarkerId);
+						AssignmentMarker currentAssignmentMarker = assignmentMarkersMap.get(currentMarkerId);
+
+						Double newQuota = Double.sum(newAssignmentMarker.getQuotaPercentage(),
+								currentAssignmentMarker.getQuotaPercentage());
+						markerHistory.setNewQuotaPercentage(newQuota);
+
+						// assign the new quota value to the new/reassigned marker
+						newAssignmentMarker.setQuotaPercentage(newQuota);
+						markerHistory.setNewMarkerId(reassignMarkerId);
+						markerHistory.setOldQuotaPercentage(currentAssignmentMarker.getQuotaPercentage());
+
+						// assign the original marker with a 0 quota value
+						currentAssignmentMarker.setQuotaPercentage(new Double(0));
+						markerHistory.setOldMarkerId(currentMarkerId);
+
+						markerHistory.setModifier(userDirectoryService.getCurrentUser().getId());
+						markerHistorySet.add(markerHistory);
+					}
+					indexHist++;
+				}
+
 				if (CollectionUtils.isNotEmpty(siteAssignmentMarkers)) {
 					state.setAttribute(NEW_ASSIGNMENT_MARKERS, siteAssignmentMarkers);
 				}
+
+				if (CollectionUtils.isNotEmpty(markerHistorySet)) {
+					state.setAttribute(NEW_ASSIGNMENT_MARKERS_HISTORY, markerHistorySet);
+				}				
 			}
 		} 						
 
@@ -7732,31 +7784,47 @@ public class AssignmentAction extends PagedResourceActionII {
                     aProperties.put(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE, (String) state.getAttribute(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE));
                 }
 
-                //NAM-32
-                Set<AssignmentMarker> assignmentMarkers = null;        
-                if(serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+                //NAM-32 - Set Assignment Object after created on Marker
+                Set<AssignmentMarker> assignmentMarkers = null;
+                Set<AssignmentMarkerHistory> reassignedMarkers = null;
+                if(serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == Assignment.SubmissionType.values()[(Integer) state.getAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE)]
+        				&& StringUtils.isNotBlank(params.getString("allowMarkerToggle")) ) {
 
     				Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
-                	assignmentMarkers = (Set<AssignmentMarker>) state.getAttribute(NEW_ASSIGNMENT_MARKERS);
-    				Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
-    				int index = 0;
-    				while (assignmentMarkerSetIter.hasNext()) {
-    					AssignmentMarker marker = assignmentMarkerSetIter.next();
-    					marker.setAssignment(a);
-    					siteAssignmentMarkers.add(marker);
-    				}
-    				if (CollectionUtils.isNotEmpty(siteAssignmentMarkers)) {
+                	assignmentMarkers = (Set<AssignmentMarker>) state.getAttribute(NEW_ASSIGNMENT_MARKERS);                	
+
+    				if (CollectionUtils.isNotEmpty(assignmentMarkers)) {
+
+        				Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
+        				while (assignmentMarkerSetIter.hasNext()) {
+        					AssignmentMarker marker = assignmentMarkerSetIter.next();
+        					marker.setAssignment(a);
+        					siteAssignmentMarkers.add(marker);
+        				}
     					assignmentMarkers = siteAssignmentMarkers;
     				}
-                }                       
-                
+    				
+    				Set<AssignmentMarkerHistory> markerHistorySet = new HashSet<AssignmentMarkerHistory>();
+    				reassignedMarkers = (Set<AssignmentMarkerHistory>) state.getAttribute(NEW_ASSIGNMENT_MARKERS_HISTORY);
+    				
+    				if (CollectionUtils.isNotEmpty(reassignedMarkers)) {
+    					Iterator<AssignmentMarkerHistory> markerHistSetIter = reassignedMarkers.iterator();
+        				while (markerHistSetIter.hasNext()) {
+        					AssignmentMarkerHistory markerHistory = markerHistSetIter.next();
+    						markerHistory.setContext(a.getContext());
+    						markerHistorySet.add(markerHistory);
+        				}
+        				reassignedMarkers = markerHistorySet;
+    				}    				
+                }   
+                                
                 // persist the Assignment changes
                 commitAssignment(state, post, a, assignmentReference, title, submissionType, useReviewService, allowStudentViewReport,
                         gradeType, gradePoints, description, checkAddHonorPledge, attachments, section, range,
                         visibleTime, openTime, dueTime, closeTime, hideDueDate, enableCloseDate, isGroupSubmit, groups,
                         usePeerAssessment, peerPeriodTime, peerAssessmentAnonEval, peerAssessmentStudentViewReviews, peerAssessmentNumReviews, peerAssessmentInstructions,
                         submitReviewRepo, generateOriginalityReport, checkTurnitin, checkInternet, checkPublications, checkInstitution,
-                        excludeBibliographic, excludeQuoted, excludeSelfPlag, storeInstIndex, studentPreview, excludeType, excludeValue, assignmentMarkers, params);
+                        excludeBibliographic, excludeQuoted, excludeSelfPlag, storeInstIndex, studentPreview, excludeType, excludeValue, assignmentMarkers, reassignedMarkers);
 
                 // Locking and unlocking groups
                 List<String> lockedGroupsReferences = new ArrayList<String>();
@@ -8621,7 +8689,7 @@ public class AssignmentAction extends PagedResourceActionII {
                                   int excludeType,
                                   int excludeValue,
                                   Set <AssignmentMarker> markers,
-                                  ParameterParser params) {
+                                  Set <AssignmentMarkerHistory> reassignedMarkers) {
         a.setTitle(title);
         a.setContext((String) state.getAttribute(STATE_CONTEXT_STRING));
         a.setSection(section);
@@ -8702,8 +8770,6 @@ public class AssignmentAction extends PagedResourceActionII {
         a.setPeerAssessmentNumberReviews(peerAssessmentNumReviews);
         a.setPeerAssessmentInstructions(peerAssessmentInstructions);
 
-        Set <AssignmentMarkerHistory> historySet = new HashSet <AssignmentMarkerHistory>();
-        
         try {
             if (Assignment.Access.SITE.toString().equals(range)) {
                 a.setTypeOfAccess(Assignment.Access.SITE);
@@ -8712,58 +8778,6 @@ public class AssignmentAction extends PagedResourceActionII {
                 a.setGroups(groups.stream().map(Group::getReference).collect(Collectors.toSet()));
             }
 
-            AssignmentMarkerHistory amh;
-            
-            //checking if the marker tool is enabled as well as if there are values in assignment marker
-            if (serverConfigurationService.getBoolean("assignment.useMarker", false) 
-            		&& !params.getString("assignmentId").equals("")
-            		&& CollectionUtils.isNotEmpty(markers)) {            	            	
-            	//two iterators, one for the current marker loop and one for the reassign marker loop
-    			Iterator<AssignmentMarker> markerIter = markers.iterator();
-    			Iterator<AssignmentMarker> reassignIter;
-    			int index = 1;
-    			String value;
-    			//loop through current markers in assignment marker
-    			while (markerIter.hasNext()) {
-    				//get the reassign marker value
-    				value = params.getString("reassignSelect" + index);
-    				index++;
-    				AssignmentMarker marker = markerIter.next();
-    				//if the reassign marker value isn't the default value
-    				if (!value.equals("") && value != null) {
-    					//set assignment marker history values
-    					reassignIter = markers.iterator();
-    					amh = new AssignmentMarkerHistory();
-    					amh.setAssignment(a);
-    					amh.setContext(a.getContext());
-    					amh.setDateModified(Instant.now());
-    					//loop through reassign marker iterator to assign the new quota percentage
-    					while (reassignIter.hasNext()) {
-    						AssignmentMarker reassignMarker = reassignIter.next();
-    						if (value.equals(reassignMarker.getMarkerUserId())) {
-    							amh.setNewAssignmentMarker(reassignMarker);
-    							Double newQuota = Double.sum(reassignMarker.getQuotaPercentage(), marker.getQuotaPercentage());
-    	    					amh.setNewQuotaPercentage(newQuota);
-    	    					//assign the new quota value to the new/reassigned marker
-    	    					reassignMarker.setQuotaPercentage(newQuota);
-    						}
-    					}
-    					amh.setOldAssignmentMarker(marker);
-    					amh.setOldQuotaPercentage(marker.getQuotaPercentage());
-    					amh.setModifier(userDirectoryService.getCurrentUser().getId());
-
-    					//assign the original marker with a 0 quota value
-    					marker.setQuotaPercentage(new Double(0));
-    					
-    					historySet.add(amh);
-    					
-    					//NAM-44 Event Logging
-    					eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_REASSIGN, assignmentRef, true));
-    				}
-    			}
-    			//NAM-44 Event Logging
-           	 	eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_ADD, assignmentRef, true));
-    		}
             
             a.setMarkers(markers);
             // commit the changes
@@ -8789,11 +8803,11 @@ public class AssignmentAction extends PagedResourceActionII {
             }
         }
         
-        if (historySet != null && CollectionUtils.isNotEmpty(historySet)) {
-        	Iterator<AssignmentMarkerHistory> history = historySet.iterator();
-        	while (history.hasNext()) {
-        		AssignmentMarkerHistory entry = history.next();
-        		assignmentService.logMarkerChanges(entry);
+        if (CollectionUtils.isNotEmpty(reassignedMarkers)) {
+        	Iterator<AssignmentMarkerHistory> reassignedMarkerIter = reassignedMarkers.iterator();
+        	while (reassignedMarkerIter.hasNext()) {
+        		AssignmentMarkerHistory reassignedMarker = reassignedMarkerIter.next();
+        		assignmentService.logMarkerChanges(reassignedMarker);
         	}
         }
 
@@ -11546,6 +11560,8 @@ public class AssignmentAction extends PagedResourceActionII {
 
         //NAM-32
         state.removeAttribute(NEW_ASSIGNMENT_MARKERS);
+        //NAM-33
+        state.removeAttribute(NEW_ASSIGNMENT_MARKERS_HISTORY);
     } // resetNewAssignment
 
     /**
@@ -11597,8 +11613,7 @@ public class AssignmentAction extends PagedResourceActionII {
         submissionTypeTable.put(5, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_SINGLE_ATTACHMENT_PROP));
         
         //NAM-28 Checks if the pdf marker tool should be displayed or not
-        Boolean useMarker = serverConfigurationService.getBoolean("assignment.useMarker", true);
-        if (useMarker) {
+        if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
         	submissionTypeTable.put(6, rb.getString(AssignmentConstants.ASSN_SUBMISSION_TYPE_PDF_ONLY_PROP)); //NAM-26 adding new submission type to table data
         }
 
@@ -14417,22 +14432,15 @@ public class AssignmentAction extends PagedResourceActionII {
     	context.put("context", state.getAttribute(STATE_CONTEXT_STRING));
     	String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
     	
-    	List<Assignment> assignments = prepPage(state);
-        context.put("assignments", assignments.iterator());
-        
+    	List<Assignment> assignments = prepPage(state);        
         for(Assignment assignment: assignments) {
         	assignmentService.populateAssignmentMarkers(assignment);
         }
-        
-        context.put("sizeOfAssignments", assignments.size());
-        
-        if(assignmentService.allowUserMarkerDownloadAndStats(contextString)) {
-	        state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
-	        String template = (String) getContext(data).get("template");
-	        return template + TEMPLATE_MARKER_DOWNLOADS_STATISTICS;
-        }
-        
-        return null;
+        context.put("assignments", assignments.iterator());
+
+        state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
+        String template = (String) getContext(data).get("template");
+        return template + TEMPLATE_MARKER_DOWNLOADS_STATISTICS;
     }
 
     /**

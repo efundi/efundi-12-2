@@ -16,7 +16,6 @@
 package org.sakaiproject.assignment.impl.persistence;
 
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,14 +25,13 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.sakaiproject.assignment.api.AssignmentService;
 import org.sakaiproject.assignment.api.model.Assignment;
-import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentMarkerHistory;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.assignment.api.persistence.AssignmentRepository;
 import org.sakaiproject.serialization.BasicSerializableRepository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -221,14 +219,12 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
      * Create new object of AssignmentMarkerHistory
      * Assign variables
      * Use sessionFactory.getCurrentSession().persist(obj);
-     */
-    
+     */    
     @Override
-    @Transactional
-    public void logMarkerChanges(AssignmentMarkerHistory amh)
-    {
-        sessionFactory.getCurrentSession().persist(amh);
-        sessionFactory.getCurrentSession().save(amh);
-    }
-    
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
+    public void logMarkerChanges(AssignmentMarkerHistory assignmentMarkerHistory) {
+        Session session = sessionFactory.getCurrentSession();
+    	assignmentMarkerHistory.setDateModified(Instant.now());
+    	session.persist(assignmentMarkerHistory);
+    }    
 }

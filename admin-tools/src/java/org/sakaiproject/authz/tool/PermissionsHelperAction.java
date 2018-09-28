@@ -714,7 +714,7 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 						String assignmentContext = (String) state.getAttribute("Assignment.context_string");
 						String roleID = role.getId();
 						if (assignmentContext != null) {
-							if (serverConfigurationService.getBoolean("assignment.useMarker ", true)) {
+							if (serverConfigurationService.getBoolean("assignment.useMarker ", false)) {
 								if (lock.equals("asn.marker")) {
 									AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
 									Boolean hasAssigned = assignmentService.hasMarkingAssigned(assignmentContext,

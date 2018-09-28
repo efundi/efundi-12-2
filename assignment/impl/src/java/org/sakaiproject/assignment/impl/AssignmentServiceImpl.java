@@ -4134,98 +4134,135 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         }
 
         return errorMessage;
-    }
+    }    
 
 	@Override
-	public Set<AssignmentMarker> getAssignmentMarkersForSite(String siteId) {
+	@Transactional
+	public void updateAssignmentMarker(AssignmentMarker assignmentMarker) throws PermissionException {
+		Assert.notNull(assignmentMarker, "AssignmentMarker cannot be null");
+		if(assignmentMarker.getId() == null) {
+			assignmentRepository.createAssignmentMarker(assignmentMarker);
+
+			eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_ADD,
+					assignmentMarker.getId(), false));
+		} else {
+			AssignmentMarker marker = assignmentRepository.findAssignmentMarker(assignmentMarker.getId());
+			if (marker == null) {
+				assignmentRepository.createAssignmentMarker(assignmentMarker);
+
+				eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_ADD,
+						assignmentMarker.getId(), false));
+			} else {
+				if (!marker.getMarkerUserId().equals(assignmentMarker.getMarkerUserId())
+						|| !marker.getQuotaPercentage().equals(assignmentMarker.getQuotaPercentage())) {
+					assignmentMarker.setModifier(sessionManager.getCurrentSessionUserId());
+					assignmentRepository.updateAssignmentMarker(assignmentMarker);
+
+					eventTrackingService.post(eventTrackingService
+							.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_EDIT, assignmentMarker.getId(), true));
+				}
+			}
+		}
+	}
+
+	@Override
+	public Set<AssignmentMarker> buildAssignmentMarkerObjSetForSite(String siteId) {
 		Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
 		try {
 			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(siteId));
-	        Set<String> allowedMarkers = realm.getUsersIsAllowed(SECURE_ASSIGNMENT_MARKER);        
-	        AssignmentMarker assignmentMarker = null;   
-	        User user = null;
-	        for (String userId : allowedMarkers) {
+			Set<String> allowedMarkers = realm.getUsersIsAllowed(SECURE_ASSIGNMENT_MARKER);
+			AssignmentMarker assignmentMarker = null;
+			User user = null;
+			for (String userId : allowedMarkers) {
 				try {
 					user = userDirectoryService.getUser(userId);
-		        	if (user != null && !securityService.isSuperUser(user.getEid())) {
-			        	assignmentMarker = new AssignmentMarker();
-			        	assignmentMarker.setContext(siteId);
-		            	assignmentMarker.setMarkerUserId(user.getEid());
-		            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
-		            	siteAssignmentMarkers.add(assignmentMarker);
-		        	}        
+					if (user != null && !securityService.isSuperUser(user.getEid())) {
+						assignmentMarker = new AssignmentMarker();
+						assignmentMarker.setContext(siteId);
+						assignmentMarker.setMarkerUserId(user.getEid());
+						assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+						siteAssignmentMarkers.add(assignmentMarker);
+					}
 				} catch (UserNotDefinedException e) {
 					log.error("Could not find user with id = {}, {}", userId, e.getMessage());
-				}	
-			}        
+				}
+			}
 		} catch (GroupNotDefinedException e) {
-            log.warn("Cannot get authz group for site = {}, {}", siteId, e.getMessage());
-		} 
-        return siteAssignmentMarkers;
+			log.warn("Cannot get authz group for site = {}, {}", siteId, e.getMessage());
+		}
+		return siteAssignmentMarkers;
 	}
-	
+
 	@Override
 	public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment) {
 		Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
-        Set<AssignmentMarker> assignmentMarkers = assignment.getMarkers();        
-        AssignmentMarker assignmentMarker = null;   
-        User user = null;
-        Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();		
-		while (assignmentMarkerSetIter.hasNext()) {
-			assignmentMarker = assignmentMarkerSetIter.next();
-			try {
-				user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
-	        	if (user != null) {
-	            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
-	            	siteAssignmentMarkers.add(assignmentMarker);
-	        	}        
-			} catch (UserNotDefinedException e) {
-				log.error("Could not find user with id = {}, {}", assignmentMarker.getMarkerUserId(), e.getMessage());
-			}	
+		List<AssignmentMarker> assignmentMarkers = assignmentRepository.findMarkersForAssignmentById(assignment.getId());
+		if (CollectionUtils.isNotEmpty(assignmentMarkers)) {
+			AssignmentMarker assignmentMarker = null;
+			User user = null;
+			Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
+			while (assignmentMarkerSetIter.hasNext()) {
+				assignmentMarker = assignmentMarkerSetIter.next();
+				try {
+					user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
+					if (user != null) {
+						assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+						siteAssignmentMarkers.add(assignmentMarker);
+					}
+				} catch (UserNotDefinedException e) {
+					log.error("Could not find user with id = {}, {}", assignmentMarker.getMarkerUserId(),
+							e.getMessage());
+				}
+			}
+			updateMarkerListIfNewMarkersAdded(assignment.getContext(), siteAssignmentMarkers);
 		}
-		updateMarkerListIfNewMarkersAdded(assignment.getContext(), siteAssignmentMarkers);
-        return siteAssignmentMarkers;
+		return siteAssignmentMarkers;
 	}
 
 	/**
-	 * If new participants were added to the Site after site markers has already been used for Assignments, the new Markers must also bve added
+	 * If new participants were added to the Site after site markers has already
+	 * been used for Assignments, the new Markers must also bve added
+	 * 
 	 * @param siteId
 	 * @param assignmentMarkers
 	 */
 	private void updateMarkerListIfNewMarkersAdded(String siteId, Set<AssignmentMarker> assignmentMarkers) {
-		
+
 		try {
 			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(siteId));
-	        Set<String> allowedMarkers = realm.getUsersIsAllowed(SECURE_ASSIGNMENT_MARKER);        
-	        boolean found = false;
-	        AssignmentMarker assignmentMarker = null;   
-	        Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
-	        for (String userId : allowedMarkers) {		           
-		        while (assignmentMarkerSetIter.hasNext()) {
-					assignmentMarker = assignmentMarkerSetIter.next();
-					if(assignmentMarker.getMarkerUserId().equals(userId)) {
-						found = true;
-						return;
-					}
-		        }
-		        if(!found) {
-					try {
-						User user = userDirectoryService.getUserByEid(userId);
-						if (user != null && !securityService.isSuperUser(user.getEid())) {
-							AssignmentMarker newAssignmentMarker = new AssignmentMarker();
-							newAssignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
-							newAssignmentMarker.setMarkerUserId(user.getEid());						
-							assignmentMarkers.add(newAssignmentMarker);
+			Set<String> allowedMarkers = realm.getUsersIsAllowed(SECURE_ASSIGNMENT_MARKER);
+			boolean found = false;
+			User user = null;
+			AssignmentMarker assignmentMarker = null;
+			for (String userId : allowedMarkers) {
+				try {
+					user = userDirectoryService.getUser(userId);
+					if (user != null && !securityService.isSuperUser(user.getEid())) {
+						Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
+						while (assignmentMarkerSetIter.hasNext()) {
+							assignmentMarker = assignmentMarkerSetIter.next();
+							if (assignmentMarker.getMarkerUserId().equals(user.getEid())) {
+								found = true;
+								break;
+							}
 						}
-					} catch (UserNotDefinedException e) {
-						log.error("Could not find user with id = {}, {}", userId, e.getMessage());
+						if (!found) {
+							AssignmentMarker newAssignmentMarker = new AssignmentMarker();
+							newAssignmentMarker.setContext(siteId);
+							newAssignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+							newAssignmentMarker.setMarkerUserId(user.getEid());
+							assignmentMarkers.add(newAssignmentMarker);
+
+						}
 					}
-		        }
-		        found = false;
-	        }
-	        
+					found = false;
+				} catch (UserNotDefinedException e) {
+					log.error("Could not find user with id = {}, {}", userId, e.getMessage());
+				}
+			}
+
 		} catch (GroupNotDefinedException e) {
-            log.warn("Cannot get authz group for site = {}, {}", siteId, e.getMessage());
+			log.warn("Cannot get authz group for site = {}, {}", siteId, e.getMessage());
 		}
 	}
 
@@ -4271,59 +4308,47 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		}
 		return blockedChanges;
 	}
-	
-	public void logMarkerChanges (AssignmentMarkerHistory assignmentMarkerHistory) {
-		assignmentRepository.logMarkerChanges(assignmentMarkerHistory);
-        eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_REASSIGN, assignmentMarkerHistory.getId(), false));
+
+	public void createAssignmentMarkerHistory(AssignmentMarkerHistory assignmentMarkerHistory)
+			throws PermissionException {
+		Assert.notNull(assignmentMarkerHistory, "AssignmentMarkerHistory cannot be null");
+		assignmentRepository.createAssignmentMarkerHistory(assignmentMarkerHistory);
+		eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_REASSIGN,
+				assignmentMarkerHistory.getId(), false));
 	}
-	
+
 	/**
-     * NAM-36
-     * Method Implementation
-     */
-    @Override
-    public void populateAssignmentMarkers(Assignment assignment) {
-    	assignmentRepository.initializeAssignment(assignment);
-    	Set<AssignmentMarker> assignmentMarkersByPermissions = new HashSet<AssignmentMarker>();
-        Set<AssignmentMarker> assignmentMarkers = assignment.getMarkers();
-        AssignmentMarker assignmentMarker = null;   
-        User user = null;
-        String markerRole  = null;
-        String currentLoggedInUserDisplayId = null;
-        
-        AuthzGroup realm = null;
-        try {
-        	realm = authzGroupService.getAuthzGroup(siteService.siteReference(assignment.getContext()));
-        } catch (Exception e) {
-        	log.warn(this + ":setAssignmentFormContext role cast problem " + e.getMessage() + " site =" + assignment.getContext());
-        }
-        
-        // Get Display Id and Role of User currently logged in
-        currentLoggedInUserDisplayId = userDirectoryService.getCurrentUser().getDisplayId();
-        
-        Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();		
-		while (assignmentMarkerSetIter.hasNext()) {
-			assignmentMarker = assignmentMarkerSetIter.next();
+	 * NAM-36 Method Implementation
+	 */
+	@Override
+	public void setMarkersForAssignmentByLoggedInUser(Assignment assignment) {
+		Set<AssignmentMarker> markersForLoggedInUser = new HashSet<AssignmentMarker>();
+		List<AssignmentMarker> assignmentMarkers = assignmentRepository.findMarkersForAssignmentById(assignment.getId());
+		if (CollectionUtils.isNotEmpty(assignmentMarkers)) {
+			AssignmentMarker assignmentMarker = null;
+			User user = null;
+			Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
+			String currentUserDisplayId = userDirectoryService.getCurrentUser().getDisplayId();
 			try {
-				user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
-	        	if (user != null) {
-
-	        		if(securityService.isSuperUser() || currentLoggedInUserDisplayId.equals(user.getEid())) {
-
-		            	assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
-		            	assignmentMarker.setUserDisplayId(user.getEid());
-			            
-			            markerRole = realm.getUserRole(user.getId()).getId();
-			            if(markerRole != null) {
-			            	assignmentMarker.setUserRole(markerRole.substring(0,1).toUpperCase() + markerRole.substring(1));
-			            }
-	        			assignmentMarkersByPermissions.add(assignmentMarker);
-	        		}
-	        	}
+				AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(assignment.getContext()));
+				while (assignmentMarkerSetIter.hasNext()) {
+					assignmentMarker = assignmentMarkerSetIter.next();
+					user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
+					if (user != null) {
+						if (securityService.isSuperUser() || currentUserDisplayId.equals(user.getEid())) {
+							assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+							assignmentMarker.setUserDisplayId(user.getEid());
+							assignmentMarker.setUserRole(realm.getUserRole(user.getId()).getId());
+							markersForLoggedInUser.add(assignmentMarker);
+						}
+					}
+				}
+				assignment.setMarkers(markersForLoggedInUser);
 			} catch (UserNotDefinedException e) {
 				log.error("Could not find user with id = {}, {}", assignmentMarker.getMarkerUserId(), e.getMessage());
-			}	
+			} catch (GroupNotDefinedException e) {
+				log.warn("Cannot get authz group for site = {}, {}", assignment.getContext(), e.getMessage());
+			}
 		}
-		assignment.setMarkers(assignmentMarkersByPermissions);
-    }
+	}
 }

@@ -2768,7 +2768,7 @@ public class AssignmentAction extends PagedResourceActionII {
         //NAM-32        
         if(serverConfigurationService.getBoolean("assignment.useMarker", false)) {
             if (state.getAttribute(NEW_ASSIGNMENT_MARKERS) == null) {
-            	state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.getAssignmentMarkersForSite(contextString));
+            	state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.buildAssignmentMarkerObjSetForSite(contextString));
             }
             context.put("assignmentMarkers", state.getAttribute(NEW_ASSIGNMENT_MARKERS));
         }
@@ -6979,7 +6979,6 @@ public class AssignmentAction extends PagedResourceActionII {
 					}
 					
 					marker.setQuotaPercentage(quotaPercentage);
-					marker.setDateCreated(Instant.now());
 					siteAssignmentMarkers.add(marker);
 					assignmentMarkersMap.put(marker.getMarkerUserId(), marker);
 					index++;
@@ -7794,40 +7793,6 @@ public class AssignmentAction extends PagedResourceActionII {
                 if (state.getAttribute(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE) != null) {
                     aProperties.put(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE, (String) state.getAttribute(AssignmentConstants.ASSIGNMENT_RELEASERESUBMISSION_NOTIFICATION_VALUE));
                 }
-
-                //NAM-32 - Set Assignment Object after created on Marker
-                Set<AssignmentMarker> assignmentMarkers = null;
-                Set<AssignmentMarkerHistory> reassignedMarkers = null;
-                if(serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == Assignment.SubmissionType.values()[(Integer) state.getAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE)]
-        				&& StringUtils.isNotBlank(params.getString("allowMarkerToggle")) ) {
-
-    				Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
-                	assignmentMarkers = (Set<AssignmentMarker>) state.getAttribute(NEW_ASSIGNMENT_MARKERS);                	
-
-    				if (CollectionUtils.isNotEmpty(assignmentMarkers)) {
-
-        				Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
-        				while (assignmentMarkerSetIter.hasNext()) {
-        					AssignmentMarker marker = assignmentMarkerSetIter.next();
-        					marker.setAssignment(a);
-        					siteAssignmentMarkers.add(marker);
-        				}
-    					assignmentMarkers = siteAssignmentMarkers;
-    				}
-    				
-    				Set<AssignmentMarkerHistory> markerHistorySet = new HashSet<AssignmentMarkerHistory>();
-    				reassignedMarkers = (Set<AssignmentMarkerHistory>) state.getAttribute(NEW_ASSIGNMENT_MARKERS_HISTORY);
-    				
-    				if (CollectionUtils.isNotEmpty(reassignedMarkers)) {
-    					Iterator<AssignmentMarkerHistory> markerHistSetIter = reassignedMarkers.iterator();
-        				while (markerHistSetIter.hasNext()) {
-        					AssignmentMarkerHistory markerHistory = markerHistSetIter.next();
-    						markerHistory.setContext(a.getContext());
-    						markerHistorySet.add(markerHistory);
-        				}
-        				reassignedMarkers = markerHistorySet;
-    				}    				
-                }   
                                 
                 // persist the Assignment changes
                 commitAssignment(state, post, a, assignmentReference, title, submissionType, useReviewService, allowStudentViewReport,
@@ -7835,7 +7800,7 @@ public class AssignmentAction extends PagedResourceActionII {
                         visibleTime, openTime, dueTime, closeTime, hideDueDate, enableCloseDate, isGroupSubmit, groups,
                         usePeerAssessment, peerPeriodTime, peerAssessmentAnonEval, peerAssessmentStudentViewReviews, peerAssessmentNumReviews, peerAssessmentInstructions,
                         submitReviewRepo, generateOriginalityReport, checkTurnitin, checkInternet, checkPublications, checkInstitution,
-                        excludeBibliographic, excludeQuoted, excludeSelfPlag, storeInstIndex, studentPreview, excludeType, excludeValue, assignmentMarkers, reassignedMarkers);
+                        excludeBibliographic, excludeQuoted, excludeSelfPlag, storeInstIndex, studentPreview, excludeType, excludeValue);
 
                 // Locking and unlocking groups
                 List<String> lockedGroupsReferences = new ArrayList<String>();
@@ -7888,6 +7853,39 @@ public class AssignmentAction extends PagedResourceActionII {
                         addAlert(state, rb.getFormattedMessage("options_cannotEditSite", siteId));
                     }
                 }
+
+                //NAM-32 - Set Assignment Object after created on Marker
+                if(post && serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == Assignment.SubmissionType.values()[(Integer) state.getAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE)]
+        				&& StringUtils.isNotBlank(params.getString("allowMarkerToggle")) ) {
+    				Set<AssignmentMarker> assignmentMarkers = (Set<AssignmentMarker>) state.getAttribute(NEW_ASSIGNMENT_MARKERS);       
+    				if (CollectionUtils.isNotEmpty(assignmentMarkers)) {
+        				Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
+        				while (assignmentMarkerSetIter.hasNext()) {
+        					AssignmentMarker marker = assignmentMarkerSetIter.next();
+        					marker.setAssignment(a); 
+                            try {
+                            	assignmentService.updateAssignmentMarker(marker);
+                            } catch (Exception e) {
+                                log.warn(".post_save_assignment: Error saving AssignmentMarkers for site with id {}", siteId);
+//                                addAlert(state, rb.getFormattedMessage("XXX", siteId));
+                            }
+        				}
+    				}    				
+    				Set<AssignmentMarkerHistory> reassignedMarkers = (Set<AssignmentMarkerHistory>) state.getAttribute(NEW_ASSIGNMENT_MARKERS_HISTORY);    				
+    				if (CollectionUtils.isNotEmpty(reassignedMarkers)) {
+    					Iterator<AssignmentMarkerHistory> markerHistSetIter = reassignedMarkers.iterator();
+        				while (markerHistSetIter.hasNext()) {
+        					AssignmentMarkerHistory markerHistory = markerHistSetIter.next();
+    						markerHistory.setContext(a.getContext());
+    	                    try {
+    	                    	assignmentService.createAssignmentMarkerHistory(markerHistory);
+    	                    } catch (Exception e) {
+    	                        log.warn(".post_save_assignment: Error saving AssignmentMarkerHistory for site with id {}", siteId);
+//    	                        addAlert(state, rb.getFormattedMessage("XXX", siteId));
+    	                    }
+        				}
+    				}    				
+                }  
 
                 if (post) {
                     // we need to update the submission
@@ -8698,9 +8696,7 @@ public class AssignmentAction extends PagedResourceActionII {
                                   boolean storeInstIndex,
                                   boolean studentPreview,
                                   int excludeType,
-                                  int excludeValue,
-                                  Set <AssignmentMarker> markers,
-                                  Set <AssignmentMarkerHistory> reassignedMarkers) {
+                                  int excludeValue) {
         a.setTitle(title);
         a.setContext((String) state.getAttribute(STATE_CONTEXT_STRING));
         a.setSection(section);
@@ -8789,7 +8785,6 @@ public class AssignmentAction extends PagedResourceActionII {
                 a.setGroups(groups.stream().map(Group::getReference).collect(Collectors.toSet()));
             }
             
-            a.setMarkers(markers);
             // commit the changes
             assignmentService.updateAssignment(a);
 
@@ -8811,14 +8806,6 @@ public class AssignmentAction extends PagedResourceActionII {
                 addAlert(state, rb.getString("group.user.multiple.error"));
                 log.warn(":post_save_assignment at least one user in multiple groups.");
             }
-        }
-        
-        if (CollectionUtils.isNotEmpty(reassignedMarkers)) {
-        	Iterator<AssignmentMarkerHistory> reassignedMarkerIter = reassignedMarkers.iterator();
-        	while (reassignedMarkerIter.hasNext()) {
-        		AssignmentMarkerHistory reassignedMarker = reassignedMarkerIter.next();
-        		assignmentService.logMarkerChanges(reassignedMarker);
-        	}
         }
 
         if(!a.getDraft() && a.getAllowPeerAssessment()){
@@ -11413,7 +11400,7 @@ public class AssignmentAction extends PagedResourceActionII {
         state.setAttribute(NEW_ASSIGNMENT_FOCUS, NEW_ASSIGNMENT_TITLE);
 
         if(serverConfigurationService.getBoolean("assignment.useMarker", false)) {
-            state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.getAssignmentMarkersForSite(toolManager.getCurrentPlacement().getContext()));
+            state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.buildAssignmentMarkerObjSetForSite(toolManager.getCurrentPlacement().getContext()));
         }
 
         state.removeAttribute(NEW_ASSIGNMENT_DESCRIPTION_EMPTY);
@@ -14444,7 +14431,7 @@ public class AssignmentAction extends PagedResourceActionII {
     	
     	List<Assignment> assignments = prepPage(state);        
         for(Assignment assignment: assignments) {
-        	assignmentService.populateAssignmentMarkers(assignment);
+        	assignmentService.setMarkersForAssignmentByLoggedInUser(assignment);
         }
         context.put("assignments", assignments.iterator());
 

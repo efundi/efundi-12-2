@@ -749,27 +749,19 @@ public interface AssignmentService extends EntityProducer {
 
     String getUsersLocalDateTimeString(Instant date);
 
-    public List<ContentReviewResult> getContentReviewResults(AssignmentSubmission submission);
-    
+    public List<ContentReviewResult> getContentReviewResults(AssignmentSubmission submission);    
 
-    public Set<AssignmentMarker> getAssignmentMarkersForSite(String siteId);    
+    public Set<AssignmentMarker> buildAssignmentMarkerObjSetForSite(String siteId);    
 
-	  public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment);
+	public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment);
 
     public Boolean hasMarkingAssigned(String contextString, String role);
     
-  //  public Boolean hasMarkingAssignedSingleUser(String contextString, String userID);
-    
     public Set<String> checkParticipantsForMarking(String siteId, Set<String> markersBeingAffected);
-    
-    public void logMarkerChanges(AssignmentMarkerHistory amh);
-    
-    /**
-     * Get assignment markers
-     * NAM-36
-     * @param assignment -
-     * 						The assignment containing markers.
-     * @return List over all markers for given Assignment.
-     */
-    public void populateAssignmentMarkers(Assignment assignment);
+         
+    public void setMarkersForAssignmentByLoggedInUser(Assignment assignment);
+
+	void updateAssignmentMarker(AssignmentMarker assignmentMarker) throws PermissionException;
+
+	void createAssignmentMarkerHistory(AssignmentMarkerHistory assignmentMarkerHistory) throws PermissionException;
 }

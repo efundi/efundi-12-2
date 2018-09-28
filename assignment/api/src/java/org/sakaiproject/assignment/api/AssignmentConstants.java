@@ -127,6 +127,10 @@ public final class AssignmentConstants {
      */
     public static final String EVENT_MARKER_ASSIGNMENT_ADD = "asn.marker.add";
     /**
+     * Event for adding a marker to a assignment. NAM-44
+     */
+    public static final String EVENT_MARKER_ASSIGNMENT_EDIT = "asn.marker.edit";
+    /**
      * Event for reassigning a marker to a assignment. NAM-44
      */
     public static final String EVENT_MARKER_ASSIGNMENT_REASSIGN = "asn.marker.reassign";

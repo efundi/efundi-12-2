@@ -26,6 +26,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.sakaiproject.assignment.api.model.Assignment;
+import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentMarkerHistory;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
@@ -210,21 +211,49 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
             sessionFactory.getCache().evictEntity(Assignment.class, assignment.getId());
         }
     }
-    
-    
-    /**
-     * NAM-35 
-     *
-     * Transactional method for logging assignmentMarkerHistory.
-     * Create new object of AssignmentMarkerHistory
-     * Assign variables
-     * Use sessionFactory.getCurrentSession().persist(obj);
-     */    
-    @Override
-    @Transactional(propagation=Propagation.REQUIRES_NEW)
-    public void logMarkerChanges(AssignmentMarkerHistory assignmentMarkerHistory) {
-        Session session = sessionFactory.getCurrentSession();
-    	assignmentMarkerHistory.setDateModified(Instant.now());
-    	session.persist(assignmentMarkerHistory);
-    }    
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void createAssignmentMarker(AssignmentMarker assignmentMarker) {
+		Session session = sessionFactory.getCurrentSession();
+		assignmentMarker.setDateCreated(Instant.now());
+		session.persist(assignmentMarker);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void updateAssignmentMarker(AssignmentMarker assignmentMarker) {
+		Session session = sessionFactory.getCurrentSession();
+		assignmentMarker.setDateModified(Instant.now());
+		session.update(assignmentMarker);
+		session.flush();
+	}
+
+	@Override
+	public AssignmentMarker findAssignmentMarker(String id) {
+		Session session = sessionFactory.getCurrentSession();
+		return (AssignmentMarker) session.get(AssignmentMarker.class, id);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<AssignmentMarker> findMarkersForAssignmentById(String assignmentId) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AssignmentMarker.class);
+		return criteria.add(Restrictions.eq("assignment.id", assignmentId)).list();
+	}
+
+	/**
+	 * NAM-35
+	 *
+	 * Transactional method for logging assignmentMarkerHistory. Create new object
+	 * of AssignmentMarkerHistory Assign variables Use
+	 * sessionFactory.getCurrentSession().persist(obj);
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void createAssignmentMarkerHistory(AssignmentMarkerHistory assignmentMarkerHistory) {
+		Session session = sessionFactory.getCurrentSession();
+		assignmentMarkerHistory.setDateModified(Instant.now());
+		session.persist(assignmentMarkerHistory);
+	}
 }

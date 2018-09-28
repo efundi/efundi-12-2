@@ -8777,7 +8777,6 @@ public class AssignmentAction extends PagedResourceActionII {
                 a.setTypeOfAccess(Assignment.Access.GROUP);
                 a.setGroups(groups.stream().map(Group::getReference).collect(Collectors.toSet()));
             }
-
             
             a.setMarkers(markers);
             // commit the changes
@@ -13091,7 +13090,7 @@ public class AssignmentAction extends PagedResourceActionII {
                     boolean withoutFolders = uploadAll_readChoice(choices, "withoutFolders"); // SAK-19147
                     // release
                     boolean releaseGrades = params.getString("release") != null && params.getBoolean("release");
-                   
+
                     state.setAttribute(UPLOAD_ALL_HAS_SUBMISSION_TEXT, Boolean.valueOf(hasSubmissionText));
                     state.setAttribute(UPLOAD_ALL_HAS_SUBMISSION_ATTACHMENT, Boolean.valueOf(hasSubmissionAttachment));
                     state.setAttribute(UPLOAD_ALL_HAS_GRADEFILE, Boolean.valueOf(hasGradeFile));
@@ -13635,7 +13634,7 @@ public class AssignmentAction extends PagedResourceActionII {
                         }
                     } catch (PermissionException e) {
                         log.warn("Could not update submission: {}, {}", submission.getId(), e.getMessage());
-                    }                    
+                    }
                 }
             }
         }

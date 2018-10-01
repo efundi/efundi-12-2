@@ -51,24 +51,26 @@ ASN.quotaCalculation = function(value_totalMarkers)
 	
 	ASN.enableButtons();
 	
-	for (var i = 1; i <= value_totalMarkers; i++) {
-		quotaId = "quota" + i;
-		value = document.getElementById(quotaId).value;
-		ASN.hideError(quotaId);
-		if (ASN.countDecimals(Number(value)) > 1) {
-			ASN.displayError(quotaId, decimalError);
+	if (document.getElementById("allowMarkerToggle").checked) {
+		for (var i = 1; i <= value_totalMarkers; i++) {
+			quotaId = "quota" + i;
+			value = document.getElementById(quotaId).value;
+			ASN.hideError(quotaId);
+			if (ASN.countDecimals(Number(value)) > 1) {
+				ASN.displayError(quotaId, decimalError);
+				ASN.disableButtons();
+			}
+			sum = Number(value) + Number(sum);
+			if (Number(sum) > 100) {
+				ASN.displayError(quotaId, totalError);
+				ASN.disableButtons();
+			}
+		}
+		
+		if (Number(sum) < 100) {
+			ASN.displayError(quotaId, totalLessThanError);
 			ASN.disableButtons();
 		}
-		sum = Number(value) + Number(sum);
-		if (Number(sum) > 100) {
-			ASN.displayError(quotaId, totalError);
-			ASN.disableButtons();
-		}
-	}
-	
-	if (Number(sum) < 100) {
-		ASN.displayError(quotaId, totalLessThanError);
-		ASN.disableButtons();
 	}
 };
 

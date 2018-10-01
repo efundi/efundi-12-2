@@ -1717,7 +1717,20 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             } else {
 
                 //List<String> submitterIds = getSubmitterIdList(searchFilterOnly, viewString.length() == 0 ? AssignmentConstants.ALL:viewString, searchString, aRef, contextString == null? a.getContext():contextString);
-                Map<User, AssignmentSubmission> submitters = getSubmitterMap(searchFilterOnly,
+                Map<User, AssignmentSubmission> submitters = new HashMap<>(); 
+                if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+						if (fromMarker) // check here for the context of partial
+										// download
+							{
+							submitters = getSubmitterMapForMarkerDownload(searchFilterOnly,
+			                        viewString.length() == 0 ? AssignmentConstants.ALL : viewString,
+			                        searchString,
+			                        reference,
+			                        contextString == null ? assignment.getContext() : contextString, fromMarkerSelectAll);
+							}
+						}
+                else
+                submitters = getSubmitterMap(searchFilterOnly,
                         viewString.length() == 0 ? AssignmentConstants.ALL : viewString,
                         searchString,
                         reference,
@@ -1725,7 +1738,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
                 if (!submitters.isEmpty()) {
                     List<AssignmentSubmission> submissions = new ArrayList<AssignmentSubmission>(submitters.values());
-
+                    //Here, as we have access to fromMarker and fromMarkerSelect All
                     StringBuilder exceptionMessage = new StringBuilder();
                     SortedIterator sortedIterator;
                     if (assignmentUsesAnonymousGrading(assignment)){
@@ -2044,6 +2057,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                     AssignmentSubmission uSubmission = userSubmissionMap.get(u);
 
                     if (uSubmission != null) {
+                    	//XXX
                         rv.put(u, uSubmission);
                     } else {
                         // add those users who haven't made any submissions and with submission rights
@@ -2071,6 +2085,167 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
                                 AssignmentSubmission s = addSubmission(a.getId(), u.getId());
                                 if (s != null) {
+                                    // Note: If we had s.setSubmitted(false);, this would put it in 'draft mode'
+                                    s.setSubmitted(true);
+                                    /*
+                                     * SAK-29314 - Since setSubmitted represents whether the submission is in draft mode state, we need another property. So we created isUserSubmission.
+									 * This represents whether the submission was geenrated by a user.
+									 * We set it to false because these submissions are generated so that the instructor has something to grade;
+									 * the user did not in fact submit anything.
+									 */
+                                    s.setUserSubmission(false);
+                                    s.setDateModified(Instant.now());
+
+                                    // set the resubmission properties
+                                    // get the assignment setting for resubmitting
+                                    Map<String, String> assignmentProperties = a.getProperties();
+                                    String assignmentAllowResubmitNumber = assignmentProperties.get(AssignmentConstants.ALLOW_RESUBMIT_NUMBER);
+                                    if (assignmentAllowResubmitNumber != null) {
+                                        s.getProperties().put(AssignmentConstants.ALLOW_RESUBMIT_NUMBER, assignmentAllowResubmitNumber);
+
+                                        String assignmentAllowResubmitCloseDate = assignmentProperties.get(AssignmentConstants.ALLOW_RESUBMIT_CLOSETIME);
+                                        // if assignment's setting of resubmit close time is null, use assignment close time as the close time for resubmit
+                                        s.getProperties().put(AssignmentConstants.ALLOW_RESUBMIT_CLOSETIME,
+                                                assignmentAllowResubmitCloseDate != null ? assignmentAllowResubmitCloseDate : String.valueOf(a.getCloseDate().toEpochMilli()));
+                                    }
+
+                                    assignmentRepository.updateSubmission(s);
+                                    rv.put(u, s);
+                                }
+                            } catch (Exception e) {
+                                log.warn("Exception thrown while creating empty submission for student who has not submitted, {}", e.getMessage());
+                            } finally {
+                                // clear the permission
+                                securityService.popAdvisor(securityAdvisor);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IdUnusedException aIdException) {
+            log.warn("Assignment id not used: {}, {}", aRef, aIdException.getMessage());
+        } catch (PermissionException aPerException) {
+            log.warn("Not allowed to get assignment {}, {}", aRef, aPerException.getMessage());
+        }
+
+        return rv;
+    }
+    
+    /* NAM-38 needed to create duplicate of this method so as to avoid editing vanilla
+     * the vanilla method is used in another location and would need access to the fromMarker and fromMarkerSelectAll
+     * params. Therefor thought it was better to create a duplicate and where the method is called in getSubmissionsZip  we 
+     * check marker property and redirect for generation.
+     * 
+     */
+    @Override
+    @Transactional
+    public Map<User, AssignmentSubmission> getSubmitterMapForMarkerDownload(String searchFilterOnly, String allOrOneGroup, String searchString, String aRef, String contextString, Boolean fromMarkerSelectAll) {
+        Map<User, AssignmentSubmission> rv = new HashMap<>();
+        if (StringUtils.isBlank(aRef)) return rv;
+
+        List<User> rvUsers;
+        allOrOneGroup = StringUtils.trimToNull(allOrOneGroup);
+        searchString = StringUtils.trimToNull(searchString);
+        boolean bSearchFilterOnly = "true".equalsIgnoreCase(searchFilterOnly);
+
+        List<String> markerSubmissionList = null;
+        //Pending method from JG.
+        //markerSubmissionList = getMarkersSubmissionList(userDirectoryService.getCurrentUser().getId(), aRef);
+        
+        try {
+            String id = AssignmentReferenceReckoner.reckoner().reference(aRef).reckon().getId();
+            Assignment a = getAssignment(id);
+
+            if (a == null) return rv;
+
+            // SAK-27824
+            if (assignmentUsesAnonymousGrading(a)) {
+                bSearchFilterOnly = false;
+                searchString = "";
+            }
+
+            if (bSearchFilterOnly) {
+                if (allOrOneGroup == null && searchString == null) {
+                    // if the option is set to "Only show user submissions according to Group Filter and Search result"
+                    // if no group filter and no search string is specified, no user will be shown first by default;
+                    return rv;
+                } else {
+                    List<User> allowAddSubmissionUsers = allowAddSubmissionUsers(aRef);
+                    if (allOrOneGroup == null) {
+                        // search is done for all submitters
+                        rvUsers = getSearchedUsers(searchString, allowAddSubmissionUsers, false);
+                    } else {
+                        // group filter first
+                        rvUsers = getSelectedGroupUsers(allOrOneGroup, contextString, a, allowAddSubmissionUsers);
+                        if (searchString != null) {
+                            // then search
+                            rvUsers = getSearchedUsers(searchString, rvUsers, true);
+                        }
+                    }
+                }
+            } else {
+                List<User> allowAddSubmissionUsers = allowAddSubmissionUsers(aRef);
+
+                // SAK-28055 need to take away those users who have the permissions defined in sakai.properties
+                String resourceString = AssignmentReferenceReckoner.reckoner().context(a.getContext()).reckon().getReference();
+                String[] permissions = serverConfigurationService.getStrings("assignment.submitter.remove.permission");
+                if (permissions != null) {
+                    for (String permission : permissions) {
+                        allowAddSubmissionUsers.removeAll(securityService.unlockUsers(permission, resourceString));
+                    }
+                } else {
+                    allowAddSubmissionUsers.removeAll(securityService.unlockUsers(SECURE_ADD_ASSIGNMENT, resourceString));
+                }
+
+                // Step 1: get group if any that is selected
+                rvUsers = getSelectedGroupUsers(allOrOneGroup, contextString, a, allowAddSubmissionUsers);
+
+                // Step 2: get all student that meets the search criteria based on previous group users. If search is null or empty string, return all users.
+                rvUsers = getSearchedUsers(searchString, rvUsers, true);
+            }
+
+            if (!rvUsers.isEmpty()) {
+                List<String> groupRefs = new ArrayList<String>();
+                Map<User, AssignmentSubmission> userSubmissionMap = getUserSubmissionMap(a);
+                for (User u : rvUsers) {
+                    AssignmentSubmission uSubmission = userSubmissionMap.get(u);
+
+					if (uSubmission != null) {
+						if (fromMarkerSelectAll && (markerSubmissionList.contains(uSubmission.getId()))) {
+							rv.put(u, uSubmission);
+						} else {
+							AssignmentSubmissionMarker asm = new AssignmentSubmissionMarker();
+							asm.setAssignmentSubmission(uSubmission);
+							if ((asm.getDownloaded() == null) || (asm.getDownloaded() == false)) {
+								rv.put(u, uSubmission);
+							}
+						}
+					} else {
+                        // add those users who haven't made any submissions and with submission rights
+                        //only initiate the group list once
+                        if (groupRefs.isEmpty()) {
+                            if (a.getTypeOfAccess() == Assignment.Access.SITE) {
+                                // for site range assignment, add the site reference first
+                                groupRefs.add(siteService.siteReference(contextString));
+                            }
+                            // add all groups inside the site
+                            Collection<Group> groups = getGroupsAllowGradeAssignment(AssignmentReferenceReckoner.reckoner().assignment(a).reckon().getReference());
+                            for (Group g : groups) {
+                                groupRefs.add(g.getReference());
+                            }
+                        }
+                        // construct fake submissions for grading purpose if the user has right for grading
+                        if (allowGradeSubmission(AssignmentReferenceReckoner.reckoner().assignment(a).reckon().getReference())) {
+                            SecurityAdvisor securityAdvisor = new MySecurityAdvisor(
+                                    sessionManager.getCurrentSessionUserId(),
+                                    new ArrayList<>(Arrays.asList(SECURE_ADD_ASSIGNMENT_SUBMISSION, SECURE_UPDATE_ASSIGNMENT_SUBMISSION)),
+                                    groupRefs/* no submission id yet, pass the empty string to advisor*/);
+                            try {
+                                // temporarily allow the user to read and write from assignments (asn.revise permission)
+                                securityService.pushAdvisor(securityAdvisor);
+
+                                AssignmentSubmission s = addSubmission(a.getId(), u.getId());
+                                if (s != null && ) {
                                     // Note: If we had s.setSubmitted(false);, this would put it in 'draft mode'
                                     s.setSubmitted(true);
                                     /*
@@ -2825,32 +3000,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             while (submissions.hasNext()) {
                 AssignmentSubmission s = (AssignmentSubmission) submissions.next();
                 boolean isAnon = assignmentUsesAnonymousGrading(s.getAssignment());
-                //SAK-29314 added a new value where it's by default submitted but is marked when the user submits                
-                //NAM-51 Partial Download - Idea is to use existing methods. This is a work in progress and may need fixing.
-				if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {					
-					try {
-						if (fromMarker) // check here for the context of partial
-										// download
-						{
-							if (!fromMarkerSelectAll) // check here for the
-														// context of partial
-														// download
-							{
-								Assignment asn = s.getAssignment();
-								Set<String> asnMarkerSubmissionSet = getSubmissionListForMarker(asn); // This is paused for the quote. Submssion List is currently genrated as null
-								
-								if (!(asnMarkerSubmissionSet.contains(s.getId()))) {
-									break OUTER;
-								}
-							}
-							
-							//NAM-44 Event Logging 
-							eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_DOWNLOAD, assignmentReference, true));							
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}					
-				}				
+                //SAK-29314 added a new value where it's by default submitted but is marked when the user submits   
                 if ((s.getSubmitted() && s.getUserSubmission()) || includeNotSubmitted) {
                     // get the submitter who submitted the submission see if the user is still in site
                     Optional<AssignmentSubmissionSubmitter> assignmentSubmitter = s.getSubmitters().stream().findAny();
@@ -3130,26 +3280,6 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             }
         }
     }
-    // NAM-51 Download Partial. This is paused for the quote. Submssion List is currently genrated as null
-    private Set<String> getSubmissionListForMarker(Assignment asn) {
-    	
-    	String curUser = userDirectoryService.getCurrentUser().getEid();						
-		
-		Set<AssignmentMarker> asnSet = getMarkersForAssignment(asn);
-		Set<String> asnMarkerSubmissionSet = new HashSet<String>();
-		for (AssignmentMarker assignmentMarker : asnSet) {
-			if (assignmentMarker.getMarkerUserId().equals(curUser)) {
-				Set<AssignmentSubmissionMarker> markerLoopSet = assignmentMarker.getSubmissionMarkers();
-				for (AssignmentSubmissionMarker subId : markerLoopSet) {
-					asnMarkerSubmissionSet.add(subId.getId());
-				}
-				break;
-			}
-		}
-		
-		return asnMarkerSubmissionSet;
-	}
-
 	// TODO zipSubmissions and zipGroupSubmissions should be combined
     protected void zipGroupSubmissions(String assignmentReference, String assignmentTitle, String gradeTypeString, Assignment.SubmissionType typeOfSubmission, Iterator submissions, OutputStream outputStream, StringBuilder exceptionMessage, boolean withStudentSubmissionText, boolean withStudentSubmissionAttachment, boolean withGradeFile, boolean withFeedbackText, boolean withFeedbackComment, boolean withFeedbackAttachment, String gradeFileFormat, boolean includeNotSubmitted) {
         ZipOutputStream out = null;

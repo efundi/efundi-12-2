@@ -764,4 +764,7 @@ public interface AssignmentService extends EntityProducer {
 	void updateAssignmentMarker(AssignmentMarker assignmentMarker) throws PermissionException;
 
 	void createAssignmentMarkerHistory(AssignmentMarkerHistory assignmentMarkerHistory) throws PermissionException;
+
+	Map<User, AssignmentSubmission> getSubmitterMapForMarkerDownload(String searchFilterOnly, String allOrOneGroup,
+			String searchString, String aRef, String contextString, Boolean fromMarkerSelectAll);
 }

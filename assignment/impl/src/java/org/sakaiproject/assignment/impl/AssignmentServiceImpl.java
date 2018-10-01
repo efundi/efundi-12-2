@@ -1717,17 +1717,15 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             } else {
 
                 //List<String> submitterIds = getSubmitterIdList(searchFilterOnly, viewString.length() == 0 ? AssignmentConstants.ALL:viewString, searchString, aRef, contextString == null? a.getContext():contextString);
-                Map<User, AssignmentSubmission> submitters = new HashMap<>(); 
-                if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
-						if (fromMarker) // check here for the context of partial
-										// download
-							{
+                Map<User, AssignmentSubmission> submitters = Collections.emptyMap();
+                if (serverConfigurationService.getBoolean("assignment.useMarker", false) && fromMarker) {
+                			// check here for the context of partial
+							// download							
 							submitters = getSubmitterMapForMarkerDownload(searchFilterOnly,
 			                        viewString.length() == 0 ? AssignmentConstants.ALL : viewString,
 			                        searchString,
 			                        reference,
-			                        contextString == null ? assignment.getContext() : contextString, fromMarkerSelectAll);
-							}
+			                        contextString == null ? assignment.getContext() : contextString, fromMarkerSelectAll);							
 						}
                 else
                 submitters = getSubmitterMap(searchFilterOnly,

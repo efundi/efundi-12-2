@@ -59,7 +59,7 @@
 										<tr style="background: #FAFAFA; font-weight: inherit">
 											<th>Name of Marker</th>
 											<th>Role</th>
-											#if ("$!userType" != "admin")
+											#if (!$!hideMarkerDownloadLinks)
 												<th>Download</th>
 												<th>Upload</th>
 												<th>Download All</th>
@@ -74,7 +74,7 @@
 											<tr #if( $counter % 2 == 0) style="background: #fff" #else style="background: #f9f9f9" #end>
 												<td>$marker.UserDisplayName</td>
 												<td>$marker.UserRole</td>
-												#if ("$!userType" != "admin")
+												#if (!$!hideMarkerDownloadLinks)
 													<td><a href="#" id="download" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'download', null, null, null, 'download' ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downloadall.button.download')</a></td>
 													<td><a href="" id="uploadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'upload', null, null, null, 'uploadAll' ); return false;" title="$!tlang.getString('uploadall.title')">$!tlang.getString('uploadall.button.upload')</a></td>
 													<td><a href="" id="downloadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'download', null, null, null, 'downloadAll' ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downall')</a></td>

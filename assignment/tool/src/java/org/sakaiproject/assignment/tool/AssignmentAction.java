@@ -1305,11 +1305,6 @@ public class AssignmentAction extends PagedResourceActionII {
         }else if(mode.equals(MODE_MARKER_DOWNLOADS_STATISTICS)) {
         	// build the options page
             template = build_marker_downloads_statistics_context(portlet, context, data, state);
-            if (securityService.isSuperUser()) {
-            	context.put("userType", "admin");
-            } else {
-            	context.put("userType", userDirectoryService.getCurrentUser().getType());
-            }
         } else if (mode.equals(MODE_STUDENT_REVIEW_EDIT)) {
             template = build_student_review_edit_context(portlet, context, data, state);
         } else if (MODE_LIST_DELETED_ASSIGNMENTS.equals(mode)) {
@@ -4181,11 +4176,9 @@ public class AssignmentAction extends PagedResourceActionII {
             state.removeAttribute(STATE_DOWNLOAD_URL);
         }
         
-        if (!serverConfigurationService.getBoolean("assignment.useMarker", false) 
-        		&& Assignment.SubmissionType.PDF_ONLY_SUBMISSION != assignment.getTypeOfSubmission()
-        		&& CollectionUtils.isEmpty(assignment.getMarkers())) {
-        	context.put("markerToolDisabled", "");
-        }
+        if (serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == assignment.getTypeOfSubmission()) {
+        	context.put("isMarkerSubmissionType", Boolean.TRUE);
+        } 
         
         String template = (String) getContext(data).get("template");
 
@@ -7855,7 +7848,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 }
 
                 //NAM-32 - Set Assignment Object after created on Marker
-                if(post && serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == Assignment.SubmissionType.values()[(Integer) state.getAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE)]
+                if(post && serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == a.getTypeOfSubmission()
         				&& StringUtils.isNotBlank(params.getString("allowMarkerToggle")) ) {
     				Set<AssignmentMarker> assignmentMarkers = (Set<AssignmentMarker>) state.getAttribute(NEW_ASSIGNMENT_MARKERS);       
     				if (CollectionUtils.isNotEmpty(assignmentMarkers)) {
@@ -14427,13 +14420,16 @@ public class AssignmentAction extends PagedResourceActionII {
     protected String build_marker_downloads_statistics_context(VelocityPortlet portlet, Context context, RunData data, SessionState state) {
     	state.setAttribute(STATE_MODE, MODE_LIST_ASSIGNMENTS);
     	context.put("context", state.getAttribute(STATE_CONTEXT_STRING));
-    	String contextString = (String) state.getAttribute(STATE_CONTEXT_STRING);
     	
     	List<Assignment> assignments = prepPage(state);        
         for(Assignment assignment: assignments) {
         	assignmentService.setMarkersForAssignmentByLoggedInUser(assignment);
         }
         context.put("assignments", assignments.iterator());
+
+        if (securityService.isSuperUser()) {
+        	context.put("hideMarkerDownloadLinks", Boolean.TRUE);
+        }
 
         state.setAttribute(STATE_MODE, MODE_MARKER_DOWNLOADS_STATISTICS);
         String template = (String) getContext(data).get("template");

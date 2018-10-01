@@ -2245,7 +2245,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                 securityService.pushAdvisor(securityAdvisor);
 
                                 AssignmentSubmission s = addSubmission(a.getId(), u.getId());
-                                if (s != null && ) {
+                                if (s != null && (markerSubmissionList.contains(uSubmission.getId()))) {
                                     // Note: If we had s.setSubmitted(false);, this would put it in 'draft mode'
                                     s.setSubmitted(true);
                                     /*

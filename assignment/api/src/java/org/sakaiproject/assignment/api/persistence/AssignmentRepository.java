@@ -24,6 +24,7 @@ import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentMarkerHistory;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
+import org.sakaiproject.assignment.api.model.AssignmentSubmissionMarker;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.serialization.SerializableRepository;
 
@@ -92,4 +93,10 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
 	public List<AssignmentMarker> findMarkersForAssignmentById(String assignmentId);
 	
 	void createAssignmentMarkerHistory(AssignmentMarkerHistory assignmentMarkerHistory);
+
+	void createAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker);
+
+	void updateAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker);	
+
+	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId, String markerId);
 }

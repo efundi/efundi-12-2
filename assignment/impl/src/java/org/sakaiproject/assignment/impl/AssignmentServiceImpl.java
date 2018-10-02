@@ -1149,6 +1149,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         // Assignment Submission Notifications
         Instant dateReturned = submission.getDateReturned();
         Instant dateSubmitted = submission.getDateSubmitted();
+        
         if (!submission.getSubmitted()) {
             // if the submission is not submitted then saving a submission event
             eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_SAVE_ASSIGNMENT_SUBMISSION, reference, true));
@@ -4478,5 +4479,22 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 				log.warn("Cannot get authz group for site = {}, {}", assignment.getContext(), e.getMessage());
 			}
 		}
+	}
+
+	@Override
+	public void createAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker)
+			throws PermissionException {
+		Assert.notNull(assignmentSubmissionMarker, "AssignmentSubmissionMarker cannot be null");
+		assignmentRepository.createAssignmentSubmissionMarker(assignmentSubmissionMarker);
+		// eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.???,
+		// assignmentMarkerHistory.getId(), false));
+	}
+
+	@Override
+	public void updateAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker)
+			throws PermissionException {
+		Assert.notNull(assignmentSubmissionMarker, "AssignmentSubmissionMarker cannot be null");
+		assignmentRepository.updateAssignmentSubmissionMarker(assignmentSubmissionMarker);
+	//	eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.???, assignmentMarkerHistory.getId(), false));
 	}
 }

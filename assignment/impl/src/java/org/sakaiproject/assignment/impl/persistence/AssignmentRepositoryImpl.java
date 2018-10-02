@@ -29,6 +29,7 @@ import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentMarkerHistory;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
+import org.sakaiproject.assignment.api.model.AssignmentSubmissionMarker;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.assignment.api.persistence.AssignmentRepository;
 import org.sakaiproject.serialization.BasicSerializableRepository;
@@ -255,5 +256,29 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
 		Session session = sessionFactory.getCurrentSession();
 		assignmentMarkerHistory.setDateModified(Instant.now());
 		session.persist(assignmentMarkerHistory);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void createAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker) {
+		Session session = sessionFactory.getCurrentSession();
+		assignmentSubmissionMarker.setDateCreated(Instant.now());
+		session.persist(assignmentSubmissionMarker);
+	}
+
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void updateAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker) {
+		Session session = sessionFactory.getCurrentSession();
+		assignmentSubmissionMarker.setDateModified(Instant.now());
+		session.update(assignmentSubmissionMarker);
+		session.flush();
+	}
+
+	@Override
+	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId, String markerId) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AssignmentSubmissionMarker.class);
+		return criteria.add(Restrictions.eq("markerUserId", markerId)).list();
 	}
 }

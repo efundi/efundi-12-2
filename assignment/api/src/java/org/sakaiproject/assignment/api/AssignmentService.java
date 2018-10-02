@@ -29,6 +29,7 @@ import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.assignment.api.model.AssignmentMarker;
 import org.sakaiproject.assignment.api.model.AssignmentMarkerHistory;
 import org.sakaiproject.assignment.api.model.AssignmentSubmission;
+import org.sakaiproject.assignment.api.model.AssignmentSubmissionMarker;
 import org.sakaiproject.assignment.api.model.AssignmentSubmissionSubmitter;
 import org.sakaiproject.entity.api.Entity;
 import org.sakaiproject.entity.api.EntityProducer;
@@ -767,4 +768,8 @@ public interface AssignmentService extends EntityProducer {
 
 	Map<User, AssignmentSubmission> getSubmitterMapForMarkerDownload(String searchFilterOnly, String allOrOneGroup,
 			String searchString, String aRef, String contextString, Boolean fromMarkerSelectAll);
+	
+	void createAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker) throws PermissionException;
+	
+	void updateAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker) throws PermissionException;
 }

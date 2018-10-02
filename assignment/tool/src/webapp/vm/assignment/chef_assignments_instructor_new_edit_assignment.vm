@@ -626,15 +626,16 @@
 		<h4>
 			$tlang.getString("gen.stusub")
 		</h4>
-		#if($!hasQuotas)
-			<div id="msgMarkerQuotaPresent" class="messageInformation indnt2" style="width: 80% !important;">$tlang.getString("settings.marker.quotaPresent")</div>
-		#end
+		##if($!markerEnabled)
+		##	<div id="msgMarkerQuotaPresent" class="messageInformation indnt2" style="width: 80% !important;">$tlang.getString("settings.marker.quotaPresent")</div>
+		##end
 		<div class="form-group row form-required">
 			<label for="subType" class="col-sm-2 form-control-label">
 				$tlang.getString("gen.submissionType")
 			</label>
 			<div class="col-sm-6">
-				<select name="$name_SubmissionType" id="subType" onchange="switchAssignmentSubmissionType();" class="assignment-submission-type" #if($!hasQuotas) disabled #end>
+			##if($!markerEnabled) disabled #end //add into the select below
+				<select name="$name_SubmissionType" id="subType" onchange="switchAssignmentSubmissionType();" class="assignment-submission-type">
 				#foreach ($i in [1..$!value_totalSubmissionTypes])
 					#if("$!submissionTypeTable.get($i)" != "") ##NAM-28
 						#if ($i == $value_SubmissionType)
@@ -654,12 +655,6 @@
 			#set($resubmitStyle="display:block")
 		#else
 			#set($resubmitStyle="display:none")
-		#end
-		
-		#if ($value_SubmissionType != 6)
-			#set($markerSetupStyle="display:none")
-		#else
-			#set($markerSetupStyle="display:block")
 		#end
 
 		<div class="form-group row">
@@ -741,13 +736,15 @@
 			</label>
 			<div class="col-sm-10">
 				<div id="tempAllowMarker" #if ($value_SubmissionType == 4) style = "display:none"#end>
-					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" #if($!hasQuotas) checked="checked" disabled#end onclick="ASN.enableMarkingTool(); ASN.resizeFrame();" />
+					##if($!markerEnabled) checked="checked" disabled#end //add into input tag below
+					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" onclick="ASN.enableMarkingTool(); ASN.resizeFrame();" />
 				</div>
 			</div>
 		</div>
 
 		##NAM-29 PDF marker settings that will be displayed when the tool is selected
-		<div class="col-sm-offset-1 row" id="pdfMarkerSettings" #if($!hasQuotas) style="display:block"#else style="display:none"#end>
+		##if($!markerEnabled) style="display:block"#else style="display:none"#end //add into div tag below
+		<div class="col-sm-offset-1 row" id="pdfMarkerSettings">
 			<div class="col-sm-12 row table-reponsive">
 				<table class="table-striped table-quota" id="quotaAssignmentTable" name="quotaAssignmentTable">
 					<tr>

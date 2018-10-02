@@ -505,7 +505,6 @@ public class AssignmentAction extends PagedResourceActionII {
     private static final String NEW_ASSIGNMENT_SUBMISSION_TYPE = "new_assignment_submission_type";
     private static final String NEW_ASSIGNMENT_MARKERS = "new_assignment_markers";
     private static final String NEW_ASSIGNMENT_MARKERS_HISTORY = "new_assignment_markers_history";
-    private static final String NEW_ASSIGNMENT_MARKERS_HAS_QUOTA = "hasQuotas";
     private static final String NEW_ASSIGNMENT_CATEGORY = "new_assignment_category";
     private static final String NEW_ASSIGNMENT_GRADE_TYPE = "new_assignment_grade_type";
     private static final String NEW_ASSIGNMENT_GRADE_POINTS = "new_assignment_grade_points";
@@ -2770,12 +2769,12 @@ public class AssignmentAction extends PagedResourceActionII {
         }
 
         context.put("allowGroupAssignmentsInGradebook", Boolean.TRUE);
-
-        if (state.getAttribute(NEW_ASSIGNMENT_MARKERS_HAS_QUOTA) == null) {
-        	state.setAttribute(NEW_ASSIGNMENT_MARKERS_HAS_QUOTA, false);
-        }
         
-        context.put("hasQuotas", state.getAttribute(NEW_ASSIGNMENT_MARKERS_HAS_QUOTA));
+        //check if marker option was selected
+        //a.isMarker()
+        if (true) {
+        	context.put("markerEnabled", "true");
+        }
         
         // the notification email choices
         // whether the choice of emails instructor submission notification is available in the installation
@@ -4183,11 +4182,8 @@ public class AssignmentAction extends PagedResourceActionII {
             state.removeAttribute(STATE_DOWNLOAD_URL);
         }
         
-        if (serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == assignment.getTypeOfSubmission()) {
-        	Set <AssignmentMarker> set = assignment.getMarkers();
-        	if (set != null & CollectionUtils.isNotEmpty(set)) {        		
-        		context.put("isMarkerSubmissionType", Boolean.TRUE);
-        	}
+        if (serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == assignment.getTypeOfSubmission()) {	
+        	context.put("isMarkerSubmissionType", Boolean.TRUE);
         } 
         
         String template = (String) getContext(data).get("template");
@@ -9190,26 +9186,19 @@ public class AssignmentAction extends PagedResourceActionII {
                 // put the names and values into vm file
                 state.setAttribute(NEW_ASSIGNMENT_TITLE, a.getTitle());
                 state.setAttribute(NEW_ASSIGNMENT_ORDER, a.getPosition());
-                                
-                state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.getMarkersForAssignment(a));
+                
+                if (CollectionUtils.isNotEmpty(assignmentService.getMarkersForAssignment(a))) {
+                	state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.getMarkersForAssignment(a));
+                } else {
+                	state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.buildAssignmentMarkerObjSetForSite(toolManager.getCurrentPlacement().getContext()));
+                }
+                
                 
                 if (serverConfigurationService.getBoolean("assignment.visible.date.enabled", false)) {
                     putTimePropertiesInState(state, a.getVisibleDate(), NEW_ASSIGNMENT_VISIBLEMONTH, NEW_ASSIGNMENT_VISIBLEDAY, NEW_ASSIGNMENT_VISIBLEYEAR, NEW_ASSIGNMENT_VISIBLEHOUR, NEW_ASSIGNMENT_VISIBLEMIN);
                     state.setAttribute(NEW_ASSIGNMENT_VISIBLETOGGLE, a.getVisibleDate() != null);
                 }
 
-                Set <AssignmentMarker> markers = (Set <AssignmentMarker>) state.getAttribute(NEW_ASSIGNMENT_MARKERS);
-                Iterator<AssignmentMarker> quotaCheckSet = markers.iterator();
-                Boolean hasQuotas = false;
-                while (quotaCheckSet.hasNext()) {
-                	AssignmentMarker marker = quotaCheckSet.next();
-                	if (marker.getQuotaPercentage() != null && marker.getQuotaPercentage() != new Double(0)) {
-                		hasQuotas = true;
-                    }
-                }
-
-                state.setAttribute(NEW_ASSIGNMENT_MARKERS_HAS_QUOTA, hasQuotas);
-                
                 putTimePropertiesInState(state, a.getOpenDate(), NEW_ASSIGNMENT_OPENMONTH, NEW_ASSIGNMENT_OPENDAY, NEW_ASSIGNMENT_OPENYEAR, NEW_ASSIGNMENT_OPENHOUR, NEW_ASSIGNMENT_OPENMIN);
                 // generate alert when editing an assignment past open date
                 if (a.getOpenDate().isBefore(Instant.now())) {
@@ -11572,7 +11561,6 @@ public class AssignmentAction extends PagedResourceActionII {
 
         //NAM-32
         state.removeAttribute(NEW_ASSIGNMENT_MARKERS);
-        state.removeAttribute(NEW_ASSIGNMENT_MARKERS_HAS_QUOTA);
         //NAM-33
         state.removeAttribute(NEW_ASSIGNMENT_MARKERS_HISTORY);
     } // resetNewAssignment

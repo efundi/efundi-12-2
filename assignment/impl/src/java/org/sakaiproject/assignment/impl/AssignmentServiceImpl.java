@@ -1790,17 +1790,16 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                         if (exceptionMessage.length() > 0) {
                             log.warn("Encountered and issue while zipping submissions for ref = {}, exception message {}", reference, exceptionMessage);
                         }
+                        else
+                        {
+                        	updateAssignment(assignment);
+                        }
                     }
                 }
             }
 
         } catch (Exception e) {
             log.warn("Cannot create submissions zip file for reference = {}", reference, e);
-        }
-    	//log here?
-        if (serverConfigurationService.getBoolean("assignment.useMarker", false) && fromMarker) {
-			eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_DOWNLOAD,
-					reference, false));
         }
     }
 

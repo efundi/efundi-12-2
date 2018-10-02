@@ -4185,7 +4185,7 @@ public class AssignmentAction extends PagedResourceActionII {
         
         if (serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == assignment.getTypeOfSubmission()) {
         	Set <AssignmentMarker> set = assignment.getMarkers();
-        	if (set != null && CollectionUtils.isNotEmpty(set)) {
+        	if (set != null & CollectionUtils.isNotEmpty(set)) {        		
         		context.put("isMarkerSubmissionType", Boolean.TRUE);
         	}
         } 

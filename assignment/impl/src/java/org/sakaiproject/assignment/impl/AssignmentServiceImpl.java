@@ -823,6 +823,8 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                 assignment.setAllowAttachments(existingAssignment.getAllowAttachments());
                 // for ContentReview service
                 assignment.setContentReview(existingAssignment.getContentReview());
+                // for Assignment Marking
+                assignment.setIsMarker(existingAssignment.getIsMarker());
 
                 //duplicating attachments
                 Set<String> tempAttach = existingAssignment.getAttachments();
@@ -1379,7 +1381,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         return null;
     }
 
-    private Map<User, AssignmentSubmission> getUserSubmissionMap(Assignment assignment, Boolean fromMarker, Boolean fromMarkerSelectAll) {
+    private Map<User, AssignmentSubmission> getUserSubmissionMap(Assignment assignment, Boolean markerDownloadPartial, Boolean markerDownloadAll) {
         Map<User, AssignmentSubmission> userSubmissionMap = new HashMap<>();
         if (assignment != null) {
             if (assignment.getIsGroup()) {
@@ -1414,49 +1416,45 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                 }
             }
             
-            //if marker - getmarker lsit
-            Map<String, String> markerSubmissionList = Collections.<String, String>emptyMap();
-            if (serverConfigurationService.getBoolean("assignment.useMarker", false) && fromMarker) {
-            	 List<AssignmentSubmissionMarker> msl = assignmentRepository.findSubmissionMarkersByIdAndAssignmentId(assignment.getId(), userDirectoryService.getCurrentUser().getId());
-            	 for (AssignmentSubmissionMarker asm : msl)
-            	 {
-            		 markerSubmissionList.put(asm.getAssignmentSubmission().getId(), asm.getDownloaded().toString());
-            	 }
-            }
-            
-            // Simply we add every AssignmentSubmissionSubmitter to the Map, this works equally well for group submissions
-            OUTER:
-            for (AssignmentSubmission submission : assignment.getSubmissions()) {
-            	/**
-            	 * if marker again, if contains continue else break to start of loop.
-            	 */
-            	 if (serverConfigurationService.getBoolean("assignment.useMarker", false))
-            	 {            		 
-            		 if (fromMarker && !fromMarkerSelectAll) {
-            			
-            			 if (markerSubmissionList.keySet().contains(submission.getId()))
-            			 {     String downloaded = markerSubmissionList.get(submission.getId());			
-            				 if(downloaded.equalsIgnoreCase("true"))
-            				 {
-            					 break OUTER;
-            				 }
-            			 }            		 
-            		 else            			 
-            		 if (fromMarker && !(markerSubmissionList.keySet().contains(submission.getId())))
-            		 {
-            			 break OUTER;
-            		 }
-            	 }
-            	 }
-                for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
-                    try {
-                        User user = userDirectoryService.getUser(submitter.getSubmitter());
-                        userSubmissionMap.put(user, submission);
-                    } catch (UserNotDefinedException e) {
-                        log.warn("Could not find user: {}, that is a submitter for submission: {}", submitter.getSubmitter(), submission.getId());
-                    }
-                }
-            }
+			// if marker - getmarker lsit
+			Map<String, String> markerSubmissionList = Collections.<String, String>emptyMap();
+			if (serverConfigurationService.getBoolean("assignment.useMarker", false) && markerDownloadPartial && assignment.getIsMarker()) {
+				List<AssignmentSubmissionMarker> msl = assignmentRepository.findSubmissionMarkersByIdAndAssignmentId(
+						assignment.getId(), userDirectoryService.getCurrentUser().getId());
+				for (AssignmentSubmissionMarker asm : msl) {
+					markerSubmissionList.put(asm.getAssignmentSubmission().getId(), asm.getDownloaded().toString());
+				}
+			} else {
+				
+			}
+			// Simply we add every AssignmentSubmissionSubmitter to the Map, this works
+			// equally well for group submissions
+			for (AssignmentSubmission submission : assignment.getSubmissions()) {
+							
+				// if marker again, if contains continue else break to start of loop.
+				if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+					if (markerDownloadPartial && !markerDownloadAll) {
+						if (markerSubmissionList.keySet().contains(submission.getId())) {
+							String downloaded = markerSubmissionList.get(submission.getId());
+							if (downloaded.equalsIgnoreCase("true")) {
+								continue;
+							}
+						} else if (markerDownloadPartial && !(markerSubmissionList.keySet().contains(submission.getId()))) {
+							continue;
+						}
+					}
+				}
+				for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
+
+					try {
+						User user = userDirectoryService.getUser(submitter.getSubmitter());
+						userSubmissionMap.put(user, submission);
+					} catch (UserNotDefinedException e) {
+						log.warn("Could not find user: {}, that is a submitter for submission: {}",
+								submitter.getSubmitter(), submission.getId());
+					}
+				}
+			}
         }
         return userSubmissionMap;
     }
@@ -1635,10 +1633,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
         String viewString = "";
         String contextString = "";
         String searchString = "";
-        String searchFilterOnly = "";
-        
-        boolean fromMarker = false;
-        boolean fromMarkerSelectAll = false;
+        String searchFilterOnly = "";        
+        boolean markerDownloadPartial = false;
+        boolean markerDownloadAll = false;
 
         if (query != null) {
             StringTokenizer queryTokens = new StringTokenizer(query, "&");
@@ -1690,13 +1687,13 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                     // search and group filter only
                     searchFilterOnly = token.contains("=") ? token.substring(token.indexOf("=") + 1) : "";
                 }
-                if (token.contains("fromMarkerPage")) {
+                if (token.contains("markerDownloadPartial")) {
                     // should contain student submission text information
-                	fromMarker = true;
+                	markerDownloadPartial = true;
                 }
-                if (token.contains("fromMarkerSelectAll")) {
+                if (token.contains("markerDownloadAll")) {
                     // should contain student submission text information
-                	fromMarkerSelectAll = true;
+                	markerDownloadAll = true;
                 }
             }
         }
@@ -1755,11 +1752,11 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                         viewString.length() == 0 ? AssignmentConstants.ALL : viewString,
                         searchString,
                         reference,
-                        contextString == null ? assignment.getContext() : contextString, fromMarker, fromMarkerSelectAll);
+                        contextString == null ? assignment.getContext() : contextString, markerDownloadPartial, markerDownloadAll);
 
                 if (!submitters.isEmpty()) {
                     List<AssignmentSubmission> submissions = new ArrayList<AssignmentSubmission>(submitters.values());
-                    //Here, as we have access to fromMarker and fromMarkerSelect All
+                    //Here, as we have access to markerDownloadPartial and markerDownloadAll
                     StringBuilder exceptionMessage = new StringBuilder();
                     SortedIterator sortedIterator;
                     if (assignmentUsesAnonymousGrading(assignment)){
@@ -1785,8 +1782,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
                                 gradeFileFormat,
                                 includeNotSubmitted,
                                 assignment.getContext(),
-                                fromMarker,
-                                fromMarkerSelectAll);
+                                markerDownloadPartial,
+                                markerDownloadAll);
+                        
                         if (exceptionMessage.length() > 0) {
                             log.warn("Encountered and issue while zipping submissions for ref = {}, exception message {}", reference, exceptionMessage);
                         }
@@ -2014,7 +2012,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
     @Override
     @Transactional
-    public Map<User, AssignmentSubmission> getSubmitterMap(String searchFilterOnly, String allOrOneGroup, String searchString, String aRef, String contextString, Boolean fromMarker, Boolean fromMarkerSelectAll) {
+    public Map<User, AssignmentSubmission> getSubmitterMap(String searchFilterOnly, String allOrOneGroup, String searchString, String aRef, String contextString, Boolean markerDownloadPartial, Boolean markerDownloadAll) {
         Map<User, AssignmentSubmission> rv = new HashMap<>();
         if (StringUtils.isBlank(aRef)) return rv;
 
@@ -2073,11 +2071,13 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
                 // Step 2: get all student that meets the search criteria based on previous group users. If search is null or empty string, return all users.
                 rvUsers = getSearchedUsers(searchString, rvUsers, true);
+                
+                
             }
 
             if (!rvUsers.isEmpty()) {
                 List<String> groupRefs = new ArrayList<String>();
-                Map<User, AssignmentSubmission> userSubmissionMap = getUserSubmissionMap(a, fromMarker, fromMarkerSelectAll);
+                Map<User, AssignmentSubmission> userSubmissionMap = getUserSubmissionMap(a, markerDownloadPartial, markerDownloadAll);
                 for (User u : rvUsers) {
                     AssignmentSubmission uSubmission = userSubmissionMap.get(u);
 
@@ -2816,7 +2816,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
     }
 
     // TODO zipSubmissions and zipGroupSubmissions should be combined
-    private void zipSubmissions(String assignmentReference, String assignmentTitle, Assignment.GradeType gradeType, Assignment.SubmissionType typeOfSubmission, Iterator submissions, OutputStream outputStream, StringBuilder exceptionMessage, boolean withStudentSubmissionText, boolean withStudentSubmissionAttachment, boolean withGradeFile, boolean withFeedbackText, boolean withFeedbackComment, boolean withFeedbackAttachment, boolean withoutFolders, String gradeFileFormat, boolean includeNotSubmitted, String siteId, Boolean fromMarker, Boolean fromMarkerSelectAll) {
+    private void zipSubmissions(String assignmentReference, String assignmentTitle, Assignment.GradeType gradeType, Assignment.SubmissionType typeOfSubmission, Iterator submissions, OutputStream outputStream, StringBuilder exceptionMessage, boolean withStudentSubmissionText, boolean withStudentSubmissionAttachment, boolean withGradeFile, boolean withFeedbackText, boolean withFeedbackComment, boolean withFeedbackAttachment, boolean withoutFolders, String gradeFileFormat, boolean includeNotSubmitted, String siteId, Boolean markerDownloadPartial, Boolean markerDownloadAll) {
         ZipOutputStream out = null;
 
         boolean isAdditionalNotesEnabled = false;
@@ -3616,6 +3616,9 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 
                     // review service
                     nAssignment.setContentReview(oAssignment.getContentReview());
+                    
+                    // Assignment Marking
+                    nAssignment.setIsMarker(oAssignment.getIsMarker());
 
                     // attachments
                     Set<String> oAttachments = oAssignment.getAttachments();
@@ -4260,18 +4263,30 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		}
 	}
 
-	// NAM-23
-	public Boolean hasMarkingAssigned(String contextString, String role) {
+	// NAM-23	
+	public Boolean allowRemoveUserWithRoleIfMarkingUsed(String contextString, String role) {
 		try {
-			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(contextString));
-			Set<String> allowedMarkerRoles = realm.getRolesIsAllowed(SECURE_ASSIGNMENT_MARKER); // gets all roles with marker permission
-			if (allowedMarkerRoles.contains(role)) {
+			Collection<Assignment> assignments = getAssignmentsForContext(contextString);
+			Site site = siteService.getSite(contextString);
+			List<AssignmentMarker> assignmentMarkers = Collections.emptyList();
+			Set<String> allowedMarkers = site.getUsersIsAllowed(SECURE_ASSIGNMENT_MARKER);
+			if (CollectionUtils.isEmpty(allowedMarkers)) {
 				return true;
 			}
-		} catch (GroupNotDefinedException e) {
-			log.warn("Cannot get authz group for site = {}, {}", contextString, e.getMessage());
+			for (Assignment assignment : assignments) {
+				if (assignment.getIsMarker()) {
+					assignmentMarkers = assignmentRepository.findMarkersForAssignmentById(assignment.getId());
+					for (AssignmentMarker marker : assignmentMarkers) {
+						if (allowedMarkers.contains(marker.getMarkerUserId())) {
+							return false;
+						}
+					}
+				}
+			}
+		} catch (IdUnusedException e1) {
+			log.warn("Cannot find site = {}, {}", contextString, e1.getMessage());
 		}
-		return false;
+		return true;
 	}
 
 	/* NAM-43 */
@@ -4351,7 +4366,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 			throws PermissionException {
 		Assert.notNull(assignmentSubmissionMarker, "AssignmentSubmissionMarker cannot be null");
 		assignmentRepository.createAssignmentSubmissionMarker(assignmentSubmissionMarker);
-		// eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.???,
+		// eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_DOWNLOAD??,
 		// assignmentMarkerHistory.getId(), false));
 	}
 
@@ -4360,6 +4375,11 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 			throws PermissionException {
 		Assert.notNull(assignmentSubmissionMarker, "AssignmentSubmissionMarker cannot be null");
 		assignmentRepository.updateAssignmentSubmissionMarker(assignmentSubmissionMarker);
-	//	eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.???, assignmentMarkerHistory.getId(), false));
+	//	eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_UPLOAD, assignmentMarkerHistory.getId(), false));
+	}
+
+	@Override
+	public AssignmentSubmissionMarker findSubmissionMarkerForMarkerIdAndSubmissionId(String markerId, String submissionId) {
+		return assignmentRepository.findSubmissionMarkerForMarkerIdAndSubmissionId(markerId, submissionId);
 	}
 }

@@ -850,13 +850,13 @@ ASN.invokeDownloadUrl = function(accessPointUrl, actionString, alertMessage, par
     {
         extraInfoArray[extraInfoArray.length]="includeNotSubmitted=true";
     }
-    var fromMarker = document.getElementById('fromMarkerPage').getAttribute('value');
-	if (fromMarker == "true") {
-		extraInfoArray[extraInfoArray.length] = ('fromMarkerPage=true');
+    var markerDownloadPartial = document.getElementById('markerDownloadPartial').getAttribute('value');
+	if (markerDownloadPartial == "true") {
+		extraInfoArray[extraInfoArray.length] = ('markerDownloadPartial=true');
 	}
-	var fromMarkerSelectAll = document.getElementById('fromMarkerSelectAll').getAttribute('value');
-	if (fromMarkerSelectAll == "true") {
-		extraInfoArray[extraInfoArray.length] = ('fromMarkerSelectAll=true');
+	var markerDownloadAll = document.getElementById('markerDownloadAll').getAttribute('value');
+	if (markerDownloadAll == "true") {
+		extraInfoArray[extraInfoArray.length] = ('markerDownloadAll=true');
 	}
 
     if (extraInfoArray.length === 0)

@@ -42,7 +42,10 @@ public class AssignmentSubmissionMarker {
     @ManyToOne
     @JoinColumn(name = "MARKER_ID")
     private AssignmentMarker assignmentMarker;
-    
+
+	@Column(name = "CONTEXT", length = 99, nullable = false)
+	private String context;
+	
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="SUBMISSION_ID")
     private AssignmentSubmission assignmentSubmission;

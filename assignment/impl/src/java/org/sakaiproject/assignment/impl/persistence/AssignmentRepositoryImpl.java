@@ -266,7 +266,6 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
 		session.persist(assignmentSubmissionMarker);
 	}
 
-
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void updateAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker) {
@@ -279,6 +278,14 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
 	@Override
 	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId, String markerId) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AssignmentSubmissionMarker.class);
-		return criteria.add(Restrictions.eq("markerUserId", markerId)).list();
+		return criteria.add(Restrictions.eq("context", assignmentId))
+				.add(Restrictions.eq("markerUserId", markerId)).list();
+	}
+
+	@Override
+	public AssignmentSubmissionMarker findSubmissionMarkerForMarkerIdAndSubmissionId(String markerId, String submissionId) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AssignmentSubmissionMarker.class);
+		return (AssignmentSubmissionMarker) criteria.add(Restrictions.eq("assignmentMarker.id", markerId))
+				.add(Restrictions.eq("assignmentSubmission.id", markerId));
 	}
 }

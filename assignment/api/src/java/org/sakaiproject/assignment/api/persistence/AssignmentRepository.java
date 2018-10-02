@@ -99,4 +99,6 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
 	void updateAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker);	
 
 	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId, String markerId);
+	
+	public AssignmentSubmissionMarker findSubmissionMarkerForMarkerIdAndSubmissionId(String markerId, String submissionId);
 }

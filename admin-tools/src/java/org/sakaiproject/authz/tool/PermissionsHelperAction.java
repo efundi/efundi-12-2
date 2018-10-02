@@ -717,9 +717,9 @@ public class PermissionsHelperAction extends VelocityPortletPaneledAction
 							if (serverConfigurationService.getBoolean("assignment.useMarker ", false)) {
 								if (lock.equals("asn.marker")) {
 									AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
-									Boolean hasAssigned = assignmentService.hasMarkingAssigned(assignmentContext,
+									Boolean allowRemove = assignmentService.allowRemoveUserWithRoleIfMarkingUsed(assignmentContext,
 											roleID);
-									if (hasAssigned) {
+									if (!allowRemove) {
 										log.warn(
 												"PermissionsAction.RemovePermission: Marker has marking assigned, cannot remove permission for role "
 														+ roleID,

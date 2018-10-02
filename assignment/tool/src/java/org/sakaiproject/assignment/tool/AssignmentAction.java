@@ -4182,8 +4182,9 @@ public class AssignmentAction extends PagedResourceActionII {
             state.removeAttribute(STATE_DOWNLOAD_URL);
         }
         
-        if (serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == assignment.getTypeOfSubmission()) {	
-        	context.put("isMarkerSubmissionType", Boolean.TRUE);
+        if (serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == assignment.getTypeOfSubmission()
+        		&& assignment.getIsMarker()) {
+    		context.put("isMarkingUsed", Boolean.TRUE);
         } 
         
         String template = (String) getContext(data).get("template");
@@ -4878,15 +4879,15 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("showSubmissionByFilterSearchOnly", state.getAttribute(SUBMISSIONS_SEARCH_ONLY) != null && ((Boolean) state.getAttribute(SUBMISSIONS_SEARCH_ONLY)) ? Boolean.TRUE : Boolean.FALSE);
             
             // NAM-36
-	        if(((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS) && (((String) state.getAttribute("user_action")) != null)) {
-	        	context.put("fromMarkerPage", Boolean.valueOf(true));
+	        if(a.getIsMarker() && ((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS) && (((String) state.getAttribute("user_action")) != null)) {
+	        	context.put("markerDownloadPartial", Boolean.valueOf(true));
 	        	if(((String) state.getAttribute("user_action")).equals("downloadAll")) {
 		        	context.put("selectAll", Boolean.valueOf(true));
 	        	} else {
 	        		context.put("selectAll", Boolean.valueOf(false));
 	        	}
 	        } else {
-	        	context.put("fromMarkerPage", Boolean.valueOf(false));
+	        	context.put("markerDownloadPartial", Boolean.valueOf(false));
 	        	context.put("selectAll", Boolean.valueOf(false));
 	        }
         }
@@ -13141,18 +13142,7 @@ public class AssignmentAction extends PagedResourceActionII {
                                 hasGradeFile, hasFeedbackText, hasComment,
                                 hasFeedbackAttachment, releaseGrades,
                                 submissionTable, submissions, assignment);
-                    }
-                
-                    if (serverConfigurationService.getBoolean("assignment.useMarker", false))
-                    {
-                    	 // NAM-44 Trying to get fromMarkerPage paramater 
-                        boolean fromMarker = params.getString("fromMarkerPage") != null && params.getBoolean("fromMarkerPage");
-                        if(fromMarker)
-                        {
-                        	 eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_UPLOAD, aReference, true));	
-                        }
-                    }
-                    
+                    }                    
                 }
             }
         }
@@ -13626,17 +13616,29 @@ public class AssignmentAction extends PagedResourceActionII {
                     String sReference = AssignmentReferenceReckoner.reckoner().submission(submission).reckon().getReference();
 
                     // commit
-                    try {
-                        assignmentService.updateSubmission(submission);
-                        if (releaseGrades && graded) {
-                            // update grade in gradebook
-                            if (associateGradebookAssignment != null) {
-                                integrateGradebook(state, aReference, associateGradebookAssignment, null, null, null, -1, null, sReference, "update", -1);
-                            }
-                        }
-                    } catch (PermissionException e) {
-                        log.warn("Could not update submission: {}, {}", submission.getId(), e.getMessage());
-                    }
+					try {
+						assignmentService.updateSubmission(submission);
+						if (releaseGrades && graded) {
+							// update grade in gradebook
+							if (associateGradebookAssignment != null) {
+								integrateGradebook(state, aReference, associateGradebookAssignment, null, null, null,
+										-1, null, sReference, "update", -1);
+							}
+						}
+
+						if (serverConfigurationService.getBoolean("assignment.useMarker", false)
+								&& assignment.getIsMarker()) {
+							AssignmentSubmissionMarker submissionMarker = null;
+							for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
+								submissionMarker = assignmentService.findSubmissionMarkerForMarkerIdAndSubmissionId(
+										submitter.getSubmitter(), submission.getId());
+								submissionMarker.setDownloaded(Boolean.TRUE);
+								assignmentService.updateAssignmentSubmissionMarker(submissionMarker);
+							}
+						}
+					} catch (PermissionException e) {
+						log.warn("Could not update submission: {}, {}", submission.getId(), e.getMessage());
+					}
                 }
             }
         }

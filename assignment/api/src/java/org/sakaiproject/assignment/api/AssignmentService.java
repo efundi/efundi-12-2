@@ -615,7 +615,7 @@ public interface AssignmentService extends EntityProducer {
      * @param contextString    Site id
      * @return
      */
-    public Map<User, AssignmentSubmission> getSubmitterMap(String searchFilterOnly, String allOrOneGroup, String search, String aRef, String contextString);
+    public Map<User, AssignmentSubmission> getSubmitterMap(String searchFilterOnly, String allOrOneGroup, String search, String aRef, String contextString, Boolean fromMarker, Boolean fromMarkerSelectAll);
 
     /**
      * @param accentedString
@@ -765,9 +765,6 @@ public interface AssignmentService extends EntityProducer {
 	void updateAssignmentMarker(AssignmentMarker assignmentMarker) throws PermissionException;
 
 	void createAssignmentMarkerHistory(AssignmentMarkerHistory assignmentMarkerHistory) throws PermissionException;
-
-	Map<User, AssignmentSubmission> getSubmitterMapForMarkerDownload(String searchFilterOnly, String allOrOneGroup,
-			String searchString, String aRef, String contextString, Boolean fromMarkerSelectAll);
 	
 	void createAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker) throws PermissionException;
 	

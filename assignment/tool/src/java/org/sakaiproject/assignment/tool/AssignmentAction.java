@@ -4205,7 +4205,7 @@ public class AssignmentAction extends PagedResourceActionII {
         try {
             sst = siteService.getSite(contextString);
 
-            Map<User, AssignmentSubmission> submitters = assignmentService.getSubmitterMap(Boolean.FALSE.toString(), "all", null, aRef, contextString);
+            Map<User, AssignmentSubmission> submitters = assignmentService.getSubmitterMap(Boolean.FALSE.toString(), "all", null, aRef, contextString, false, false);
             for (User u : submitters.keySet()) {
                 if (candidateDetailProvider != null && !candidateDetailProvider.getAdditionalNotes(u, sst).isPresent()) {
                     log.debug("Skipping user with no additional notes " + u.getEid());
@@ -12120,7 +12120,7 @@ public class AssignmentAction extends PagedResourceActionII {
                             }
                         }
                     } else {
-                        Map<User, AssignmentSubmission> submitters = assignmentService.getSubmitterMap(searchFilterOnly.toString(), allOrOneGroup, search, aRef, contextString);
+                        Map<User, AssignmentSubmission> submitters = assignmentService.getSubmitterMap(searchFilterOnly.toString(), allOrOneGroup, search, aRef, contextString, false, false);
                         // construct the user-submission list
                         for (User u : submitters.keySet()) {
                             String uId = u.getId();
@@ -12700,7 +12700,7 @@ public class AssignmentAction extends PagedResourceActionII {
         String search = (String) state.getAttribute(VIEW_SUBMISSION_SEARCH);
         Boolean searchFilterOnly = (state.getAttribute(SUBMISSIONS_SEARCH_ONLY) != null && ((Boolean) state.getAttribute(SUBMISSIONS_SEARCH_ONLY)) ? Boolean.TRUE : Boolean.FALSE);
 
-        Map<User, AssignmentSubmission> submitters = assignmentService.getSubmitterMap(searchFilterOnly.toString(), allOrOneGroup, search, aRef, contextString);
+        Map<User, AssignmentSubmission> submitters = assignmentService.getSubmitterMap(searchFilterOnly.toString(), allOrOneGroup, search, aRef, contextString, false, false);
 
         return new ArrayList<>(submitters.values());
     }

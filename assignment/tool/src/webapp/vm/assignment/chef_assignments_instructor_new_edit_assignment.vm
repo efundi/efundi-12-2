@@ -763,11 +763,13 @@
 								$assignmentMarker.userDisplayName
 							</td>
 							<td>
-								<input type="number" value="$assignmentMarker.quotaPercentage" #if($assignment) disabled="disabled" #end class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($assignmentMarkers.size())">
+								##if($assignment && $!markerEnabled) disabled="disabled" #end //add into input below when markerenabled method works
+								<input type="number" value="$assignmentMarker.quotaPercentage" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($assignmentMarkers.size())">
 							</td>
 							#if($!assignment)
 								<td>
-									<select class="select-quota" name="reassignSelect$velocityCount" id="reassignSelect$velocityCount" #if($assignmentMarker.quotaPercentage == 0)disabled#end>
+									##if($assignmentMarker.quotaPercentage == 0 && $!markerEnabled)disabled#end //add into input below when markerenabled method works
+									<select class="select-quota" name="reassignSelect$velocityCount" id="reassignSelect$velocityCount">
 										<option  value="">$tlang.getString("marker.reassign.select")</option>
 										#foreach ($assignmentMarkerReassign in $assignmentMarkers)
 											#if("$assignmentMarker.markerUserId" != "$assignmentMarkerReassign.markerUserId")

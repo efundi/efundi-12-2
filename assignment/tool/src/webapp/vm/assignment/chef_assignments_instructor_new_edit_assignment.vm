@@ -634,8 +634,7 @@
 				$tlang.getString("gen.submissionType")
 			</label>
 			<div class="col-sm-6">
-			##if($!markerEnabled) disabled #end //add into the select below
-				<select name="$name_SubmissionType" id="subType" onchange="switchAssignmentSubmissionType();" class="assignment-submission-type">
+				<select name="$name_SubmissionType" id="subType" onchange="switchAssignmentSubmissionType();" class="assignment-submission-type" #if($!markerEnabled) disabled #end>
 				#foreach ($i in [1..$!value_totalSubmissionTypes])
 					#if("$!submissionTypeTable.get($i)" != "") ##NAM-28
 						#if ($i == $value_SubmissionType)
@@ -736,15 +735,13 @@
 			</label>
 			<div class="col-sm-10">
 				<div id="tempAllowMarker" #if ($value_SubmissionType == 4) style = "display:none"#end>
-					##if($!markerEnabled) checked="checked" disabled#end //add into input tag below
-					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" onclick="ASN.enableMarkingTool(); ASN.resizeFrame();" />
+					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" onclick="ASN.enableMarkingTool(); ASN.resizeFrame();" #if($!markerEnabled) checked="checked" disabled#end/>
 				</div>
 			</div>
 		</div>
 
 		##NAM-29 PDF marker settings that will be displayed when the tool is selected
-		##if($!markerEnabled) style="display:block"#else style="display:none"#end //add into div tag below
-		<div class="col-sm-offset-1 row" id="pdfMarkerSettings">
+		<div class="col-sm-offset-1 row" id="pdfMarkerSettings" #if($!markerEnabled) style="display:block"#else style="display:none"#end>
 			<div class="col-sm-12 row table-reponsive">
 				<table class="table-striped table-quota" id="quotaAssignmentTable" name="quotaAssignmentTable">
 					<tr>
@@ -763,13 +760,11 @@
 								$assignmentMarker.userDisplayName
 							</td>
 							<td>
-								##if($assignment && $!markerEnabled) disabled="disabled" #end //add into input below when markerenabled method works
-								<input type="number" value="$assignmentMarker.quotaPercentage" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($assignmentMarkers.size())">
+								<input type="number" value="$assignmentMarker.quotaPercentage" class="input-quota" step="0.1" placeholder="0.0" name="quota$velocityCount" id="quota$velocityCount" onchange="ASN.quotaCalculation($assignmentMarkers.size())" #if($!markerEnabled) disabled="disabled" #end>
 							</td>
 							#if($!assignment)
 								<td>
-									##if($assignmentMarker.quotaPercentage == 0 && $!markerEnabled)disabled#end //add into input below when markerenabled method works
-									<select class="select-quota" name="reassignSelect$velocityCount" id="reassignSelect$velocityCount">
+									<select class="select-quota" name="reassignSelect$velocityCount" id="reassignSelect$velocityCount" #if(!$!markerEnabled || $value_SubmissionType != 6)disabled#end>
 										<option  value="">$tlang.getString("marker.reassign.select")</option>
 										#foreach ($assignmentMarkerReassign in $assignmentMarkers)
 											#if("$assignmentMarker.markerUserId" != "$assignmentMarkerReassign.markerUserId")

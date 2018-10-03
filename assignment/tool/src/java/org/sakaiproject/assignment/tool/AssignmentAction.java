@@ -2771,9 +2771,8 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("allowGroupAssignmentsInGradebook", Boolean.TRUE);
         
         //check if marker option was selected
-        //a.isMarker()
-        if (true) {
-        	context.put("markerEnabled", "true");
+        if (a != null && a.getIsMarker()) {
+        	context.put("markerEnabled", true);
         }
         
         // the notification email choices

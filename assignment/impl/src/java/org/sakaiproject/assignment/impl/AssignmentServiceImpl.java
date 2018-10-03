@@ -1430,7 +1430,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 			for (AssignmentSubmission submission : assignment.getSubmissions()) {
 							
 				// if marker again, if contains continue else break to start of loop.
-				if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+				if (serverConfigurationService.getBoolean("assignment.useMarker", false) && assignment.getIsMarker()) {
 					if (markerDownloadPartial && !markerDownloadAll) {
 						if (markerSubmissionList.keySet().contains(submission.getId())) {
 							String downloaded = markerSubmissionList.get(submission.getId());

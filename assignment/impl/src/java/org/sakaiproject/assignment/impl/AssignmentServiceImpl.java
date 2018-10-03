@@ -4294,7 +4294,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		Set<String> blockedChanges = new HashSet<String>();
 		try {
 			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(siteId));
-			Set<String> allowedMarkers = realm.getUsersIsAllowed(SECURE_ASSIGNMENT_MARKER); // gets markers with marking for this site.
+			Set<String> allowedMarkers = getMarkersForSite(siteId); // gets markers with marking for this site.
 			Set<String> allowedMarkerRoles = realm.getRolesIsAllowed(SECURE_ASSIGNMENT_MARKER); // gets all roles with permission
 			for (String user : markersBeingAffected) {
 				if ((user.contains(":"))) { // checks if this is a role change user
@@ -4317,6 +4317,19 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		}
 		return blockedChanges;
 	}
+	
+	private Set<String> getMarkersForSite(String contextString) {
+ 		Collection<Assignment> asnCollection = getAssignmentsForContext(contextString);
+		Set<String> userIds = new HashSet<String>();
+		for (Assignment assignmentObj : asnCollection) {
+ 			Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();			
+			for (AssignmentMarker asnMarker : asnMrks) {
+				String id = asnMarker.getMarkerUserId();
+				userIds.add(id);
+			}
+		}
+		return userIds;
+	} 
 
 	public void createAssignmentMarkerHistory(AssignmentMarkerHistory assignmentMarkerHistory)
 			throws PermissionException {

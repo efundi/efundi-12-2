@@ -1424,8 +1424,6 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 				for (AssignmentSubmissionMarker asm : msl) {
 					markerSubmissionList.put(asm.getAssignmentSubmission().getId(), asm.getDownloaded().toString());
 				}
-			} else {
-				
 			}
 			// Simply we add every AssignmentSubmissionSubmitter to the Map, this works
 			// equally well for group submissions

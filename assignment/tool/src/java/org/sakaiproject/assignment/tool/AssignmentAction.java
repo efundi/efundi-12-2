@@ -4882,9 +4882,14 @@ public class AssignmentAction extends PagedResourceActionII {
 	        	context.put("markerDownloadPartial", Boolean.valueOf(true));
 	        	if(((String) state.getAttribute("user_action")).equals("downloadAll")) {
 		        	context.put("selectAll", Boolean.valueOf(true));
+	        	} else if (((String) state.getAttribute("user_action")).equals("uploadAll")) {
+	        		context.put("selectAll", Boolean.valueOf(true));
+	        	} else if (((String) state.getAttribute("user_action")).equals("download")) {
+	        		context.put("selectAll", Boolean.valueOf(true));
 	        	} else {
 	        		context.put("selectAll", Boolean.valueOf(false));
 	        	}
+	        	
 	        } else {
 	        	context.put("markerDownloadPartial", Boolean.valueOf(false));
 	        	context.put("selectAll", Boolean.valueOf(false));

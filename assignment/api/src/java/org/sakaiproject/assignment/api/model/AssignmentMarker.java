@@ -33,7 +33,7 @@ import lombok.NoArgsConstructor;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "ASN_MARKER_T")
 @Data
-@NoArgsConstructor(exclude = "submissionMarkers")
+@EqualsAndHashCode(exclude= "submissionMarkers")
 public class AssignmentMarker {
 
 	@Id

@@ -13117,7 +13117,25 @@ public class AssignmentAction extends PagedResourceActionII {
                     Assignment assignment = getAssignment(aReference, "doUpload_all", state);
                     if (assignment != null) {
                         associateGradebookAssignment = assignment.getProperties().get(PROP_ASSIGNMENT_ASSOCIATE_GRADEBOOK_ASSIGNMENT);
-                        submissions = assignmentService.getSubmissions(assignment);
+
+                        if (assignment.getIsMarker()) {
+                        	AssignmentSubmission submission = null;
+                        	List<AssignmentSubmissionMarker> submissionsForMarker = assignmentService.findSubmissionMarkersByIdAndAssignmentId(assignment.getId(), userDirectoryService.getCurrentUser().getEid());
+                        	for(AssignmentSubmissionMarker submissionMarker : submissionsForMarker) {
+                        		try {
+									submission = assignmentService.getSubmission(submissionMarker.getAssignmentSubmission().getId());
+	                        		if(submission != null) {
+	                            		submissions.add(submission);
+	                        		}   
+								} catch (IdUnusedException e) {
+                                    log.warn(this + ":doUpload_all getSubmission " + e.getMessage());
+								} catch (PermissionException e) {
+                                    log.warn(this + ":doUpload_all getSubmission " + e.getMessage());
+								}                     		
+                        	}
+                        } else {
+                            submissions = assignmentService.getSubmissions(assignment);
+                        }
                         for (AssignmentSubmission s : submissions) {
                             String eid = s.getSubmitters().toArray(new AssignmentSubmissionSubmitter[0])[0].getSubmitter();
                             List<Reference> attachments = entityManager.newReferenceList();
@@ -13128,7 +13146,7 @@ public class AssignmentAction extends PagedResourceActionII {
                             anonymousSubmissionAndEidTable.put(s.getId(), eid);
                         }
                     }
-
+                    
                     InputStream fileContentStream = fileFromUpload.getInputStream();
                     if (fileContentStream != null) {
                         submissionTable = uploadAll_parseZipFile(state,

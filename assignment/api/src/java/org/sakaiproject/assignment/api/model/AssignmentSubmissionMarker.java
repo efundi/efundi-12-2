@@ -46,7 +46,7 @@ public class AssignmentSubmissionMarker {
 	@Column(name = "CONTEXT", length = 99, nullable = false)
 	private String context;
 	
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="SUBMISSION_ID")
     private AssignmentSubmission assignmentSubmission;
 

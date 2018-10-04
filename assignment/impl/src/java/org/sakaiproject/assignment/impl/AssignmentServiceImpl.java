@@ -1427,18 +1427,19 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 			}
 			// Simply we add every AssignmentSubmissionSubmitter to the Map, this works
 			// equally well for group submissions
+			OUTER: 
 			for (AssignmentSubmission submission : assignment.getSubmissions()) {
-							
+
 				// if marker again, if contains continue else break to start of loop.
 				if (serverConfigurationService.getBoolean("assignment.useMarker", false) && assignment.getIsMarker()) {
 					if (markerDownloadPartial && !markerDownloadAll) {
 						if (markerSubmissionList.keySet().contains(submission.getId())) {
 							String downloaded = markerSubmissionList.get(submission.getId());
 							if (downloaded.equalsIgnoreCase("true")) {
-								continue;
+								break OUTER;
 							}
-						} else if (markerDownloadPartial && !(markerSubmissionList.keySet().contains(submission.getId()))) {
-							continue;
+						} else if (markerDownloadAll && !(markerSubmissionList.keySet().contains(submission.getId()))) {
+							break OUTER;
 						}
 					}
 				}
@@ -4392,5 +4393,11 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 	@Override
 	public AssignmentSubmissionMarker findSubmissionMarkerForMarkerIdAndSubmissionId(String markerId, String submissionId) {
 		return assignmentRepository.findSubmissionMarkerForMarkerIdAndSubmissionId(markerId, submissionId);
+	}
+
+	@Override
+	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId,
+			String markerId) {
+		return assignmentRepository.findSubmissionMarkersByIdAndAssignmentId(assignmentId, markerId);
 	}
 }

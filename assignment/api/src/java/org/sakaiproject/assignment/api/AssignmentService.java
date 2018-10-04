@@ -773,4 +773,6 @@ public interface AssignmentService extends EntityProducer {
 	void updateAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker) throws PermissionException;	
 
 	public AssignmentSubmissionMarker findSubmissionMarkerForMarkerIdAndSubmissionId(String markerId, String submissionId);
+	
+	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId, String markerId);
 }

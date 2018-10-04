@@ -275,6 +275,7 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
 		session.flush();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId, String markerId) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AssignmentSubmissionMarker.class);

@@ -503,6 +503,7 @@ public class AssignmentAction extends PagedResourceActionII {
     private static final String NEW_ASSIGNMENT_ATTACHMENT = "new_assignment_attachment";
     private static final String NEW_ASSIGNMENT_SECTION = "new_assignment_section";
     private static final String NEW_ASSIGNMENT_SUBMISSION_TYPE = "new_assignment_submission_type";
+    private static final String NEW_ASSIGNMENT_USE_MARKER = "new_assignment_use_marker";
     private static final String NEW_ASSIGNMENT_MARKERS = "new_assignment_markers";
     private static final String NEW_ASSIGNMENT_MARKERS_HISTORY = "new_assignment_markers_history";
     private static final String NEW_ASSIGNMENT_CATEGORY = "new_assignment_category";
@@ -2766,14 +2767,15 @@ public class AssignmentAction extends PagedResourceActionII {
             	state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.buildAssignmentMarkerObjSetForSite(contextString));
             }
             context.put("assignmentMarkers", state.getAttribute(NEW_ASSIGNMENT_MARKERS));
+
+            //check if marker option was selected
+            if (a != null && a.getIsMarker()) {
+            	state.setAttribute(NEW_ASSIGNMENT_USE_MARKER, a.getIsMarker());
+            	context.put("markerEnabled", true);
+            }
         }
 
         context.put("allowGroupAssignmentsInGradebook", Boolean.TRUE);
-        
-        //check if marker option was selected
-        if (a != null && a.getIsMarker()) {
-        	context.put("markerEnabled", true);
-        }
         
         // the notification email choices
         // whether the choice of emails instructor submission notification is available in the installation
@@ -6959,9 +6961,12 @@ public class AssignmentAction extends PagedResourceActionII {
                 addAlert(state, sb.toString());
             }
         } 
+        
+        Boolean isMarker = params.getString("allowMarkerToggle") != null ? Boolean.TRUE : Boolean.FALSE;
+        state.setAttribute(NEW_ASSIGNMENT_USE_MARKER, isMarker);
               
 		if (serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == Assignment.SubmissionType.values()[(Integer) state.getAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE)]
-				&& StringUtils.isNotBlank(params.getString("allowMarkerToggle")) )  {
+				&& isMarker )  {
 
 			if (state.getAttribute(NEW_ASSIGNMENT_MARKERS) != null) {
 				Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
@@ -7694,6 +7699,9 @@ public class AssignmentAction extends PagedResourceActionII {
                 useReviewService = a.getContentReview();
                 allowStudentViewReport = Boolean.valueOf(p.get(NEW_ASSIGNMENT_ALLOW_STUDENT_VIEW));
             }
+            
+            //Add isMarker value
+            boolean isMarker = Boolean.valueOf((Boolean) state.getAttribute(NEW_ASSIGNMENT_USE_MARKER));
 
             String submitReviewRepo = (String) state.getAttribute(NEW_ASSIGNMENT_REVIEW_SERVICE_SUBMIT_RADIO);
             String generateOriginalityReport = (String) state.getAttribute(NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_RADIO);
@@ -7799,7 +7807,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 }
                                 
                 // persist the Assignment changes
-                commitAssignment(state, post, a, assignmentReference, title, submissionType, useReviewService, allowStudentViewReport,
+                commitAssignment(state, post, a, assignmentReference, title, submissionType, useReviewService, isMarker, allowStudentViewReport,
                         gradeType, gradePoints, description, checkAddHonorPledge, attachments, section, range,
                         visibleTime, openTime, dueTime, closeTime, hideDueDate, enableCloseDate, isGroupSubmit, groups,
                         usePeerAssessment, peerPeriodTime, peerAssessmentAnonEval, peerAssessmentStudentViewReviews, peerAssessmentNumReviews, peerAssessmentInstructions,
@@ -7860,7 +7868,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
                 //NAM-32 - Set Assignment Object after created on Marker
                 if(post && serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == a.getTypeOfSubmission()
-        				&& StringUtils.isNotBlank(params.getString("allowMarkerToggle")) ) {
+        				&& isMarker ) {
     				Set<AssignmentMarker> assignmentMarkers = (Set<AssignmentMarker>) state.getAttribute(NEW_ASSIGNMENT_MARKERS);       
     				if (CollectionUtils.isNotEmpty(assignmentMarkers)) {
         				Iterator<AssignmentMarker> assignmentMarkerSetIter = assignmentMarkers.iterator();
@@ -8664,6 +8672,7 @@ public class AssignmentAction extends PagedResourceActionII {
                                   String title,
                                   Assignment.SubmissionType submissionType,
                                   boolean useReviewService,
+                                  boolean isMarker,                                  
                                   boolean allowStudentViewReport,
                                   Assignment.GradeType gradeType,
                                   String gradePoints,
@@ -8710,6 +8719,7 @@ public class AssignmentAction extends PagedResourceActionII {
         a.setHideDueDate(hideDueDate);
         a.setTypeOfSubmission(submissionType);
         a.setContentReview(useReviewService);
+        a.setIsMarker(isMarker);
         a.setTypeOfGrade(gradeType);
 
         a.setOpenDate(openTime);
@@ -11410,6 +11420,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
         if(serverConfigurationService.getBoolean("assignment.useMarker", false)) {
             state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.buildAssignmentMarkerObjSetForSite(toolManager.getCurrentPlacement().getContext()));
+            state.setAttribute(NEW_ASSIGNMENT_USE_MARKER, Boolean.FALSE);
         }
 
         state.removeAttribute(NEW_ASSIGNMENT_DESCRIPTION_EMPTY);
@@ -11568,6 +11579,7 @@ public class AssignmentAction extends PagedResourceActionII {
         state.removeAttribute(NEW_ASSIGNMENT_MARKERS);
         //NAM-33
         state.removeAttribute(NEW_ASSIGNMENT_MARKERS_HISTORY);
+        state.removeAttribute(NEW_ASSIGNMENT_USE_MARKER);
     } // resetNewAssignment
 
     /**

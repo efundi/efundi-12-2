@@ -1418,7 +1418,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             
 			// if marker - getmarker lsit
 			Map<String, String> markerSubmissionList = Collections.<String, String>emptyMap();
-			if (assignment.getIsMarker()) {				
+			if (assignment.getIsMarker()) {
 				List<AssignmentSubmissionMarker> msl = assignmentRepository.findSubmissionMarkersByIdAndAssignmentId(
 						assignment.getId(), userDirectoryService.getCurrentUser().getId());
 				for (AssignmentSubmissionMarker asm : msl) {
@@ -4293,7 +4293,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		Set<String> blockedChanges = new HashSet<String>();
 		try {
 			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(siteId));
-			Set<String> allowedMarkers = getMarkersForSite(siteId); // gets markers with marking for this site.
+			Set<String> allowedMarkers = getMarkerEidsSetForSite(siteId); // gets markers with marking for this site.
 			Set<String> allowedMarkerRoles = realm.getRolesIsAllowed(SECURE_ASSIGNMENT_MARKER); // gets all roles with permission
 			for (String user : markersBeingAffected) {
 				if ((user.contains(":"))) { // checks if this is a role change user
@@ -4317,7 +4317,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		return blockedChanges;
 	}
 	
-	private Set<String> getMarkersForSite(String contextString) {
+	private Set<String> getMarkerEidsSetForSite(String contextString) {
  		Collection<Assignment> asnCollection = getAssignmentsForContext(contextString);
 		Set<String> userIds = new HashSet<String>();
 		for (Assignment assignmentObj : asnCollection) {

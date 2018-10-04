@@ -245,6 +245,13 @@ public class Assignment {
 
     @Column(name = "IS_MARKER")
     private Boolean isMarker = Boolean.FALSE;
+    
+    public Boolean getIsMarker(){
+    	if(this.isMarker == null) {
+    		return false;
+    	}
+		return this.isMarker;
+    }
 
     public enum Access {
         SITE,

@@ -279,13 +279,13 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
 	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId, String markerId) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AssignmentSubmissionMarker.class);
 		return criteria.add(Restrictions.eq("context", assignmentId))
-				.add(Restrictions.eq("id", markerId)).list();
+				.add(Restrictions.eq("assignmentMarker.markerUserId", markerId)).list();
 	}
 
 	@Override
 	public AssignmentSubmissionMarker findSubmissionMarkerForMarkerIdAndSubmissionId(String markerId, String submissionId) {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AssignmentSubmissionMarker.class);
 		return (AssignmentSubmissionMarker) criteria.add(Restrictions.eq("assignmentMarker.id", markerId))
-				.add(Restrictions.eq("assignmentSubmission.id", markerId));
+				.add(Restrictions.eq("assignmentSubmission.id", submissionId));
 	}
 }

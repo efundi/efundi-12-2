@@ -1418,7 +1418,7 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
             
 			// if marker - getmarker lsit
 			Map<String, String> markerSubmissionList = Collections.<String, String>emptyMap();
-			if (serverConfigurationService.getBoolean("assignment.useMarker", false) && markerDownloadPartial && assignment.getIsMarker()) {
+			if (assignment.getIsMarker()) {				
 				List<AssignmentSubmissionMarker> msl = assignmentRepository.findSubmissionMarkersByIdAndAssignmentId(
 						assignment.getId(), userDirectoryService.getCurrentUser().getId());
 				for (AssignmentSubmissionMarker asm : msl) {
@@ -1427,19 +1427,19 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 			}
 			// Simply we add every AssignmentSubmissionSubmitter to the Map, this works
 			// equally well for group submissions
-			OUTER: 
+			
 			for (AssignmentSubmission submission : assignment.getSubmissions()) {
 
 				// if marker again, if contains continue else break to start of loop.
-				if (serverConfigurationService.getBoolean("assignment.useMarker", false) && assignment.getIsMarker()) {
+				if (CollectionUtils.isNotEmpty(markerSubmissionList.keySet()) && assignment.getIsMarker()) {
 					if (markerDownloadPartial && !markerDownloadAll) {
 						if (markerSubmissionList.keySet().contains(submission.getId())) {
 							String downloaded = markerSubmissionList.get(submission.getId());
 							if (downloaded.equalsIgnoreCase("true")) {
-								break OUTER;
+								continue;
 							}
 						} else if (markerDownloadAll && !(markerSubmissionList.keySet().contains(submission.getId()))) {
-							break OUTER;
+							continue;
 						}
 					}
 				}

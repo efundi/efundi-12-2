@@ -39,7 +39,7 @@ public class AssignmentSubmissionMarker {
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private String id;
 	
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "MARKER_ID")
     private AssignmentMarker assignmentMarker;
 

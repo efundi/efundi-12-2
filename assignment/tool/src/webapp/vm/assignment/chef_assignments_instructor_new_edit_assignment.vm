@@ -116,7 +116,6 @@
 			document.getElementById('resubmitNotification').style.display = 'none';
 			document.getElementById('pdfMarkerSettings').style.display = 'none';
 			document.getElementById('allowPdfMarker').style.display = 'none';
-			document.getElementById('pdfMarkerSettings').style.display = 'none';
 		}
 	}
 	focus_path = [ '$fField' ];
@@ -626,9 +625,6 @@
 		<h4>
 			$tlang.getString("gen.stusub")
 		</h4>
-		##if($!markerEnabled)
-		##	<div id="msgMarkerQuotaPresent" class="messageInformation indnt2" style="width: 80% !important;">$tlang.getString("settings.marker.quotaPresent")</div>
-		##end
 		<div class="form-group row form-required">
 			<label for="subType" class="col-sm-2 form-control-label">
 				$tlang.getString("gen.submissionType")
@@ -636,13 +632,11 @@
 			<div class="col-sm-6">
 				<select name="$name_SubmissionType" id="subType" onchange="switchAssignmentSubmissionType();" class="assignment-submission-type" #if($!markerEnabled) disabled #end>
 				#foreach ($i in [1..$!value_totalSubmissionTypes])
-					#if("$!submissionTypeTable.get($i)" != "") ##NAM-28
-						#if ($i == $value_SubmissionType)
-							<option value="$i" selected="selected">$!submissionTypeTable.get($i)</option>
-						#else
-							<option value="$i">$!submissionTypeTable.get($i)</option>
-						#end
-					#end	
+					#if ($i == $value_SubmissionType)
+						<option value="$i" selected="selected">$submissionTypeTable.get($i)</option>
+					#else
+						<option value="$i">$submissionTypeTable.get($i)</option>
+					#end
 				#end
 				</select>
 			</div>

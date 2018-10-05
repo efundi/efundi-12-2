@@ -56,9 +56,7 @@
 							<input type="file" name="file" id="file" class="upload" onchange="document.getElementById('filechosenconfirm').style.display='block';" />
 						#end
 						<p id="filechosenconfirm" class="information" style="display:none;clear:both">$tlang.getString("uploadall.choose.file.confirm")</p>
-						<h4>
-							<span class="reqStar">*</span>$tlang.getString("uploadall.choose.file2")
-						</h4>
+						<h4><span class="reqStar">*</span>$tlang.getString("uploadall.choose.file2")</h4>
 					</div>
 				#end
 			<p class="checkbox">

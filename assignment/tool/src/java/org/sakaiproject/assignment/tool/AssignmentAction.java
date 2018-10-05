@@ -19,7 +19,6 @@ import static org.sakaiproject.assignment.api.AssignmentServiceConstants.*;
 import static org.sakaiproject.assignment.api.model.Assignment.GradeType.*;
 
 import java.io.*;
-
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -42,6 +41,9 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import au.com.bytecode.opencsv.CSVReader;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -74,8 +76,6 @@ import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Object;
 import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Statement;
 import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Verb;
 import org.sakaiproject.event.api.LearningResourceStoreService.LRS_Verb.SAKAI_VERB;
-import org.sakaiproject.event.api.NotificationService;
-import org.sakaiproject.event.api.SessionState;
 import org.sakaiproject.exception.*;
 import org.sakaiproject.javax.PagingPosition;
 import org.sakaiproject.message.api.MessageHeader;
@@ -102,10 +102,6 @@ import org.sakaiproject.util.ResourceLoader;
 import org.sakaiproject.util.SortedIterator;
 import org.sakaiproject.util.Validator;
 import org.sakaiproject.util.api.FormattedText;
-
-import au.com.bytecode.opencsv.CSVReader;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -2414,7 +2410,7 @@ public class AssignmentAction extends PagedResourceActionII {
             log.debug("Failed to find if anonymous grading is forced.");
         }
         context.put("forceAnonGrading", forceAnonGrading);
-        
+
         // is the assignment an new assignment
         String assignmentId = (String) state.getAttribute(EDIT_ASSIGNMENT_ID);
         if (assignmentId != null) {
@@ -2514,6 +2510,7 @@ public class AssignmentAction extends PagedResourceActionII {
             context.put("name_OpenDateNotification", AssignmentConstants.ASSIGNMENT_OPENDATE_NOTIFICATION);
         }
         context.put("name_CheckAddHonorPledge", NEW_ASSIGNMENT_CHECK_ADD_HONOR_PLEDGE);
+
         // SAK-17606
         context.put("name_CheckAnonymousGrading", NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING);
 
@@ -2548,7 +2545,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
         // information related to gradebook categories
         putGradebookCategoryInfoIntoContext(state, context);
-        
+
         context.put("value_totalSubmissionTypes", Assignment.SubmissionType.values().length - 1);
         context.put("value_GradeType", state.getAttribute(NEW_ASSIGNMENT_GRADE_TYPE));
         // format to show one decimal place
@@ -6574,6 +6571,7 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String assignmentRef = params.getString("assignmentId");
+
         // put the input value into the state attributes
         String title = params.getString(NEW_ASSIGNMENT_TITLE);
         state.setAttribute(NEW_ASSIGNMENT_TITLE, title);
@@ -6716,8 +6714,7 @@ public class AssignmentAction extends PagedResourceActionII {
         String peerAssessmentInstructions = processFormattedTextFromBrowser(state, params.getString(NEW_ASSIGNMENT_PEER_ASSESSMENT_INSTRUCTIONS), true);
         state.setAttribute(NEW_ASSIGNMENT_PEER_ASSESSMENT_INSTRUCTIONS, peerAssessmentInstructions);
 
-        String b, r;      
-        
+        String b, r;
         //REVIEW SERVICE
         r = params.getString(NEW_ASSIGNMENT_USE_REVIEW_SERVICE);
         // set whether we use the review service or not
@@ -7573,7 +7570,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 addAlert(state, rb.getFormattedMessage("group.editsite.nopermission"));
             }
         }
-        
+
         String assignmentId = params.getString("assignmentId");
 
         // whether this is an editing which changes non-point graded assignment to point graded assignment?
@@ -7592,7 +7589,7 @@ public class AssignmentAction extends PagedResourceActionII {
         if (StringUtils.isBlank(assignmentId)) {
             //  create a new assignment
             try {
-            	a = assignmentService.addAssignment(siteId);//NAM-32
+                a = assignmentService.addAssignment(siteId);
                 newAssignment = true;
             } catch (PermissionException e) {
                 log.warn("Could not create new assignment for site: {}, {}", siteId, e.getMessage());
@@ -7941,7 +7938,7 @@ public class AssignmentAction extends PagedResourceActionII {
 
                 // save supplement item information
                 saveAssignmentSupplementItem(state, params, siteId, a);
-                
+
                 // set default sorting
                 setDefaultSort(state);
 
@@ -8002,7 +7999,6 @@ public class AssignmentAction extends PagedResourceActionII {
                     }
                 }
             }
-
             if (newAssignment) {
                 // post new assignment event since it is fully initialized by now
                 eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_ADD_ASSIGNMENT, assignmentReference, true));
@@ -8798,7 +8794,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 a.setTypeOfAccess(Assignment.Access.GROUP);
                 a.setGroups(groups.stream().map(Group::getReference).collect(Collectors.toSet()));
             }
-            
+
             // commit the changes
             assignmentService.updateAssignment(a);
 
@@ -9206,8 +9202,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 	state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.getMarkersForAssignment(a));
                 } else {
                 	state.setAttribute(NEW_ASSIGNMENT_MARKERS, assignmentService.buildAssignmentMarkerObjSetForSite(toolManager.getCurrentPlacement().getContext()));
-                }
-                
+                }                
                 
                 if (serverConfigurationService.getBoolean("assignment.visible.date.enabled", false)) {
                     putTimePropertiesInState(state, a.getVisibleDate(), NEW_ASSIGNMENT_VISIBLEMONTH, NEW_ASSIGNMENT_VISIBLEDAY, NEW_ASSIGNMENT_VISIBLEYEAR, NEW_ASSIGNMENT_VISIBLEHOUR, NEW_ASSIGNMENT_VISIBLEMIN);
@@ -9346,7 +9341,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 // get all supplement item info into state
                 setAssignmentSupplementItemInState(state, a);
 
-                state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_NEW_EDIT_ASSIGNMENT);   
+                state.setAttribute(STATE_MODE, MODE_INSTRUCTOR_NEW_EDIT_ASSIGNMENT);
             }
         } else {
             addAlert(state, rb.getString("youarenot6"));
@@ -11457,7 +11452,7 @@ public class AssignmentAction extends PagedResourceActionII {
         state.removeAttribute(ALLPURPOSE_RETRACT_DATE);
         state.removeAttribute(ALLPURPOSE_ACCESS);
         state.removeAttribute(ALLPURPOSE_ATTACHMENTS);
-        
+
         // SAK-17606
         state.removeAttribute(NEW_ASSIGNMENT_CHECK_ANONYMOUS_GRADING);
 
@@ -13159,7 +13154,7 @@ public class AssignmentAction extends PagedResourceActionII {
                             anonymousSubmissionAndEidTable.put(s.getId(), eid);
                         }
                     }
-                    
+
                     InputStream fileContentStream = fileFromUpload.getInputStream();
                     if (fileContentStream != null) {
                         submissionTable = uploadAll_parseZipFile(state,
@@ -13177,7 +13172,7 @@ public class AssignmentAction extends PagedResourceActionII {
                                 hasGradeFile, hasFeedbackText, hasComment,
                                 hasFeedbackAttachment, releaseGrades,
                                 submissionTable, submissions, assignment);
-                    }                    
+                    }
                 }
             }
         }
@@ -13661,14 +13656,15 @@ public class AssignmentAction extends PagedResourceActionII {
 							}
 						}
 
-						if (serverConfigurationService.getBoolean("assignment.useMarker", false)
-								&& assignment.getIsMarker()) {
+						if (assignment.getIsMarker()) {
 							AssignmentSubmissionMarker submissionMarker = null;
 							for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
 								submissionMarker = assignmentService.findSubmissionMarkerForMarkerIdAndSubmissionId(
-										submitter.getSubmitter(), submission.getId());
-								submissionMarker.setDownloaded(Boolean.TRUE);
-								assignmentService.updateAssignmentSubmissionMarker(submissionMarker);
+										sessionManager.getCurrentSessionUserId(), submission.getId());
+								if(submissionMarker != null) {
+									submissionMarker.setDownloaded(Boolean.TRUE);
+									assignmentService.updateAssignmentSubmissionMarker(submissionMarker);
+								}
 							}
 						}
 					} catch (PermissionException e) {
@@ -13857,9 +13853,7 @@ public class AssignmentAction extends PagedResourceActionII {
         state.removeAttribute(UPLOAD_ALL_HAS_COMMENTS);
         state.removeAttribute(UPLOAD_ALL_WITHOUT_FOLDERS);
         state.removeAttribute(UPLOAD_ALL_RELEASE_GRADES);
-        
-        //NAM-36
-        //state.removeAttribute(STATE_CANCEL_MODE);
+
     }
 
     /**
@@ -14208,9 +14202,7 @@ public class AssignmentAction extends PagedResourceActionII {
         ParameterParser params = data.getParameters();
 
         String max_file_size_mb = serverConfigurationService.getString("content.upload.max", "1");
-        
-        Boolean upload = true; //NAM-27 default value
-        
+
         String mode = (String) state.getAttribute(STATE_MODE);
         List<Reference> attachments;
 
@@ -14236,7 +14228,7 @@ public class AssignmentAction extends PagedResourceActionII {
             // "The user submitted a file to upload but it was too big!"
             addAlert(state, rb.getFormattedMessage("size.exceeded", max_file_size_mb));
             //addAlert(state, hrb.getString("size") + " " + max_file_size_mb + "MB " + hrb.getString("exceeded2"));
-        } else if (singleFileUpload && (fileitem.getFileName() == null || fileitem.getFileName().length() == 0)) {
+        } else if ((singleFileUpload || pdfFileUpload) && (fileitem.getFileName() == null || fileitem.getFileName().length() == 0)) {
             // only if in the single file upload case, need to warn user to upload a local file
             addAlert(state, rb.getString("choosefile7"));
         } else if (fileitem.getFileName().length() > 0) {
@@ -14244,106 +14236,102 @@ public class AssignmentAction extends PagedResourceActionII {
             InputStream fileContentStream = fileitem.getInputStream();
             String contentType = fileitem.getContentType();
             
-            if (pdfFileUpload) { //NAM-27
-        		if (!contentType.equals("application/pdf")) {
-        			upload = false;
-        		}
-        	}
-            
-            InputStreamReader reader = new InputStreamReader(fileContentStream);
+            if (pdfFileUpload && !contentType.equals("application/pdf")) { //NAM-27
+            	addAlert(state, rb.getFormattedMessage("attnotpdf", filename));
+            } else {
+                InputStreamReader reader = new InputStreamReader(fileContentStream);
 
-            try {
-                //check the InputStreamReader to see if the file is 0kb aka empty
-                if (!reader.ready()) {
-                    addAlert(state, rb.getFormattedMessage("attempty", filename));
-                } else if (upload) { //NAM-27
-                    // we just want the file name part - strip off any drive and path stuff
-                    String name = Validator.getFileName(filename);
-                    String resourceId = Validator.escapeResourceName(name);
+                try {
+                    //check the InputStreamReader to see if the file is 0kb aka empty
+                    if (!reader.ready()) {
+                        addAlert(state, rb.getFormattedMessage("attempty", filename));
+                    } else {
+                        // we just want the file name part - strip off any drive and path stuff
+                        String name = Validator.getFileName(filename);
+                        String resourceId = Validator.escapeResourceName(name);
 
-                    // make a set of properties to add for the new resource
-                    ResourcePropertiesEdit props = contentHostingService.newResourceProperties();
-                    props.addProperty(ResourceProperties.PROP_DISPLAY_NAME, name);
-                    props.addProperty(ResourceProperties.PROP_DESCRIPTION, filename);
+                        // make a set of properties to add for the new resource
+                        ResourcePropertiesEdit props = contentHostingService.newResourceProperties();
+                        props.addProperty(ResourceProperties.PROP_DISPLAY_NAME, name);
+                        props.addProperty(ResourceProperties.PROP_DESCRIPTION, filename);
 
-                    // make an attachment resource for this URL
-                    SecurityAdvisor sa = createSubmissionSecurityAdvisor();
-                    try {
-                        String siteId = toolManager.getCurrentPlacement().getContext();
-
-                        // add attachment
-                        // put in a security advisor so we can create citationAdmin site without need
-                        // of further permissions
-                        securityService.pushAdvisor(sa);
-                        ContentResource attachment = contentHostingService.addAttachmentResource(resourceId, siteId, "Assignments", contentType, fileContentStream, props);
-
-                        Site s = null;
+                        // make an attachment resource for this URL
+                        SecurityAdvisor sa = createSubmissionSecurityAdvisor();
                         try {
-                            s = siteService.getSite(siteId);
-                        } catch (IdUnusedException iue) {
-                            log.warn(this + ":doAttachUpload: Site not found!" + iue.getMessage());
-                        }
+                            String siteId = toolManager.getCurrentPlacement().getContext();
 
-                        // Check if the file is acceptable with the ContentReviewService
-                        boolean blockedByCRS = false;
-                        if (!inPeerReviewMode && assignmentService.allowReviewService(s)) {
-                            String assignmentReference = (String) state.getAttribute(VIEW_SUBMISSION_ASSIGNMENT_REFERENCE);
-                            Assignment a = getAssignment(assignmentReference, "doAttachUpload", state);
-                            if (a.getContentReview()) {
-                                if (!contentReviewService.isAcceptableContent(attachment)) {
-                                    addAlert(state, rb.getFormattedMessage("review.file.not.accepted", new Object[]{contentReviewService.getServiceName(), getContentReviewAcceptedFileTypesMessage()}));
-                                    blockedByCRS = true;
-                                    // TODO: delete the file? Could we have done this check without creating it in the first place?
-                                }
-                            }
-                        }
+                            // add attachment
+                            // put in a security advisor so we can create citationAdmin site without need
+                            // of further permissions
+                            securityService.pushAdvisor(sa);
+                            ContentResource attachment = contentHostingService.addAttachmentResource(resourceId, siteId, "Assignments", contentType, fileContentStream, props);
 
-                        if (!blockedByCRS) {
+                            Site s = null;
                             try {
-                                Reference ref = entityManager.newReference(contentHostingService.getReference(attachment.getId()));
-                                if (singleFileUpload && attachments.size() > 1) {
-                                    //SAK-26319	- the assignment type is 'single file upload' and the user has existing attachments, so they must be uploading a 'newSingleUploadedFile'	--bbailla2
-                                    state.setAttribute("newSingleUploadedFile", ref);
-                                } else {
-                                    attachments.add(ref);
-                                }
-                            } catch (Exception ee) {
-                                log.warn(this + "doAttachUpload cannot find reference for " + attachment.getId() + ee.getMessage());
+                                s = siteService.getSite(siteId);
+                            } catch (IdUnusedException iue) {
+                                log.warn(this + ":doAttachUpload: Site not found!" + iue.getMessage());
                             }
-                        }
 
-                        if (inPeerReviewMode) {
-                            state.setAttribute(PEER_ATTACHMENTS, attachments);
-                        } else {
-                            state.setAttribute(ATTACHMENTS, attachments);
-                        }
-                    } catch (PermissionException e) {
-                        addAlert(state, rb.getString("notpermis4"));
-                    } catch (RuntimeException e) {
-                        if (contentHostingService.ID_LENGTH_EXCEPTION.equals(e.getMessage())) {
-                            // couldn't we just truncate the resource-id instead of rejecting the upload?
-                            addAlert(state, rb.getFormattedMessage("alert.toolong", new String[]{name}));
-                        } else {
-                            log.debug(this + ".doAttachupload ***** Runtime Exception ***** " + e.getMessage());
+                            // Check if the file is acceptable with the ContentReviewService
+                            boolean blockedByCRS = false;
+                            if (!inPeerReviewMode && assignmentService.allowReviewService(s)) {
+                                String assignmentReference = (String) state.getAttribute(VIEW_SUBMISSION_ASSIGNMENT_REFERENCE);
+                                Assignment a = getAssignment(assignmentReference, "doAttachUpload", state);
+                                if (a.getContentReview()) {
+                                    if (!contentReviewService.isAcceptableContent(attachment)) {
+                                        addAlert(state, rb.getFormattedMessage("review.file.not.accepted", new Object[]{contentReviewService.getServiceName(), getContentReviewAcceptedFileTypesMessage()}));
+                                        blockedByCRS = true;
+                                        // TODO: delete the file? Could we have done this check without creating it in the first place?
+                                    }
+                                }
+                            }
+
+                            if (!blockedByCRS) {
+                                try {
+                                    Reference ref = entityManager.newReference(contentHostingService.getReference(attachment.getId()));
+                                    if (singleFileUpload && attachments.size() > 1) {
+                                        //SAK-26319	- the assignment type is 'single file upload' and the user has existing attachments, so they must be uploading a 'newSingleUploadedFile'	--bbailla2
+                                        state.setAttribute("newSingleUploadedFile", ref);
+                                    } else {
+                                        attachments.add(ref);
+                                    }
+                                } catch (Exception ee) {
+                                    log.warn(this + "doAttachUpload cannot find reference for " + attachment.getId() + ee.getMessage());
+                                }
+                            }
+
+                            if (inPeerReviewMode) {
+                                state.setAttribute(PEER_ATTACHMENTS, attachments);
+                            } else {
+                                state.setAttribute(ATTACHMENTS, attachments);
+                            }
+                        } catch (PermissionException e) {
+                            addAlert(state, rb.getString("notpermis4"));
+                        } catch (RuntimeException e) {
+                            if (contentHostingService.ID_LENGTH_EXCEPTION.equals(e.getMessage())) {
+                                // couldn't we just truncate the resource-id instead of rejecting the upload?
+                                addAlert(state, rb.getFormattedMessage("alert.toolong", new String[]{name}));
+                            } else {
+                                log.debug(this + ".doAttachupload ***** Runtime Exception ***** " + e.getMessage());
+                                addAlert(state, rb.getString("failed"));
+                            }
+                        } catch (ServerOverloadException e) {
+                            // disk full or no writing permission to disk
+                            log.debug(this + ".doAttachupload ***** Disk IO Exception ***** " + e.getMessage());
+                            addAlert(state, rb.getString("failed.diskio"));
+                        } catch (Exception ignore) {
+                            // other exceptions should be caught earlier
+                            log.debug(this + ".doAttachupload ***** Unknown Exception ***** " + ignore.getMessage());
                             addAlert(state, rb.getString("failed"));
+                        } finally {
+                            securityService.popAdvisor(sa);
                         }
-                    } catch (ServerOverloadException e) {
-                        // disk full or no writing permission to disk
-                        log.debug(this + ".doAttachupload ***** Disk IO Exception ***** " + e.getMessage());
-                        addAlert(state, rb.getString("failed.diskio"));
-                    } catch (Exception ignore) {
-                        // other exceptions should be caught earlier
-                        log.debug(this + ".doAttachupload ***** Unknown Exception ***** " + ignore.getMessage());
-                        addAlert(state, rb.getString("failed"));
-                    } finally {
-                        securityService.popAdvisor(sa);
                     }
-                } else {
-                	addAlert(state, rb.getFormattedMessage("attnotpdf", filename)); //NAM-27
+                } catch (IOException e) {
+                    log.debug(this + ".doAttachupload ***** IOException ***** " + e.getMessage());
+                    addAlert(state, rb.getString("failed"));
                 }
-            } catch (IOException e) {
-                log.debug(this + ".doAttachupload ***** IOException ***** " + e.getMessage());
-                addAlert(state, rb.getString("failed"));
             }
         }
     }    // doAttachupload

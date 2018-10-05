@@ -1595,23 +1595,21 @@ public class AssignmentServiceImpl
 
 				// if marker again, if contains continue else break to start of loop.
 				if (assignment.getIsMarker()) {
-				if (CollectionUtils.isNotEmpty(markerSubmissionList.keySet())) {
-					if (markerSubmissionList.keySet().contains(submission.getId())) {
-						if (markerDownloadPartial) {
-							String downloaded = markerSubmissionList.get(submission.getId());
-							if (downloaded.equalsIgnoreCase("true")) {
-								continue;
+					if (CollectionUtils.isNotEmpty(markerSubmissionList.keySet())) {
+						if (markerSubmissionList.keySet().contains(submission.getId())) {
+							if (markerDownloadPartial) {
+								String downloaded = markerSubmissionList.get(submission.getId());
+								if (downloaded.equalsIgnoreCase("true")) {
+									continue;
+								}
+							} else if (markerDownloadAll) {
+								// no logic needed, we add it to our zip?
 							}
-						} else if (markerDownloadAll) {
-							//no logic needed, we add it to our zip.
+						} else {
+							continue;
 						}
 					}
-					else
-					{
-						continue;
-					}
 				}
-			}
 				for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
 
 					try {

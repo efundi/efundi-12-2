@@ -13133,6 +13133,7 @@ public class AssignmentAction extends PagedResourceActionII {
                         if (assignment.getIsMarker()) {
                         	AssignmentSubmission submission = null;
                         	List<AssignmentSubmissionMarker> submissionsForMarker = assignmentService.findSubmissionMarkersByIdAndAssignmentId(assignment.getId(), userDirectoryService.getCurrentUser().getEid());
+                        	submissions = new HashSet<AssignmentSubmission>();
                         	for(AssignmentSubmissionMarker submissionMarker : submissionsForMarker) {
                         		try {
 									submission = assignmentService.getSubmission(submissionMarker.getAssignmentSubmission().getId());

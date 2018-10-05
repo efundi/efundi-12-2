@@ -1579,35 +1579,44 @@ public class AssignmentServiceImpl
 				}
 			}
 
-			// if marker - getmarker lsit
-			Map<String, String> markerSubmissionList = new HashMap<String, String>();
+			// if marker - getmarker lsit			
+			List<AssignmentSubmissionMarker> msl = new ArrayList<AssignmentSubmissionMarker>();
 			if (assignment.getIsMarker()) {
-				List<AssignmentSubmissionMarker> msl = findSubmissionMarkersByIdAndAssignmentId(assignment.getId(),
-						userDirectoryService.getCurrentUser().getEid());
-				for (AssignmentSubmissionMarker asm : msl) {
-					markerSubmissionList.put(asm.getAssignmentSubmission().getId(), asm.getDownloaded().toString());
-				}
+				msl = findSubmissionMarkersByIdAndAssignmentId(assignment.getId(),
+						userDirectoryService.getCurrentUser().getEid());				
 			}
 			// Simply we add every AssignmentSubmissionSubmitter to the Map, this works
 			// equally well for group submissions
-
 			for (AssignmentSubmission submission : assignment.getSubmissions()) {
 
 				// if marker again, if contains continue else break to start of loop.
 				if (assignment.getIsMarker()) {
-					if (CollectionUtils.isNotEmpty(markerSubmissionList.keySet())) {
-						if (markerSubmissionList.keySet().contains(submission.getId())) {
-							if (markerDownloadPartial) {
-								String downloaded = markerSubmissionList.get(submission.getId());
-								if (downloaded.equalsIgnoreCase("true")) {
-									continue;
+					if (CollectionUtils.isNotEmpty(msl)) {
+						for (AssignmentSubmissionMarker assignmentSubmissionMarker : msl) {
+
+							if (assignmentSubmissionMarker.getAssignmentSubmission().getId()
+									.equals(submission.getId())) {
+								if (markerDownloadPartial) {
+									if (assignmentSubmissionMarker.getDownloaded()) {
+										continue;
+									}
+								} else if (markerDownloadAll) {
+									// no logic needed, we add it to our zip?
 								}
-							} else if (markerDownloadAll) {
-								// no logic needed, we add it to our zip?
+							} else {
+								continue;
 							}
-						} else {
-							continue;
+
+							assignmentSubmissionMarker.setDownloaded(true);
+							try {
+								updateAssignmentSubmissionMarker(assignmentSubmissionMarker);
+							} catch (PermissionException e) {
+								// TODO Auto-generated catch block
+								log.warn("Could not process submission {}, for marker: {}", submission.getId(),
+										assignmentSubmissionMarker.getId());
+							}
 						}
+
 					}
 				}
 				for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
@@ -4749,8 +4758,7 @@ public class AssignmentServiceImpl
 			throws PermissionException {
 		Assert.notNull(assignmentSubmissionMarker, "AssignmentSubmissionMarker cannot be null");
 		assignmentRepository.updateAssignmentSubmissionMarker(assignmentSubmissionMarker);
-		// eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_UPLOAD,
-		// assignmentMarkerHistory.getId(), false));
+		 eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_UPLOAD, assignmentSubmissionMarker.getId(), false));
 	}
 
 	@Override

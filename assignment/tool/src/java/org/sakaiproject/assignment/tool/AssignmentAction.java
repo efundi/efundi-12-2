@@ -13660,9 +13660,9 @@ public class AssignmentAction extends PagedResourceActionII {
 							AssignmentSubmissionMarker submissionMarker = null;
 							for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
 								submissionMarker = assignmentService.findSubmissionMarkerForMarkerIdAndSubmissionId(
-										sessionManager.getCurrentSessionUserId(), submission.getId());
+										userDirectoryService.getCurrentUser().getEid(), submission.getId());
 								if(submissionMarker != null) {
-									submissionMarker.setDownloaded(Boolean.TRUE);
+									submissionMarker.setUploaded(Boolean.TRUE);
 									assignmentService.updateAssignmentSubmissionMarker(submissionMarker);
 								}
 							}

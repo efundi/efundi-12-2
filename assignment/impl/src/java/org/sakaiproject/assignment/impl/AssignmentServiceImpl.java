@@ -1606,17 +1606,7 @@ public class AssignmentServiceImpl
 							} else {
 								continue;
 							}
-
-							assignmentSubmissionMarker.setDownloaded(true);
-							try {
-								updateAssignmentSubmissionMarker(assignmentSubmissionMarker);
-							} catch (PermissionException e) {
-								// TODO Auto-generated catch block
-								log.warn("Could not process submission {}, for marker: {}", submission.getId(),
-										assignmentSubmissionMarker.getId());
-							}
 						}
-
 					}
 				}
 				for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
@@ -1960,6 +1950,9 @@ public class AssignmentServiceImpl
 									reference, exceptionMessage);
 						} else {
 							updateAssignment(assignment);
+							if(assignment.getIsMarker()) {
+								updateDownloadedSubmissionMarkers(submissions.iterator());
+							}
 						}
 					}
 				}
@@ -4758,7 +4751,7 @@ public class AssignmentServiceImpl
 			throws PermissionException {
 		Assert.notNull(assignmentSubmissionMarker, "AssignmentSubmissionMarker cannot be null");
 		assignmentRepository.updateAssignmentSubmissionMarker(assignmentSubmissionMarker);
-		 eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_UPLOAD, assignmentSubmissionMarker.getId(), false));
+		eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_UPLOAD, assignmentSubmissionMarker.getId(), false));
 	}
 
 	@Override
@@ -4771,5 +4764,23 @@ public class AssignmentServiceImpl
 	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId,
 			String markerId) {
 		return assignmentRepository.findSubmissionMarkersByIdAndAssignmentId(assignmentId, markerId);
+	}
+
+	private void updateDownloadedSubmissionMarkers(Iterator<AssignmentSubmission> submissions) {
+		String currentUserEid = userDirectoryService.getCurrentUser().getEid();
+		AssignmentSubmission submission = null;
+		AssignmentSubmissionMarker marker = null;
+		while (submissions.hasNext()) {
+			submission = (AssignmentSubmission) submissions.next();
+			marker = findSubmissionMarkerForMarkerIdAndSubmissionId(currentUserEid, submission.getId());
+			if(marker != null) {
+				marker.setDownloaded(true);
+				try {
+					updateAssignmentSubmissionMarker(marker);
+				} catch (PermissionException e) {
+					log.warn("Could not upate submissionMarker for download with submission {}, for marker: {}", submission.getId(), currentUserEid);
+				}
+			}
+		}		
 	}
 }

@@ -1587,26 +1587,29 @@ public class AssignmentServiceImpl
 			}
 			// Simply we add every AssignmentSubmissionSubmitter to the Map, this works
 			// equally well for group submissions
-			for (AssignmentSubmission submission : assignment.getSubmissions()) {
+			OUTER: 
+				for (AssignmentSubmission submission : assignment.getSubmissions()) {
 
 				// if marker again, if contains continue else break to start of loop.
 				if (assignment.getIsMarker()) {
 					if (CollectionUtils.isNotEmpty(msl)) {
+						Boolean found = false;
 						for (AssignmentSubmissionMarker assignmentSubmissionMarker : msl) {
 
 							if (assignmentSubmissionMarker.getAssignmentSubmission().getId()
-									.equals(submission.getId())) {
-								if (markerDownloadPartial) {
-									if (assignmentSubmissionMarker.getDownloaded()) {
-										continue;
+									.equals(submission.getId())) { //check submission IDs are equal - This means that this submission is assigened to the current user.
+								found = true;
+								if (markerDownloadPartial) { // are we only downloading the unmarked? if yes
+									if (assignmentSubmissionMarker.getDownloaded()) { //have we already downloaded?
+										break OUTER; //if we have no need to compare to the rest of the list or to process this further, break to outside of main loop.
 									}
-								} else if (markerDownloadAll) {
-									// no logic needed, we add it to our zip?
+								} else if (markerDownloadAll) { //if we are assigned this submission and all is selected, continue.
+									continue;
 								}
-							} else {
-								continue;
 							}
 						}
+						if (!found) // for download all if not part of the list we skip it.
+							break OUTER;
 					}
 				}
 				for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {

@@ -87,4 +87,8 @@ public class AssignmentMarker {
     
     @Transient
     private String userDisplayId;
+    
+    
+    @Transient
+    private String markerStats;
 }

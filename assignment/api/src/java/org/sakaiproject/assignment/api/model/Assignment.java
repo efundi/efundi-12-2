@@ -253,9 +253,6 @@ public class Assignment {
     	}
 		return this.isMarker;
     }
-    
-    @Transient
-    private HashMap<String, String> markerStats;
 
     public enum Access {
         SITE,

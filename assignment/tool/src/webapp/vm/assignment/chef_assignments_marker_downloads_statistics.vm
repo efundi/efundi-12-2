@@ -80,7 +80,7 @@
 													<td><a href="" id="downloadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'download', null, null, null, 'downloadAll' ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downall')</a></td>
 												#end
 												<td>
-													$assignment.markerStats.get($marker.Id)
+													$marker.markerStats
 												</td>
 											</tr>
 											#set( $counter = $counter + 1 )

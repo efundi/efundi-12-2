@@ -14454,7 +14454,7 @@ public class AssignmentAction extends PagedResourceActionII {
     	context.put("context", state.getAttribute(STATE_CONTEXT_STRING));
     	
     	List<Assignment> assignments = prepPage(state);     
-    	String stat;
+    	String stat = "";
         for(Assignment assignment: assignments) {
         	assignmentService.setMarkersForAssignmentByLoggedInUser(assignment);
         	HashMap <String, String> stats = new HashMap<>();
@@ -14479,11 +14479,8 @@ public class AssignmentAction extends PagedResourceActionII {
 	    	    			}
 	        			}
 	        			stat = totalUploaded + " / " + totalDownloaded + " / " + totalAssigned;
-    	    			stats.put(marker.getId(), stat);
         			}
-        		}
-        		if (!(stats.isEmpty())) {
-        			assignment.setMarkerStats(stats);
+        			marker.setMarkerStats(stat);
         		}
         	}
         }

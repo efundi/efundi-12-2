@@ -13659,7 +13659,7 @@ public class AssignmentAction extends PagedResourceActionII {
 										userDirectoryService.getCurrentUser().getEid(), submission.getId());
 								if(submissionMarker != null) {
 									submissionMarker.setUploaded(Boolean.TRUE);
-									assignmentService.updateAssignmentSubmissionMarker(submissionMarker, "Upload");
+									assignmentService.updateAssignmentSubmissionMarker(submissionMarker);
 								}
 							}
 						}

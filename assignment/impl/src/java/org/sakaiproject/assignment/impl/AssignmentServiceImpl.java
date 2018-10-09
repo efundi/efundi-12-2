@@ -4772,23 +4772,16 @@ public class AssignmentServiceImpl
 			throws PermissionException {
 		Assert.notNull(assignmentSubmissionMarker, "AssignmentSubmissionMarker cannot be null");
 		assignmentRepository.createAssignmentSubmissionMarker(assignmentSubmissionMarker);
-		// eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_DOWNLOAD??,
-		// assignmentMarkerHistory.getId(), false));
+		eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_DOWNLOAD,
+		assignmentSubmissionMarker.getId(), false));
 	}
 
 	@Override
-	public void updateAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker, String loadDirection)
+	public void updateAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker)
 			throws PermissionException {
 		Assert.notNull(assignmentSubmissionMarker, "AssignmentSubmissionMarker cannot be null");
 		assignmentRepository.updateAssignmentSubmissionMarker(assignmentSubmissionMarker);
-		
-		if (loadDirection.equals("Upload")){
 		eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_UPLOAD, assignmentSubmissionMarker.getId(), false));
-		}
-		else
-		{
-			eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_DOWNLOAD, assignmentSubmissionMarker.getId(), false));
-		}
 	}
 
 	@Override
@@ -4813,7 +4806,7 @@ public class AssignmentServiceImpl
 			if(marker != null) {
 				marker.setDownloaded(true);
 				try {
-					updateAssignmentSubmissionMarker(marker, "Download");
+					createAssignmentSubmissionMarker(marker);
 				} catch (PermissionException e) {
 					log.warn("Could not upate submissionMarker for download with submission {}, for marker: {}", submission.getId(), currentUserEid);
 				}

@@ -852,11 +852,11 @@ ASN.invokeDownloadUrl = function(accessPointUrl, actionString, alertMessage, par
     }
     var markerDownloadPartial = document.getElementById('markerDownloadPartial').getAttribute('value');
 	if (markerDownloadPartial == "true") {
-		extraInfoArray[extraInfoArray.length] = ('markerDownloadPartial=true');
+		extraInfoArray[extraInfoArray.length] = ('markerDownloadPartial');
 	}
 	var markerDownloadAll = document.getElementById('markerDownloadAll').getAttribute('value');
 	if (markerDownloadAll == "true") {
-		extraInfoArray[extraInfoArray.length] = ('markerDownloadAll=true');
+		extraInfoArray[extraInfoArray.length] = ('markerDownloadAll');
 	}
 
     if (extraInfoArray.length === 0)

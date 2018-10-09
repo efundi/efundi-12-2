@@ -1587,31 +1587,53 @@ public class AssignmentServiceImpl
 			}
 			// Simply we add every AssignmentSubmissionSubmitter to the Map, this works
 			// equally well for group submissions
-			OUTER: 
-				for (AssignmentSubmission submission : assignment.getSubmissions()) {
+		
+				
 
 				// if marker again, if contains continue else break to start of loop.
-				if (assignment.getIsMarker()) {
-					if (CollectionUtils.isNotEmpty(msl)) {
-						Boolean found = false;
+			if (assignment.getIsMarker()) {
+				if (CollectionUtils.isNotEmpty(msl)) {
+					for (AssignmentSubmission submission : assignment.getSubmissions()) {
 						for (AssignmentSubmissionMarker assignmentSubmissionMarker : msl) {
 
 							if (assignmentSubmissionMarker.getAssignmentSubmission().getId()
-									.equals(submission.getId())) { //check submission IDs are equal - This means that this submission is assigened to the current user.
-								found = true;
-								if (markerDownloadPartial) { // are we only downloading the unmarked? if yes
-									if (assignmentSubmissionMarker.getDownloaded()) { //have we already downloaded?
-										break OUTER; //if we have no need to compare to the rest of the list or to process this further, break to outside of main loop.
+									.equals(submission.getId())) { // check submission IDs are equal - This means that
+																	// this submission is assigened to the current user.
+								if (markerDownloadAll) { // if we are assigned this submission and all is selected,
+															// continue.
+									for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
+
+										try {
+											User user = userDirectoryService.getUser(submitter.getSubmitter());
+											userSubmissionMap.put(user, submission);
+										} catch (UserNotDefinedException e) {
+											log.warn("Could not find user: {}, that is a submitter for submission: {}",
+													submitter.getSubmitter(), submission.getId());
+										}
 									}
-								} else if (markerDownloadAll) { //if we are assigned this submission and all is selected, continue.
-									continue;
+								} else if (markerDownloadPartial) { // are we only downloading the unmarked? if yes
+									if (!assignmentSubmissionMarker.getDownloaded()) { // have we already downloaded?
+										for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
+
+											try {
+												User user = userDirectoryService.getUser(submitter.getSubmitter());
+												userSubmissionMap.put(user, submission);
+											} catch (UserNotDefinedException e) {
+												log.warn(
+														"Could not find user: {}, that is a submitter for submission: {}",
+														submitter.getSubmitter(), submission.getId());
+											}
+										}
+									}
 								}
 							}
 						}
-						if (!found) // for download all if not part of the list we skip it.
-							break OUTER;
 					}
 				}
+				return userSubmissionMap;
+			}
+				else
+					for (AssignmentSubmission submission : assignment.getSubmissions()) {
 				for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
 
 					try {
@@ -1623,6 +1645,7 @@ public class AssignmentServiceImpl
 					}
 				}
 			}
+				
 		}
 		return userSubmissionMap;
 	}
@@ -1864,11 +1887,11 @@ public class AssignmentServiceImpl
 					// search and group filter only
 					searchFilterOnly = token.contains("=") ? token.substring(token.indexOf("=") + 1) : "";
 				}
-				if (token.contains("markerDownloadPartial")) {
+				if (token.contains("markerDownloadPartial=true")) {
 					// should contain student submission text information
 					markerDownloadPartial = true;
 				}
-				if (token.contains("markerDownloadAll")) {
+				if (token.contains("markerDownloadAll=true")) {
 					// should contain student submission text information
 					markerDownloadAll = true;
 				}

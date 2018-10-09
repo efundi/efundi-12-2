@@ -4880,7 +4880,7 @@ public class AssignmentAction extends PagedResourceActionII {
 	        if(a.getIsMarker() && ((String) state.getAttribute(STATE_CANCEL_MODE)).equals(MODE_MARKER_DOWNLOADS_STATISTICS) && (((String) state.getAttribute("user_action")) != null)) {
 	        	context.put("markerDownloadPartial", Boolean.valueOf(true));
 	        	if(((String) state.getAttribute("user_action")).equals("downloadAll")) {
-		        	context.put("selectAll", Boolean.valueOf(true));
+		        	context.put("markerDownloadAll", Boolean.valueOf(true));
 	        	} else if (((String) state.getAttribute("user_action")).equals("uploadAll")) {
 	        		context.put("selectAll", Boolean.valueOf(true));
 	        	} else if (((String) state.getAttribute("user_action")).equals("download")) {

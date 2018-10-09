@@ -40,6 +40,7 @@ import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -252,6 +253,9 @@ public class Assignment {
     	}
 		return this.isMarker;
     }
+    
+    @Transient
+    private HashMap<String, String> markerStats;
 
     public enum Access {
         SITE,

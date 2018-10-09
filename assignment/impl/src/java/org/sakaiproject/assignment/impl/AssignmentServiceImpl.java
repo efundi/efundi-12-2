@@ -1887,11 +1887,11 @@ public class AssignmentServiceImpl
 					// search and group filter only
 					searchFilterOnly = token.contains("=") ? token.substring(token.indexOf("=") + 1) : "";
 				}
-				if (token.contains("markerDownloadPartial=true")) {
+				if (token.contains("markerDownloadPartial")) {
 					// should contain student submission text information
 					markerDownloadPartial = true;
 				}
-				if (token.contains("markerDownloadAll=true")) {
+				if (token.contains("markerDownloadAll")) {
 					// should contain student submission text information
 					markerDownloadAll = true;
 				}
@@ -2304,6 +2304,10 @@ public class AssignmentServiceImpl
 				List<String> groupRefs = new ArrayList<String>();
 				Map<User, AssignmentSubmission> userSubmissionMap = getUserSubmissionMap(a, markerDownloadPartial,
 						markerDownloadAll);
+				if (a.getIsMarker())
+				{
+					return userSubmissionMap;
+				}
 				for (User u : rvUsers) {
 					AssignmentSubmission uSubmission = userSubmissionMap.get(u);
 

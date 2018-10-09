@@ -2304,7 +2304,7 @@ public class AssignmentServiceImpl
 				List<String> groupRefs = new ArrayList<String>();
 				Map<User, AssignmentSubmission> userSubmissionMap = getUserSubmissionMap(a, markerDownloadPartial,
 						markerDownloadAll);
-				if (a.getIsMarker())
+				if (a.getIsMarker() && markerDownloadPartial)
 				{
 					return userSubmissionMap;
 				}

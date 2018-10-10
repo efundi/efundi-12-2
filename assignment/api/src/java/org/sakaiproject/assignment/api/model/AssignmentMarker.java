@@ -2,7 +2,6 @@ package org.sakaiproject.assignment.api.model;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;

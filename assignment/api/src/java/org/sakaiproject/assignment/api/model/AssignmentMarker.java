@@ -2,6 +2,7 @@ package org.sakaiproject.assignment.api.model;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -93,7 +94,13 @@ public class AssignmentMarker {
     
     public String getMarkerStatsDisplay(){
     	
-    	//Add method implementation using numberAllocated & numberUploaded
+    	int totalAssigned = (this.getNumberAllocated() == null ? 0 : this.getNumberAllocated());
+		int totalUploaded = (this.getNumberUploaded() == null ? 0 : this.getNumberUploaded());
+		int totalDownloaded = 0; //Update for future Jira when we figure out how to add the downloaded total
+    	        			
+        String stat = totalUploaded + " / " + totalDownloaded + " / " + totalAssigned;
+        
+        this.setMarkerStatsDisplay(stat);
     	
 		return this.markerStatsDisplay;
     }

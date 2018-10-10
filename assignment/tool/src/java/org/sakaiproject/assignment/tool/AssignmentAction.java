@@ -14456,21 +14456,6 @@ public class AssignmentAction extends PagedResourceActionII {
     	List<Assignment> assignments = prepPage(state);     
         for(Assignment assignment: assignments) {
         	assignmentService.setMarkersForAssignmentByLoggedInUser(assignment);
-        	Set<AssignmentMarker> markersSet = assignment.getMarkers();
-        	if(assignment.getIsMarker() && assignment.getMarkers() != null) {
-        		Iterator<AssignmentMarker> markerIter = markersSet.iterator();
-        		String stat = "0 / 0 / 0";
-        		while (markerIter.hasNext()) {
-        			AssignmentMarker marker = markerIter.next();
-        			if (marker != null) {
-	        			int totalAssigned = (marker.getNumberAllocated() == null ? 0 : marker.getNumberAllocated());
-	        			int totalUploaded = (marker.getNumberUploaded() == null ? 0 : marker.getNumberUploaded());
-    	    			int totalDownloaded = 0; //Update for future Jira when we figure out how to add the downloaded total
-	        			stat = totalUploaded + " / " + totalDownloaded + " / " + totalAssigned;
-        			}
-        			marker.setMarkerStatsDisplay(stat);
-        		}
-        	}
         }
         context.put("assignments", assignments.iterator());
 

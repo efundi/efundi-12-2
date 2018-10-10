@@ -14454,35 +14454,8 @@ public class AssignmentAction extends PagedResourceActionII {
     	context.put("context", state.getAttribute(STATE_CONTEXT_STRING));
     	
     	List<Assignment> assignments = prepPage(state);     
-    	String stat = "";
         for(Assignment assignment: assignments) {
         	assignmentService.setMarkersForAssignmentByLoggedInUser(assignment);
-        	HashMap <String, String> stats = new HashMap<>();
-        	Set<AssignmentMarker> markersSet = assignment.getMarkers();
-        	if(assignment.getIsMarker() && assignment.getMarkers() != null) {
-        		Iterator<AssignmentMarker> markerIter = markersSet.iterator();
-        		while (markerIter.hasNext()) {
-        			AssignmentMarker marker = markerIter.next();
-        			if (marker != null) {
-	        			int totalAssigned = (marker.getNumberAllocated() == null ? 0 : marker.getNumberAllocated());
-	        			int totalUploaded = (marker.getNumberUploaded() == null ? 0 : marker.getNumberUploaded());
-    	    			int totalDownloaded = 0;
-    	    			List<AssignmentSubmissionMarker> submissionsForMarker = 
-    	    					assignmentService.findSubmissionMarkersByIdAndAssignmentId(assignment.getId(), marker.getMarkerUserId());
-	        			if (submissionsForMarker != null & CollectionUtils.isNotEmpty(submissionsForMarker)) {
-	    	    			Iterator<AssignmentSubmissionMarker> submissionIter = submissionsForMarker.iterator();
-	    	    			while (submissionIter.hasNext()) {
-	    	    				AssignmentSubmissionMarker asm = submissionIter.next();
-	    	    				if (asm.getDownloaded()) {
-	    	    					totalDownloaded++;
-	    	    				}
-	    	    			}
-	        			}
-	        			stat = totalUploaded + " / " + totalDownloaded + " / " + totalAssigned;
-        			}
-        			marker.setMarkerStats(stat);
-        		}
-        	}
         }
         context.put("assignments", assignments.iterator());
 

@@ -89,5 +89,12 @@ public class AssignmentMarker {
     private String userDisplayId;
     
     @Transient
-    private String markerStats;
+    private String markerStatsDisplay;
+    
+    public String getMarkerStatsDisplay(){
+    	
+    	//Add method implementation using numberAllocated & numberUploaded
+    	
+		return this.markerStatsDisplay;
+    }
 }

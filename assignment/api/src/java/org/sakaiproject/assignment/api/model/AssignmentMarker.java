@@ -59,10 +59,10 @@ public class AssignmentMarker {
     private Integer orderNumber;
 
     @Column(name = "NUM_ALLOC")
-    private Integer numberAllocated;
+    private Integer numberAllocated = 0;
 
     @Column(name = "NUM_UPLOADED")
-    private Integer numberUploaded;
+    private Integer numberUploaded = 0;
     
     @Type(type = "org.sakaiproject.springframework.orm.hibernate.type.InstantType")
     @Column(name = "CREATED_DATE", nullable = false)
@@ -92,14 +92,8 @@ public class AssignmentMarker {
     private String markerStatsDisplay;
     
     public String getMarkerStatsDisplay(){
-    	
-    	int totalAssigned = (this.getNumberAllocated() == null ? 0 : this.getNumberAllocated());
-		int totalUploaded = (this.getNumberUploaded() == null ? 0 : this.getNumberUploaded());
-		int totalDownloaded = 0; //Update for future Jira when we figure out how to add the downloaded total
     	        			
-        String stat = totalUploaded + " / " + totalDownloaded + " / " + totalAssigned;
-        
-        this.setMarkerStatsDisplay(stat);
+    	this.markerStatsDisplay = 0 + " / " + this.getNumberUploaded() + " / " + this.getNumberAllocated();
     	
 		return this.markerStatsDisplay;
     }

@@ -1581,7 +1581,7 @@ public class AssignmentServiceImpl
 
 			// if marker - getmarker lsit			
 			List<AssignmentSubmissionMarker> msl = new ArrayList<AssignmentSubmissionMarker>();
-			if (assignment.getIsMarker()) {
+			if (assignment.getIsMarker() && (markerDownloadPartial || markerDownloadAll)) {
 				msl = findSubmissionMarkersByIdAndAssignmentId(assignment.getId(),
 						userDirectoryService.getCurrentUser().getEid());				
 			}
@@ -1591,7 +1591,7 @@ public class AssignmentServiceImpl
 				
 
 				// if marker again, if contains continue else break to start of loop.
-			if (assignment.getIsMarker()) {
+			if (assignment.getIsMarker() && (markerDownloadPartial || markerDownloadAll))  {
 				if (CollectionUtils.isNotEmpty(msl)) {
 					for (AssignmentSubmission submission : assignment.getSubmissions()) {
 						for (AssignmentSubmissionMarker assignmentSubmissionMarker : msl) {
@@ -2302,12 +2302,12 @@ public class AssignmentServiceImpl
 
 			if (!rvUsers.isEmpty()) {
 				List<String> groupRefs = new ArrayList<String>();
-				Map<User, AssignmentSubmission> userSubmissionMap = getUserSubmissionMap(a, markerDownloadPartial,
-						markerDownloadAll);
-				if (a.getIsMarker() && markerDownloadPartial)
-				{
+				Map<User, AssignmentSubmission>  userSubmissionMap = new HashMap<User, AssignmentSubmission>();
+				if (a.getIsMarker() && markerDownloadPartial){
+					userSubmissionMap = getUserSubmissionMap(a, markerDownloadPartial, markerDownloadAll);
 					return userSubmissionMap;
 				}
+				userSubmissionMap = getUserSubmissionMap(a, false, false);
 				for (User u : rvUsers) {
 					AssignmentSubmission uSubmission = userSubmissionMap.get(u);
 

@@ -1533,10 +1533,15 @@ public class AssignmentServiceImpl
 		return null;
 	}
 
-	private Map<User, AssignmentSubmission> getUserSubmissionMap(Assignment assignment, Boolean markerDownloadPartial,
-			Boolean markerDownloadAll) {
+	private Map<User, AssignmentSubmission> getUserSubmissionMap(Assignment assignment,
+			boolean isMarker, boolean isMarkerPartialDownload) {
 		Map<User, AssignmentSubmission> userSubmissionMap = new HashMap<>();
 		if (assignment != null) {
+			
+			if (assignment.getIsMarker() && isMarker && !assignment.getIsGroup()) {
+				return getUserSubmissionMapForMarker(userSubmissionMap, assignment, isMarkerPartialDownload);
+			}			
+			
 			if (assignment.getIsGroup()) {
 				// All this block does is some verification of members in the group and the
 				// submissions submitters
@@ -1578,74 +1583,53 @@ public class AssignmentServiceImpl
 					log.warn("Could not fetch site for assignment: {} with a context of: {}");
 				}
 			}
+            // Simply we add every AssignmentSubmissionSubmitter to the Map, this works equally well for group submissions
+            for (AssignmentSubmission submission : assignment.getSubmissions()) {
+                for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
+                    try {
+                        User user = userDirectoryService.getUser(submitter.getSubmitter());
+                        userSubmissionMap.put(user, submission);
+                    } catch (UserNotDefinedException e) {
+                        log.warn("Could not find user: {}, that is a submitter for submission: {}", submitter.getSubmitter(), submission.getId());
+                    }
+                }
+            }
+		}
+		return userSubmissionMap;
+	}
 
-			// if marker - getmarker lsit			
-			List<AssignmentSubmissionMarker> msl = new ArrayList<AssignmentSubmissionMarker>();
-			if (assignment.getIsMarker() && (markerDownloadPartial || markerDownloadAll)) {
-				msl = findSubmissionMarkersByIdAndAssignmentId(assignment.getId(),
-						userDirectoryService.getCurrentUser().getEid());				
-			}
-			// Simply we add every AssignmentSubmissionSubmitter to the Map, this works
-			// equally well for group submissions
-		
-				
-
-				// if marker again, if contains continue else break to start of loop.
-			if (assignment.getIsMarker() && (markerDownloadPartial || markerDownloadAll))  {
-				if (CollectionUtils.isNotEmpty(msl)) {
-					for (AssignmentSubmission submission : assignment.getSubmissions()) {
-						for (AssignmentSubmissionMarker assignmentSubmissionMarker : msl) {
-
-							if (assignmentSubmissionMarker.getAssignmentSubmission().getId()
-									.equals(submission.getId())) { // check submission IDs are equal - This means that
-																	// this submission is assigened to the current user.
-								if (markerDownloadAll) { // if we are assigned this submission and all is selected,
-															// continue.
-									for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
-
-										try {
-											User user = userDirectoryService.getUser(submitter.getSubmitter());
-											userSubmissionMap.put(user, submission);
-										} catch (UserNotDefinedException e) {
-											log.warn("Could not find user: {}, that is a submitter for submission: {}",
-													submitter.getSubmitter(), submission.getId());
-										}
-									}
-								} else if (markerDownloadPartial) { // are we only downloading the unmarked? if yes
-									if (!assignmentSubmissionMarker.getDownloaded()) { // have we already downloaded?
-										for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
-
-											try {
-												User user = userDirectoryService.getUser(submitter.getSubmitter());
-												userSubmissionMap.put(user, submission);
-											} catch (UserNotDefinedException e) {
-												log.warn(
-														"Could not find user: {}, that is a submitter for submission: {}",
-														submitter.getSubmitter(), submission.getId());
-											}
-										}
-									}
-								}
+	private Map<User, AssignmentSubmission> getUserSubmissionMapForMarker(Map<User, AssignmentSubmission> userSubmissionMap, Assignment assignment, boolean isMarkerPartialDownload) {
+		List<AssignmentSubmissionMarker> submissionMarkers = findSubmissionMarkersByIdAndAssignmentId(assignment.getId(), userDirectoryService.getCurrentUser().getEid());
+		AssignmentSubmission assignmentSubmission = null;
+		if (CollectionUtils.isNotEmpty(submissionMarkers)) {
+			for (AssignmentSubmissionMarker assignmentSubmissionMarker : submissionMarkers) {
+				assignmentSubmission = assignmentSubmissionMarker.getAssignmentSubmission();
+				if(isMarkerPartialDownload) {
+					if(!assignmentSubmissionMarker.getDownloaded()) {
+						for (AssignmentSubmissionSubmitter submitter : assignmentSubmission.getSubmitters()) {
+							try {
+								User user = userDirectoryService.getUser(submitter.getSubmitter());
+								userSubmissionMap.put(user, assignmentSubmission);
+							} catch (UserNotDefinedException e) {
+								log.warn(
+										"Could not find user: {}, that is a submitter for submission: {}",
+										submitter.getSubmitter(), assignmentSubmission.getId());
 							}
 						}
 					}
-				}
-				return userSubmissionMap;
-			}
-				else
-					for (AssignmentSubmission submission : assignment.getSubmissions()) {
-				for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
-
-					try {
-						User user = userDirectoryService.getUser(submitter.getSubmitter());
-						userSubmissionMap.put(user, submission);
-					} catch (UserNotDefinedException e) {
-						log.warn("Could not find user: {}, that is a submitter for submission: {}",
-								submitter.getSubmitter(), submission.getId());
+				} else {
+					for (AssignmentSubmissionSubmitter submitter : assignmentSubmission.getSubmitters()) {
+						try {
+							User user = userDirectoryService.getUser(submitter.getSubmitter());
+							userSubmissionMap.put(user, assignmentSubmission);
+						} catch (UserNotDefinedException e) {
+							log.warn(
+									"Could not find user: {}, that is a submitter for submission: {}",
+									submitter.getSubmitter(), assignmentSubmission.getId());
+						}
 					}
 				}
 			}
-				
 		}
 		return userSubmissionMap;
 	}
@@ -1834,8 +1818,9 @@ public class AssignmentServiceImpl
 		String contextString = "";
 		String searchString = "";
 		String searchFilterOnly = "";
-		boolean markerDownloadPartial = false;
-		boolean markerDownloadAll = false;
+		boolean isMarker = false;
+		boolean isMarkerPartialDownload = false;
+		boolean isMarkerDownloadAll = false;
 
 		if (query != null) {
 			StringTokenizer queryTokens = new StringTokenizer(query, "&");
@@ -1887,13 +1872,17 @@ public class AssignmentServiceImpl
 					// search and group filter only
 					searchFilterOnly = token.contains("=") ? token.substring(token.indexOf("=") + 1) : "";
 				}
+				if (token.contains("isMarker")) {
+					// should contain student submission text information
+					isMarker = true;
+				}
 				if (token.contains("markerDownloadPartial")) {
 					// should contain student submission text information
-					markerDownloadPartial = true;
+					isMarkerPartialDownload = true;
 				}
 				if (token.contains("markerDownloadAll")) {
 					// should contain student submission text information
-					markerDownloadAll = true;
+					isMarkerDownloadAll = true;
 				}
 			}
 		}
@@ -1946,12 +1935,10 @@ public class AssignmentServiceImpl
 				// aRef, contextString == null? a.getContext():contextString);
 				Map<User, AssignmentSubmission> submitters = getSubmitterMap(searchFilterOnly,
 						viewString.length() == 0 ? AssignmentConstants.ALL : viewString, searchString, reference,
-						contextString == null ? assignment.getContext() : contextString, markerDownloadPartial,
-						markerDownloadAll);
+						contextString == null ? assignment.getContext() : contextString, isMarker, isMarkerPartialDownload);
 
 				if (!submitters.isEmpty()) {
 					List<AssignmentSubmission> submissions = new ArrayList<AssignmentSubmission>(submitters.values());
-					// Here, as we have access to markerDownloadPartial and markerDownloadAll
 					StringBuilder exceptionMessage = new StringBuilder();
 					SortedIterator sortedIterator;
 					if (assignmentUsesAnonymousGrading(assignment)) {
@@ -1967,8 +1954,7 @@ public class AssignmentServiceImpl
 								assignment.getTypeOfSubmission(), sortedIterator, out, exceptionMessage,
 								withStudentSubmissionText, withStudentSubmissionAttachment, withGradeFile,
 								withFeedbackText, withFeedbackComment, withFeedbackAttachment, withoutFolders,
-								gradeFileFormat, includeNotSubmitted, assignment.getContext(), markerDownloadPartial,
-								markerDownloadAll);
+								gradeFileFormat, includeNotSubmitted, assignment.getContext());
 
 						if (exceptionMessage.length() > 0) {
 							log.warn(
@@ -1976,7 +1962,7 @@ public class AssignmentServiceImpl
 									reference, exceptionMessage);
 						} else {
 							updateAssignment(assignment);
-							if(assignment.getIsMarker()) {
+							if(assignment.getIsMarker() && isMarker) {
 								updateDownloadedSubmissionMarkers(submissions.iterator());
 							}
 						}
@@ -2229,8 +2215,7 @@ public class AssignmentServiceImpl
 	@Override
 	@Transactional
 	public Map<User, AssignmentSubmission> getSubmitterMap(String searchFilterOnly, String allOrOneGroup,
-			String searchString, String aRef, String contextString, Boolean markerDownloadPartial,
-			Boolean markerDownloadAll) {
+			String searchString, String aRef, String contextString, boolean isMarker, boolean isMarkerPartialDownload) {
 		Map<User, AssignmentSubmission> rv = new HashMap<>();
 		if (StringUtils.isBlank(aRef))
 			return rv;
@@ -2303,9 +2288,8 @@ public class AssignmentServiceImpl
 			if (!rvUsers.isEmpty()) {
 				List<String> groupRefs = new ArrayList<String>();
 				Map<User, AssignmentSubmission>  userSubmissionMap = new HashMap<User, AssignmentSubmission>();
-				if (a.getIsMarker() && markerDownloadPartial){
-					userSubmissionMap = getUserSubmissionMap(a, markerDownloadPartial, markerDownloadAll);
-					return userSubmissionMap;
+				if (a.getIsMarker() && isMarker) {
+					return getUserSubmissionMap(a, isMarker, isMarkerPartialDownload);
 				}
 				userSubmissionMap = getUserSubmissionMap(a, false, false);
 				for (User u : rvUsers) {
@@ -3100,7 +3084,7 @@ public class AssignmentServiceImpl
 			StringBuilder exceptionMessage, boolean withStudentSubmissionText, boolean withStudentSubmissionAttachment,
 			boolean withGradeFile, boolean withFeedbackText, boolean withFeedbackComment,
 			boolean withFeedbackAttachment, boolean withoutFolders, String gradeFileFormat, boolean includeNotSubmitted,
-			String siteId, Boolean markerDownloadPartial, Boolean markerDownloadAll) {
+			String siteId) {
 		ZipOutputStream out = null;
 
 		boolean isAdditionalNotesEnabled = false;

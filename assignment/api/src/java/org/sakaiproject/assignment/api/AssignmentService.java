@@ -613,11 +613,11 @@ public interface AssignmentService extends EntityProducer {
      * @param aRef             Assignment Reference
      * @param search           The search string
      * @param contextString    Site id
-     * @param markerDownloadPartial
-     * @param markerDownloadAll
+     * @param isMarker
+     * @param isMarkerPartialDownload
      * @return
      */
-    public Map<User, AssignmentSubmission> getSubmitterMap(String searchFilterOnly, String allOrOneGroup, String search, String aRef, String contextString, Boolean markerDownloadPartial, Boolean markerDownloadAll);
+    public Map<User, AssignmentSubmission> getSubmitterMap(String searchFilterOnly, String allOrOneGroup, String search, String aRef, String contextString, boolean isMarker, boolean isMarkerPartialDownload);
 
     /**
      * @param accentedString

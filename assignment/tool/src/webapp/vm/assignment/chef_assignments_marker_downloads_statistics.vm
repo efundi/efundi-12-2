@@ -17,7 +17,7 @@
 </script>
 <!-- start: chef_assignments_marker_downloads_statistics.vm  -->
 <div class="portletBody container-fluid">
-	#navBarHREF( $allowAddAssignment $withGrade $allowGradeSubmission $allowAddAssignment $allowRecoverAssignment $allowAllGroups $assignmentscheck $allowUpdateSite $enableViewOption $view "markerdownstats" )
+	#navBarHREF( $allowAddAssignment $withGrade $allowGradeSubmission $allowAddAssignment $allowRecoverAssignment $allowAllGroups $assignmentscheck $allowUpdateSite $enableViewOption $view )
 
 	<div class="page-header" id="marker_downloads_statistics">
         <h1>
@@ -38,10 +38,8 @@
 					<div class="assignments" style="margin-bottom: 5px">
 						<form name="viewForm$assignmentCount" id="viewForm$assignmentCount" class="inlineForm" method="post" action="#toolForm("AssignmentAction")">
 							<input type="hidden" name="assignmentId" id = "assignmentId" value=$validator.escapeUrl($!assignmentReference) />
-							<input type="hidden" name="option" id="option" value="x" />
-							<input type="hidden" name="option_type" id="option_type" value="x" />
-							<input type="hidden" name="eventSubmit_doView_submission_list_option" value="x" />
-							<input type="hidden" name="search" value="" />
+        					<input type="hidden" name="option" id="option" value="x"/>
+							<input type="hidden" name="eventSubmit_doView_marker_stats_option" value="x" />
 							<input type="hidden" name="sakai_csrf_token" value="$sakai_csrf_token" />
 							
 							<div class="panel-heading" style="background: #fafafa; padding-left: 5px;">
@@ -75,9 +73,9 @@
 												<td>$marker.UserDisplayName</td>
 												<td>$marker.UserRole</td>
 												#if (!$!hideMarkerDownloadLinks)
-													<td><a href="#" id="download" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'download', null, null, null, 'download' ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downloadall.button.download')</a></td>
-													<td><a href="" id="uploadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'upload', null, null, null, 'uploadAll' ); return false;" title="$!tlang.getString('uploadall.title')">$!tlang.getString('uploadall.button.upload')</a></td>
-													<td><a href="" id="downloadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'download', null, null, null, 'downloadAll' ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downall')</a></td>
+													<td><a href="#" id="download" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'markerPartialDownload', null, null, null ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downloadall.button.download')</a></td>
+													<td><a href="" id="uploadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'markerUpload', null, null, null ); return false;" title="$!tlang.getString('uploadall.title')">$!tlang.getString('uploadall.button.upload')</a></td>
+													<td><a href="" id="downloadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'markerDownload', null, null, null ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downall')</a></td>
 												#end
 												<td>
 													$marker.markerStatsDisplay

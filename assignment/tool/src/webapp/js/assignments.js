@@ -850,15 +850,18 @@ ASN.invokeDownloadUrl = function(accessPointUrl, actionString, alertMessage, par
     {
         extraInfoArray[extraInfoArray.length]="includeNotSubmitted=true";
     }
-    var markerDownloadPartial = document.getElementById('markerDownloadPartial').getAttribute('value');
-	if (markerDownloadPartial == "true") {
-		extraInfoArray[extraInfoArray.length] = ('markerDownloadPartial');
-	}
-	var markerDownloadAll = document.getElementById('markerDownloadAll').getAttribute('value');
-	if (markerDownloadAll == "true") {
-		extraInfoArray[extraInfoArray.length] = ('markerDownloadAll');
-	}
-
+    if (document.getElementById('isMarker') && document.getElementById('isMarker').value)
+    {
+		extraInfoArray[extraInfoArray.length] = ('isMarker=true');
+    }
+    if (document.getElementById('markerDownloadPartial') && document.getElementById('markerDownloadPartial').value)
+    {
+		extraInfoArray[extraInfoArray.length] = ('markerDownloadPartial=true');
+    }    
+    if (document.getElementById('markerDownloadAll') && document.getElementById('markerDownloadAll').value)
+    {
+		extraInfoArray[extraInfoArray.length] = ('markerDownloadAll=true');
+    }
     if (extraInfoArray.length === 0)
     {
         alert(alertMessage);
@@ -912,12 +915,12 @@ ASN.enableSubmitUnlessNoFile = function(checkForFile)
     }
 };
 
-ASN.submitForm = function( formID, option, submissionID, view, focusId, option_type )
+ASN.submitForm = function( formID, option, submissionID, view, focusId )
 {
     // Get the form
     var form = document.getElementById( formID );
     if( form !== null )
-    {	
+    {
         // Apply the submission ID to the form's action if one is supplied
         if( submissionID !== null )
         {
@@ -952,14 +955,6 @@ ASN.submitForm = function( formID, option, submissionID, view, focusId, option_t
             {
                 viewElement.value = view;
             }
-        }
-        
-        // if
-        if(option_type !== undefined) {
-        	var optionTypeElement = document.getElementById( "option_type" );
-        	if ( optionTypeElement !== null ) {
-        		optionTypeElement.value = option_type;
-        	}
         }
 
         // Do the submit() if the form has one

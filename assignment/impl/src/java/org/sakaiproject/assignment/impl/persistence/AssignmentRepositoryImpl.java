@@ -74,10 +74,8 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
 
     @Override
     @Transactional
-    public void newAssignment(Assignment assignment) 
-    {
-        if (!existsAssignment(assignment.getId())) 
-        {
+    public void newAssignment(Assignment assignment) {
+        if (!existsAssignment(assignment.getId())) {
             assignment.setDateCreated(Instant.now());
             sessionFactory.getCurrentSession().persist(assignment);
         }

@@ -23,7 +23,6 @@ import org.hibernate.annotations.Type;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 /**
  * AssignmentMarker represents an assignment Marker.
@@ -91,10 +90,8 @@ public class AssignmentMarker {
     @Transient
     private String markerStatsDisplay;
     
-    public String getMarkerStatsDisplay(){
-    	        			
-    	this.markerStatsDisplay = 0 + " / " + this.getNumberUploaded() + " / " + this.getNumberAllocated();
-    	
+    public String getMarkerStatsDisplay(){    	        			
+    	this.markerStatsDisplay = 0 + " / " + this.getNumberUploaded() + " / " + this.getNumberAllocated();    	
 		return this.markerStatsDisplay;
     }
 }

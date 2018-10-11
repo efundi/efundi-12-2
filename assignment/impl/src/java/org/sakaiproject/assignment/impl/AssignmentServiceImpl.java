@@ -4813,4 +4813,9 @@ public class AssignmentServiceImpl
 			}
 		}		
 	}
+	
+	@Override
+	public void markerQuotaCalculation() {
+		
+	}
 }

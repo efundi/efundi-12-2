@@ -775,4 +775,6 @@ public interface AssignmentService extends EntityProducer {
 	public AssignmentSubmissionMarker findSubmissionMarkerForMarkerIdAndSubmissionId(String markerId, String submissionId);
 	
 	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId, String markerId);
+	
+	void markerQuotaCalculation();	
 }

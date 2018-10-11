@@ -729,7 +729,7 @@
 			</label>
 			<div class="col-sm-10">
 				<div id="tempAllowMarker" #if ($value_SubmissionType == 4) style = "display:none"#end>
-					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" onclick="ASN.enableMarkingTool(); ASN.resizeFrame();" #if($!markerEnabled) checked="checked" disabled#end/>
+					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" onclick="ASN.enableMarkingTool(); ASN.quotaCalculation($assignmentMarkers.size()); ASN.resizeFrame();" #if($!markerEnabled) checked="checked" disabled#end/>
 				</div>
 			</div>
 		</div>

@@ -451,8 +451,20 @@ ASN.showOrHideSelectGroupsMessage = function() {
     // Get the elements
     var groupMsg = document.getElementById("msgSelectGroups");
     var groupsRadio = document.getElementById("groups");
-    var checkboxes = document.getElementsByName("selectedGroups");
-    
+    var checkboxes = document.getElementsByName("selectedGroups");   
+	    if (groupsRadio.checked) {
+		document.getElementById("allowMarkerToggle").checked = false;
+		document.getElementById("allowMarkerToggle").disabled = true;
+		ASN.enableMarkingTool();		
+		var markerList = document.getElementById("quotaAssignmentTable")
+				.getElementsByTagName("input");
+		for (i = 0; i < markerList.length; i++) {
+			markerList[i].value = 0.0;
+		}
+	} else {
+		document.getElementById("allowMarkerToggle").disabled = false;
+		ASN.enableMarkingTool();	
+	}
     // Determine if groups are selected
     var groupsSelected = false;
     for (i = 0; i < checkboxes.length; i++) {

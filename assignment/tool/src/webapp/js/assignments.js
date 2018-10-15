@@ -77,8 +77,12 @@ ASN.quotaCalculation = function(value_totalMarkers)
 ASN.enableMarkingTool = function() {
 	if (document.getElementById("allowMarkerToggle").checked) {
 		document.getElementById('pdfMarkerSettings').style.display = 'block';
+		document.getElementById('new_assignment_group_submit').checked = false;
+		document.getElementById('new_assignment_group_submit').disabled  = true;
+		document.getElementById('$name_noAdditionalOptionsName').checked = true;
 	} else {
 		document.getElementById('pdfMarkerSettings').style.display = 'none';
+		document.getElementById('new_assignment_group_submit').disabled  = false;
 		ASN.enableButtons();
 	}
 };
@@ -451,20 +455,8 @@ ASN.showOrHideSelectGroupsMessage = function() {
     // Get the elements
     var groupMsg = document.getElementById("msgSelectGroups");
     var groupsRadio = document.getElementById("groups");
-    var checkboxes = document.getElementsByName("selectedGroups");   
-	    if (groupsRadio.checked) {
-		document.getElementById("allowMarkerToggle").checked = false;
-		document.getElementById("allowMarkerToggle").disabled = true;
-		ASN.enableMarkingTool();		
-		var markerList = document.getElementById("quotaAssignmentTable")
-				.getElementsByTagName("input");
-		for (i = 0; i < markerList.length; i++) {
-			markerList[i].value = 0.0;
-		}
-	} else {
-		document.getElementById("allowMarkerToggle").disabled = false;
-		ASN.enableMarkingTool();	
-	}
+    var checkboxes = document.getElementsByName("selectedGroups");
+    
     // Determine if groups are selected
     var groupsSelected = false;
     for (i = 0; i < checkboxes.length; i++) {

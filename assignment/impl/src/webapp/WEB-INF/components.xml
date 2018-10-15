@@ -235,5 +235,27 @@
         <property name="configurableJobPropertyValidator">
             <bean class="org.sakaiproject.assignment.impl.conversion.Assignment12ConversionJobValidator"/>
         </property>
+    </bean>    
+
+    <bean id="org.sakaiproject.assignment.impl.AssignmentMarkerQuotaCalculationJob"
+          class="org.sakaiproject.assignment.impl.AssignmentMarkerQuotaCalculationJob" init-method="init">
+        <property name="assignmentService" ref="org.sakaiproject.assignment.api.AssignmentService"/>
+        <property name="serverConfigurationService" ref="org.sakaiproject.component.api.ServerConfigurationService" />
+        <property name="schedulerManager" ref="org.sakaiproject.api.app.scheduler.SchedulerManager"/>
     </bean>
+    
+    <bean id="org.sakaiproject.api.app.scheduler.JobBeanWrapper.AssignmentMarkerQuotaCalculationJob"
+          class="org.sakaiproject.component.app.scheduler.jobs.SpringJobBeanWrapper"
+          init-method="init">
+        <property name="beanId">
+            <value>org.sakaiproject.assignment.impl.AssignmentMarkerQuotaCalculationJob</value>
+        </property>
+        <property name="jobName">
+            <value>Assignment Marker Quota Calculation Job</value>
+        </property>
+        <property name="schedulerManager">
+            <ref bean="org.sakaiproject.api.app.scheduler.SchedulerManager" />
+        </property>
+    </bean>
+    
 </beans>

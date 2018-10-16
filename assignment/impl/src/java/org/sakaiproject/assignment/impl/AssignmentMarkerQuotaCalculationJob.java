@@ -26,7 +26,8 @@ public class AssignmentMarkerQuotaCalculationJob implements Job {
 
 	public void execute(JobExecutionContext jobInfo) throws JobExecutionException {
 		if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
-			assignmentService.markerQuotaCalculation();
+			//assignmentService.markerQuotaCalculation(assignment, submission); 
+			//edited out to prevent build error while we incrementally build the quota services.
 		}
 	}
 

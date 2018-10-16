@@ -1150,7 +1150,9 @@ public class AssignmentServiceImpl
 			eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_ADD_ASSIGNMENT_SUBMISSION,
 					submissionReference, true));
 
-			log.debug("New submission: {} added to assignment: {}", submission.getId(), assignmentId);
+			log.debug("New submission: {} added to assignment: {}", submission.getId(), assignmentId);			
+				
+			
 			return submission;
 		} catch (IdUnusedException iue) {
 			log.warn("A submission cannot be added to an unknown assignment: {}", assignmentId);
@@ -2169,8 +2171,7 @@ public class AssignmentServiceImpl
 														? assignmentAllowResubmitCloseDate
 														: String.valueOf(a.getCloseDate().toEpochMilli()));
 									}
-
-									assignmentRepository.updateSubmission(s);
+									assignmentRepository.updateSubmission(s);									
 									// clear the permission
 								} catch (Exception e) {
 									log.warn(
@@ -4799,7 +4800,24 @@ public class AssignmentServiceImpl
 	}
 	
 	@Override
-	public void markerQuotaCalculation() {
-		// TODO Add Quota Calculation	
+	public void markerQuotaCalculation(Assignment assignment, AssignmentSubmission submission) {
+		
+		List<AssignmentMarker> asnMrks = assignmentRepository.findMarkersForAssignmentById(assignment.getId());
+		Iterator<AssignmentMarker> assignmentMarkersIterator = asnMrks.iterator();		
+		AssignmentMarker asnMarker = assignmentMarkersIterator.next();
+		
+		AssignmentSubmissionMarker asnSM = new AssignmentSubmissionMarker();
+		asnSM.setAssignmentSubmission(submission);
+		asnSM.setContext(assignment.getId());
+		asnSM.setAssignmentMarker(asnMarker);
+		
+		try {
+			createAssignmentSubmissionMarker(asnSM);
+		} catch (PermissionException e) {
+			
+			log.warn("Could not upate submissionMarker for new submission {}, for assignment: {}", submission.getId(), assignment.getId());
+		}
+		
+		
 	}
 }

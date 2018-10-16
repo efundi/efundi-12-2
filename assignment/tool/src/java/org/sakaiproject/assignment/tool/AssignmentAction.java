@@ -6333,11 +6333,17 @@ public class AssignmentAction extends PagedResourceActionII {
                         assignmentService.postReviewableSubmissionAttachments(submission);
                     }
                 }
+                
+                if (a.getIsMarker()){
+    				assignmentService.markerQuotaCalculation(a, submission);
+    				}
             }
 
             if (state.getAttribute(STATE_MESSAGE) == null) {
                 state.setAttribute(STATE_MODE, MODE_STUDENT_VIEW_SUBMISSION_CONFIRMATION);
             }
+            
+			
         }
     } // post_save_submission
 

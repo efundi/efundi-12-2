@@ -1150,8 +1150,7 @@ public class AssignmentServiceImpl
 			eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_ADD_ASSIGNMENT_SUBMISSION,
 					submissionReference, true));
 
-			log.debug("New submission: {} added to assignment: {}", submission.getId(), assignmentId);			
-				
+			log.debug("New submission: {} added to assignment: {}", submission.getId(), assignmentId);						
 			
 			return submission;
 		} catch (IdUnusedException iue) {
@@ -4813,11 +4812,8 @@ public class AssignmentServiceImpl
 		
 		try {
 			createAssignmentSubmissionMarker(asnSM);
-		} catch (PermissionException e) {
-			
+		} catch (PermissionException e) {			
 			log.warn("Could not upate submissionMarker for new submission {}, for assignment: {}", submission.getId(), assignment.getId());
-		}
-		
-		
+		}	
 	}
 }

@@ -7034,14 +7034,15 @@ public class AssignmentAction extends PagedResourceActionII {
                 addAlert(state, sb.toString());
             }
         } 
+
+        Boolean isMarker = false;
         
-        Boolean isMarkerEnabled = false;
-        if (params.getString("isMarkerEnabled") != null) {
-        	isMarkerEnabled = true;
-        	state.setAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE, Assignment.SubmissionType.PDF_ONLY_SUBMISSION.ordinal());
+        state.setAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE, Integer.parseInt(params.getString("new_assignment_submission_type")));
+        
+        if (params.getString("allowMarkerToggle") != null) {
+        	isMarker = (params.getString("allowMarkerToggle").equals("on") ? Boolean.TRUE : Boolean.FALSE);
         }
         
-        Boolean isMarker = (params.getString("allowMarkerToggle") != null ? Boolean.TRUE : Boolean.FALSE) | isMarkerEnabled;
         state.setAttribute(NEW_ASSIGNMENT_USE_MARKER, isMarker);
               
 		if (serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == Assignment.SubmissionType.values()[(Integer) state.getAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE)]

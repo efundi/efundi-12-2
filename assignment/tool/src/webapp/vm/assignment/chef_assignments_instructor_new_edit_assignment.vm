@@ -161,12 +161,6 @@
 		<input type="hidden" name="eventSubmit_doAssignment_form" value="" />
 		<input type="hidden" name="option" id="option" value="" />
 		<input type="hidden" name="view" id="view" value="" />
-		#if ($!markerEnabled)
-			<input type="hidden" name="isMarkerEnabled" id="isMarkerEnabled" value="" />
-		#end
-		#if ($value_SubmissionType == 6)
-			<input type="hidden" name="isPdfType" id="isPdfType" value="" />
-		#end
 		<input type="hidden" name="$name_order" id="$name_order" value="$!value_position_order" />
 
 		<div class="form-group row form-required">
@@ -636,7 +630,7 @@
 				$tlang.getString("gen.submissionType")
 			</label>
 			<div class="col-sm-6">
-				<select name="$name_SubmissionType" id="subType" onchange="switchAssignmentSubmissionType();" class="assignment-submission-type" #if($!markerEnabled) disabled #end>
+				<select name="$name_SubmissionType" id="subType" onchange="switchAssignmentSubmissionType();" class="assignment-submission-type" #if($!markerEnabled) class="disabled" disabled="disabled" #end>
 				#foreach ($i in [1..$!value_totalSubmissionTypes])
 					#if ($i == $value_SubmissionType)
 						<option value="$i" selected="selected">$submissionTypeTable.get($i)</option>
@@ -735,7 +729,7 @@
 			</label>
 			<div class="col-sm-10">
 				<div id="tempAllowMarker" #if ($value_SubmissionType == 4) style = "display:none"#end>
-					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" onclick="ASN.enableMarkingTool(); ASN.quotaCalculation($assignmentMarkers.size()); ASN.resizeFrame();" #if($!markerEnabled) checked="checked" disabled#end/>
+					<input type="checkbox" id="allowMarkerToggle" name ="allowMarkerToggle" onclick="ASN.enableMarkingTool(); ASN.quotaCalculation($assignmentMarkers.size()); ASN.resizeFrame();" #if($!markerEnabled) checked="checked" class="disabled" disabled="disabled"#end/>
 				</div>
 			</div>
 		</div>

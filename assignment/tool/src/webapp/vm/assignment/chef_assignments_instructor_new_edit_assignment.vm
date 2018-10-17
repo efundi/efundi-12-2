@@ -161,12 +161,6 @@
 		<input type="hidden" name="eventSubmit_doAssignment_form" value="" />
 		<input type="hidden" name="option" id="option" value="" />
 		<input type="hidden" name="view" id="view" value="" />
-		#if ($!markerEnabled)
-			<input type="hidden" name="isMarkerEnabled" id="isMarkerEnabled" value="" />
-		#end
-		#if ($value_SubmissionType == 6)
-			<input type="hidden" name="isPdfType" id="isPdfType" value="" />
-		#end
 		<input type="hidden" name="$name_order" id="$name_order" value="$!value_position_order" />
 
 		<div class="form-group row form-required">

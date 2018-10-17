@@ -48,6 +48,7 @@ ASN.quotaCalculation = function(value_totalMarkers)
 	var value;
 	var quotaId;
 	
+	
 	ASN.enableButtons();
 	
 	if (document.getElementById("allowMarkerToggle").checked) {
@@ -74,9 +75,11 @@ ASN.quotaCalculation = function(value_totalMarkers)
 };
 
 ASN.removeDisableOption = function() {
-	if (document.getElementById("allowMarkerToggle").checked) {
-		document.getElementById("allowMarkerToggle").disabled = false;
-		document.getElementById("subType").disabled = false;
+	if (document.getElementById("allowMarkerToggle") !== null) {
+		if (document.getElementById("allowMarkerToggle").checked) {
+			document.getElementById("allowMarkerToggle").disabled = false;
+			document.getElementById("subType").disabled = false;
+		}
 	}
 }
 
@@ -929,6 +932,7 @@ ASN.submitForm = function( formID, option, submissionID, view, focusId )
 {
     // Get the form
     var form = document.getElementById( formID );
+    ASN.removeDisableOption();
     if( form !== null )
     {
         // Apply the submission ID to the form's action if one is supplied

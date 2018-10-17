@@ -227,7 +227,12 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
 	public void updateAssignmentMarker(AssignmentMarker assignmentMarker) {
 		Session session = sessionFactory.getCurrentSession();
 		assignmentMarker.setDateModified(Instant.now());
+		try {
 		session.update(assignmentMarker);
+		}
+		catch(Exception e) {
+			session.merge(assignmentMarker);	
+		}
 		session.flush();
 	}
 

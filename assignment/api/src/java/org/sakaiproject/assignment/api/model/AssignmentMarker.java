@@ -55,7 +55,7 @@ public class AssignmentMarker {
     private Double quotaPercentage = 0.0;
 
     @Column(name = "ORDER_NUM")
-    private Integer orderNumber;
+    private Integer orderNumber = 0;
 
     @Column(name = "NUM_ALLOC")
     private Integer numberAllocated = 0;

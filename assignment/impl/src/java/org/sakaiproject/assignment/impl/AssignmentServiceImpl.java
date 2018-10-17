@@ -4528,7 +4528,8 @@ public class AssignmentServiceImpl
 						assignmentMarker.getId(), false));
 			} else {
 				if (!marker.getMarkerUserId().equals(assignmentMarker.getMarkerUserId())
-						|| !marker.getQuotaPercentage().equals(assignmentMarker.getQuotaPercentage())) {
+						|| !marker.getQuotaPercentage().equals(assignmentMarker.getQuotaPercentage()) 
+						|| marker.getNumberAllocated().equals(assignmentMarker.getNumberAllocated())) {
 					assignmentMarker.setModifier(sessionManager.getCurrentSessionUserId());
 					assignmentRepository.updateAssignmentMarker(assignmentMarker);
 
@@ -4803,20 +4804,84 @@ public class AssignmentServiceImpl
 	
 	@Override
 	public void markerQuotaCalculation(Assignment assignment, AssignmentSubmission submission) {
-		
-		List<AssignmentMarker> asnMrks = assignmentRepository.findMarkersForAssignmentById(assignment.getId());
-		Iterator<AssignmentMarker> assignmentMarkersIterator = asnMrks.iterator();		
-		AssignmentMarker asnMarker = assignmentMarkersIterator.next();
-		
+
+		String assignmentId = assignment.getId();
+		List<AssignmentMarker> asnMrks = assignmentRepository.findMarkersForAssignmentById(assignmentId);
+
+		double totalSubmissions = getTotalAssignmentMarkerSubmissions(asnMrks);
+		totalSubmissions++;
+		AssignmentMarker currentMarker = getMarkerForSubmissionOfAssignment(asnMrks, totalSubmissions, assignmentId);
+
 		AssignmentSubmissionMarker asnSM = new AssignmentSubmissionMarker();
 		asnSM.setAssignmentSubmission(submission);
 		asnSM.setContext(assignment.getId());
-		asnSM.setAssignmentMarker(asnMarker);
-		
+		asnSM.setAssignmentMarker(currentMarker);
+
 		try {
 			createAssignmentSubmissionMarker(asnSM);
-		} catch (PermissionException e) {			
-			log.warn("Could not upate submissionMarker for new submission {}, for assignment: {}", submission.getId(), assignment.getId());
-		}	
+		} catch (PermissionException e) {
+			log.warn("Could not upate submissionMarker for new submission {}, for assignment: {}", submission.getId(),
+					assignment.getId());
+		}
+	}
+
+	private AssignmentMarker getMarkerForSubmissionOfAssignment(List<AssignmentMarker> asnMrks, double totalSubmissions,
+			String assignmentId) {
+		AssignmentMarker currentMarker = findMarker(asnMrks, totalSubmissions);
+		if (currentMarker == null) {
+			for (AssignmentMarker assignmentMarker : asnMrks) {
+				assignmentMarker.setOrderNumber(0);
+				try {
+					updateAssignmentMarker(assignmentMarker);
+				} catch (PermissionException e) {
+					log.warn("Could not upate Assignment Marker {}", assignmentMarker.getId());
+				}
+			}
+			asnMrks = assignmentRepository.findMarkersForAssignmentById(assignmentId);
+			currentMarker = findMarker(asnMrks, totalSubmissions);
+		}
+		try {
+			updateAssignmentMarker(currentMarker);
+		} catch (PermissionException e) {
+			log.warn("Could not upate Assignment Marker {}", currentMarker.getId());
+		}
+		return currentMarker;
+	}
+
+	private AssignmentMarker findMarker(List<AssignmentMarker> asnMrks, double totalSubmissions) {
+		for (AssignmentMarker assignmentMarker : asnMrks) {
+			if (assignmentMarker.getOrderNumber() != 1) {
+				double quotaPercentage = assignmentMarker.getQuotaPercentage();
+				int numberAllocated = assignmentMarker.getNumberAllocated();
+				if (numberAllocated == 0 && quotaPercentage > 0) {
+					assignmentMarker.setOrderNumber(1);
+					numberAllocated++;
+					assignmentMarker.setNumberAllocated(numberAllocated);
+					return assignmentMarker;
+				} else {
+					double currentPercentage = (numberAllocated / totalSubmissions) * 100.00;
+					if (currentPercentage < quotaPercentage) {
+						assignmentMarker.setOrderNumber(1);
+						numberAllocated++;
+						assignmentMarker.setNumberAllocated(numberAllocated);
+						return assignmentMarker;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private double getTotalAssignmentMarkerSubmissions(List<AssignmentMarker> asnMrks) {
+		double totalSubmissionsAssigned = 0;
+		for (AssignmentMarker assignmentMarker : asnMrks) {
+			totalSubmissionsAssigned = assignmentMarker.getNumberAllocated();
+		}
+		return totalSubmissionsAssigned;
 	}
 }
+
+//getMarkers
+//getTotal
+//getMarkersWith0Order
+//getFirstthat doesn't equal percent of total

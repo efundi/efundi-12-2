@@ -1880,11 +1880,11 @@ public class AssignmentServiceImpl
 					// should contain student submission text information
 					isMarker = true;
 				}
-				if (token.contains("markerDownloadPartial")) {
+				if (token.contains("markerDownloadPartial=true")) {
 					// should contain student submission text information
 					isMarkerPartialDownload = true;
 				}
-				if (token.contains("markerDownloadAll")) {
+				if (token.contains("markerDownloadAll=true")) {
 					// should contain student submission text information
 					isMarkerDownloadAll = true;
 				}

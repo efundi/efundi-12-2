@@ -48,7 +48,6 @@ ASN.quotaCalculation = function(value_totalMarkers)
 	var value;
 	var quotaId;
 	
-	
 	ASN.enableButtons();
 	
 	if (document.getElementById("allowMarkerToggle").checked) {
@@ -930,7 +929,6 @@ ASN.submitForm = function( formID, option, submissionID, view, focusId )
 {
     // Get the form
     var form = document.getElementById( formID );
-    ASN.removeDisableOption();
     if( form !== null )
     {
         // Apply the submission ID to the form's action if one is supplied

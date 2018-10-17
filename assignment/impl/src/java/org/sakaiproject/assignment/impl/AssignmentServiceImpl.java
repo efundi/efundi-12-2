@@ -1148,7 +1148,7 @@ public class AssignmentServiceImpl
 			String submissionReference = AssignmentReferenceReckoner.reckoner().submission(submission).reckon()
 					.getReference();
 			
-			markerQuotaCalculation();
+			//markerQuotaCalculation();
 			
 			eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_ADD_ASSIGNMENT_SUBMISSION,
 					submissionReference, true));

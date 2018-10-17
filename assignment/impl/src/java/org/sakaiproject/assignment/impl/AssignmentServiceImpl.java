@@ -4880,8 +4880,3 @@ public class AssignmentServiceImpl
 		return totalSubmissionsAssigned;
 	}
 }
-
-//getMarkers
-//getTotal
-//getMarkersWith0Order
-//getFirstthat doesn't equal percent of total

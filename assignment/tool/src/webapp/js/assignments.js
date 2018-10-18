@@ -867,13 +867,13 @@ ASN.invokeDownloadUrl = function(accessPointUrl, actionString, alertMessage, par
     {
 		extraInfoArray[extraInfoArray.length] = ('isMarker=true');
     }
-    if (document.getElementById('markerDownloadPartial') && document.getElementById('markerDownloadPartial').value)
+    if (document.getElementById('markerDownloadPartial'))
     {
-		extraInfoArray[extraInfoArray.length] = ('markerDownloadPartial=true');
+		extraInfoArray[extraInfoArray.length] = ('markerDownloadPartial='+document.getElementById('markerDownloadPartial').value);
     }    
-    if (document.getElementById('markerDownloadAll') && document.getElementById('markerDownloadAll').value)
+    if (document.getElementById('markerDownloadAll'))
     {
-		extraInfoArray[extraInfoArray.length] = ('markerDownloadAll=true');
+		extraInfoArray[extraInfoArray.length] = ('markerDownloadAll='+document.getElementById('markerDownloadAll').value);
     }
     if (extraInfoArray.length === 0)
     {

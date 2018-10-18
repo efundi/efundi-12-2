@@ -4875,7 +4875,7 @@ public class AssignmentServiceImpl
 	private double getTotalAssignmentMarkerSubmissions(List<AssignmentMarker> asnMrks) {
 		double totalSubmissionsAssigned = 0;
 		for (AssignmentMarker assignmentMarker : asnMrks) {
-			totalSubmissionsAssigned = assignmentMarker.getNumberAllocated();
+			totalSubmissionsAssigned += assignmentMarker.getNumberAllocated();
 		}
 		return totalSubmissionsAssigned;
 	}

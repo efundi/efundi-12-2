@@ -7952,7 +7952,7 @@ public class AssignmentAction extends PagedResourceActionII {
                 }
 
                 //NAM-32 - Set Assignment Object after created on Marker
-                if(post && serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == a.getTypeOfSubmission()
+                if(serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == a.getTypeOfSubmission()
         				&& isMarker ) {
     				Set<AssignmentMarker> assignmentMarkers = (Set<AssignmentMarker>) state.getAttribute(NEW_ASSIGNMENT_MARKERS);       
     				if (CollectionUtils.isNotEmpty(assignmentMarkers)) {

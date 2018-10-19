@@ -4900,6 +4900,7 @@ public class AssignmentServiceImpl
 					if (changeCheck) {
 						oldMarker.setNumberAllocated(oldMarkersAllocation);
 						newMarker.setNumberAllocated(newMarkersAllocation);
+						newMarker.setOrderNumber(1);
 						try {
 							updateAssignmentMarker(newMarker);
 							updateAssignmentMarker(oldMarker);

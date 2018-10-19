@@ -83,6 +83,17 @@ ASN.removeDisableOption = function() {
 	}
 }
 
+ASN.enableUploadOptions = function(value_isMarker) {
+	if (value_isMarker != null) {
+		document.getElementById("studentSubmissionText").disabled = false;
+		document.getElementById("studentSubmissionAttachment").disabled = false;
+		document.getElementById("gradeFile").disabled = false;
+		document.getElementById("feedbackTexts").disabled = false;
+		document.getElementById("feedbackComments").disabled = false;
+		document.getElementById("feedbackAttachments").disabled = false;
+	}
+}
+
 ASN.enableMarkingTool = function() {
 	if (document.getElementById("allowMarkerToggle").checked) {
 		document.getElementById('pdfMarkerSettings').style.display = 'block';

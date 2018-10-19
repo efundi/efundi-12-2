@@ -4712,7 +4712,7 @@ public class AssignmentServiceImpl
 	}
 
 	public void createAssignmentMarkerHistory(AssignmentMarkerHistory assignmentMarkerHistory)
-			throws PermissionException {
+			throws PermissionException {		
 		Assert.notNull(assignmentMarkerHistory, "AssignmentMarkerHistory cannot be null");
 		assignmentRepository.createAssignmentMarkerHistory(assignmentMarkerHistory);
 		eventTrackingService.post(eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_ASSIGNMENT_REASSIGN,
@@ -4878,5 +4878,38 @@ public class AssignmentServiceImpl
 			totalSubmissionsAssigned += assignmentMarker.getNumberAllocated();
 		}
 		return totalSubmissionsAssigned;
+	}
+	
+	public void reassignSubmissionsNotMarked(AssignmentMarker oldMarker, AssignmentMarker newMarker, String context) { // need to trim the assignment comes through as /assignment/a/7ece7c9a-5216-433b-b58c-a84935df30d4/56bedc7c-11d6-4b76-9033-ef4f12eeade5
+		
+		int oldMarkersAllocation = oldMarker.getNumberAllocated();
+		int newMarkersAllocation = newMarker.getNumberAllocated();
+		boolean changeCheck = false;
+		List<AssignmentSubmissionMarker> markerSubmissions = findSubmissionMarkersByIdAndAssignmentId(context.substring(51, context.length()), oldMarker.getMarkerUserId());
+		for (AssignmentSubmissionMarker assignmentSubmissionMarker : markerSubmissions) {
+			if (!assignmentSubmissionMarker.getUploaded()) {
+				assignmentSubmissionMarker.setAssignmentMarker(newMarker);
+				oldMarkersAllocation--;
+				newMarkersAllocation++;
+				try {
+					updateAssignmentSubmissionMarker(assignmentSubmissionMarker, "EVENT_MARKER_ASSIGNMENT_REASSIGN");
+					changeCheck = true;
+				} catch (PermissionException e) {
+					log.warn("Could not upate AssignmentSubmissionMarker {}", assignmentSubmissionMarker.getId());
+				} finally {
+					if (changeCheck) {
+						oldMarker.setNumberAllocated(oldMarkersAllocation);
+						newMarker.setNumberAllocated(newMarkersAllocation);
+						try {
+							updateAssignmentMarker(newMarker);
+							updateAssignmentMarker(oldMarker);
+						} catch (PermissionException e) {
+							log.warn("Could not upate AssignmentMarkers {} and {}", newMarker.getId(),
+									oldMarker.getId());
+						}
+					}
+				}
+			}
+		}
 	}
 }

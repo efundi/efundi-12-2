@@ -7107,6 +7107,8 @@ public class AssignmentAction extends PagedResourceActionII {
 
 						markerHistory.setModifier(userDirectoryService.getCurrentUser().getId());
 						markerHistorySet.add(markerHistory);
+						//call to do reassignment of actual submissions.
+						assignmentService.reassignSubmissionsNotMarked(currentAssignmentMarker, newAssignmentMarker, assignmentRef);
 					}
 					indexHist++;
 				}

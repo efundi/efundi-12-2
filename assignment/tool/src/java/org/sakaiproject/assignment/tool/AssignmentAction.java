@@ -13748,12 +13748,21 @@ public class AssignmentAction extends PagedResourceActionII {
 
 						if (assignment.getIsMarker()) {
 							AssignmentSubmissionMarker submissionMarker = null;
+							AssignmentMarker assignmentMarker = null;
 							for (AssignmentSubmissionSubmitter submitter : submission.getSubmitters()) {
 								submissionMarker = assignmentService.findSubmissionMarkerForMarkerIdAndSubmissionId(
 										userDirectoryService.getCurrentUser().getEid(), submission.getId());
-								if(submissionMarker != null) {
+								if (submissionMarker != null) {
+									if (!submissionMarker.getUploaded()) {
+										assignmentMarker = submissionMarker.getAssignmentMarker();
+										assignmentMarker.setNumberUploaded(assignmentMarker.getNumberUploaded() + 1);
+										assignmentService.updateAssignmentMarker(assignmentMarker);
+									}
 									submissionMarker.setUploaded(Boolean.TRUE);
-									assignmentService.updateAssignmentSubmissionMarker(submissionMarker, AssignmentConstants.EVENT_MARKER_ASSIGNMENT_UPLOAD);
+									assignmentService.updateAssignmentSubmissionMarker(submissionMarker,
+											AssignmentConstants.EVENT_MARKER_ASSIGNMENT_UPLOAD);
+									
+
 								}
 							}
 						}

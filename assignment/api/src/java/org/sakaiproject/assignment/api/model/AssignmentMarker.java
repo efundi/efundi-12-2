@@ -63,6 +63,9 @@ public class AssignmentMarker {
     @Column(name = "NUM_UPLOADED")
     private Integer numberUploaded = 0;
     
+    @Column(name = "NUM_DOWNLOADED")
+    private Integer numberDownloaded = 0;
+    
     @Type(type = "org.sakaiproject.springframework.orm.hibernate.type.InstantType")
     @Column(name = "CREATED_DATE", nullable = false)
     private Instant dateCreated;
@@ -90,8 +93,8 @@ public class AssignmentMarker {
     @Transient
     private String markerStatsDisplay;
     
-    public String getMarkerStatsDisplay(){    	        			
-    	this.markerStatsDisplay = 0 + " / " + this.getNumberUploaded() + " / " + this.getNumberAllocated();    	
+    public String getMarkerStatsDisplay(){   	        			
+    	this.markerStatsDisplay = (getNumberAllocated() - getNumberDownloaded()) + " / " + getNumberUploaded() + " / " + getNumberAllocated();    	
 		return this.markerStatsDisplay;
-    }
+    }	
 }

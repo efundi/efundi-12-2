@@ -4787,19 +4787,35 @@ public class AssignmentServiceImpl
 	private void updateDownloadedSubmissionMarkers(Iterator<AssignmentSubmission> submissions) {
 		String currentUserEid = userDirectoryService.getCurrentUser().getEid();
 		AssignmentSubmission submission = null;
-		AssignmentSubmissionMarker marker = null;
+		AssignmentSubmissionMarker submissionMarker = null;
+		AssignmentMarker asnMarker = null;
+		int downloads = 0;
 		while (submissions.hasNext()) {
 			submission = (AssignmentSubmission) submissions.next();
-			marker = findSubmissionMarkerForMarkerIdAndSubmissionId(currentUserEid, submission.getId());
-			if(marker != null) {
-				marker.setDownloaded(true);
-				try {
-					updateAssignmentSubmissionMarker(marker, AssignmentConstants.EVENT_MARKER_ASSIGNMENT_DOWNLOAD);
-				} catch (PermissionException e) {
-					log.warn("Could not upate submissionMarker for download with submission {}, for marker: {}", submission.getId(), currentUserEid);
+			submissionMarker = findSubmissionMarkerForMarkerIdAndSubmissionId(currentUserEid, submission.getId());
+			if (submissionMarker != null) {
+				if(!submissionMarker.getDownloaded())
+				{
+				downloads++;
 				}
+				submissionMarker.setDownloaded(true);
+				asnMarker = submissionMarker.getAssignmentMarker();				
+				try {
+					updateAssignmentSubmissionMarker(submissionMarker,
+							AssignmentConstants.EVENT_MARKER_ASSIGNMENT_DOWNLOAD);
+				} catch (PermissionException e) {
+					log.warn("Could not upate submissionMarker for download with submission {}, for marker: {}",
+							submission.getId(), currentUserEid);
+				}				
 			}
-		}		
+		}
+		asnMarker.setNumberDownloaded(asnMarker.getNumberDownloaded() + downloads);
+		try {
+			updateAssignmentMarker(asnMarker);
+		} catch (PermissionException e) {
+			log.warn("Could not upate AssignmentMarker for download with submission {}, for marker: {}",
+					submission.getId(), currentUserEid);
+		}
 	}
 	
 	@Override
@@ -4883,12 +4899,18 @@ public class AssignmentServiceImpl
 	public void reassignSubmissionsNotMarked(AssignmentMarker oldMarker, AssignmentMarker newMarker, String context) { // need to trim the assignment comes through as /assignment/a/7ece7c9a-5216-433b-b58c-a84935df30d4/56bedc7c-11d6-4b76-9033-ef4f12eeade5
 		
 		int oldMarkersAllocation = oldMarker.getNumberAllocated();
+		int oldMarkersDownloaded = oldMarker.getNumberDownloaded();
 		int newMarkersAllocation = newMarker.getNumberAllocated();
 		boolean changeCheck = false;
 		List<AssignmentSubmissionMarker> markerSubmissions = findSubmissionMarkersByIdAndAssignmentId(context.substring(51, context.length()), oldMarker.getMarkerUserId());
 		for (AssignmentSubmissionMarker assignmentSubmissionMarker : markerSubmissions) {
 			if (!assignmentSubmissionMarker.getUploaded()) {
 				assignmentSubmissionMarker.setAssignmentMarker(newMarker);
+				if(assignmentSubmissionMarker.getDownloaded()) {
+					oldMarkersDownloaded--;
+					assignmentSubmissionMarker.setDownloaded(false);
+				}
+				
 				oldMarkersAllocation--;
 				newMarkersAllocation++;
 				try {
@@ -4899,6 +4921,7 @@ public class AssignmentServiceImpl
 				} finally {
 					if (changeCheck) {
 						oldMarker.setNumberAllocated(oldMarkersAllocation);
+						oldMarker.setNumberDownloaded(oldMarkersDownloaded);
 						newMarker.setNumberAllocated(newMarkersAllocation);
 						newMarker.setOrderNumber(1);
 						try {

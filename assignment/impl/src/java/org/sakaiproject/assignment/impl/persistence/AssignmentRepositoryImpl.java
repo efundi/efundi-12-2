@@ -55,15 +55,6 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
                 .add(Restrictions.eq("deleted", Boolean.FALSE))
                 .list();
     }
-    
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Assignment> findAllAssignments(Boolean isMarker) {
-        return startCriteriaQuery()
-                .add(Restrictions.eq("isMarker", isMarker))
-                .add(Restrictions.eq("deleted", Boolean.FALSE))
-                .list();
-    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -306,4 +297,14 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
 		return (AssignmentSubmissionMarker) criteria.add(Restrictions.eq("asn.markerUserId", markerId))
 				.add(Restrictions.eq("assignmentSubmission.id", submissionId)).uniqueResult();
 	}
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Assignment> findAllAssignmentsForMarkerQuotaCalculation() {
+        return startCriteriaQuery()
+                .add(Restrictions.eq("isMarker", Boolean.TRUE))
+                .add(Restrictions.lt("openDate", Instant.now()))
+                .add(Restrictions.eq("deleted", Boolean.FALSE))
+                .list();
+    }
 }

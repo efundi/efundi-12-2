@@ -102,5 +102,5 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
 	
 	public AssignmentSubmissionMarker findSubmissionMarkerForMarkerIdAndSubmissionId(String markerId, String submissionId);
 	
-	public List<Assignment> findAllAssignments(Boolean isMarker);
+	public List<Assignment> findAllAssignmentsForMarkerQuotaCalculation();
 }

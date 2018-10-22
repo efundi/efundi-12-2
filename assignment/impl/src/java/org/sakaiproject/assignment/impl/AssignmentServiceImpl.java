@@ -4626,12 +4626,7 @@ public class AssignmentServiceImpl
 							AssignmentMarker newAssignmentMarker = new AssignmentMarker();
 							newAssignmentMarker.setContext(siteId);
 							newAssignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
-							newAssignmentMarker.setDateCreated(Instant.now());
 							newAssignmentMarker.setMarkerUserId(user.getEid());
-							newAssignmentMarker.setNumberAllocated(0);
-							newAssignmentMarker.setNumberUploaded(0);
-							newAssignmentMarker.setOrderNumber(0);
-							newAssignmentMarker.setQuotaPercentage(new Double(0));
 							newAssignmentMarker.setAssignment(assignment);
 							assignmentMarkers.add(newAssignmentMarker);
 							//assignmentRepository.updateAssignmentMarker(newAssignmentMarker); Not working currently
@@ -4949,7 +4944,7 @@ public class AssignmentServiceImpl
 	
 	public void quotaCalculationJob() {
 		if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
-			Collection <Assignment> assignments = assignmentRepository.findAllAssignments(true);
+			Collection <Assignment> assignments = assignmentRepository.findAllAssignmentsForMarkerQuotaCalculation();
 			String message;
 			Event event;
 			for (Assignment assignment : assignments) {

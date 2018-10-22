@@ -143,6 +143,10 @@ public final class AssignmentConstants {
      */
     public static final String EVENT_MARKER_ASSIGNMENT_UPLOAD = "asn.marker.upload";
     /**
+     * Event for a marker uploading assignment(s) via the marker UI. NAM-44
+     */
+    public static final String EVENT_MARKER_QUOTA_CALCULATION = "asn.marker.quota.calculation";
+    /**
      * Calendar event field for assignment due dates
      */
     public static final String NEW_ASSIGNMENT_DUEDATE_CALENDAR_ASSIGNMENT_ID = "new_assignment_duedate_calendar_assignment_id";

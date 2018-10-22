@@ -4590,7 +4590,7 @@ public class AssignmentServiceImpl
 							e.getMessage());
 				}
 			}
-			updateMarkerListIfNewMarkersAdded(assignment.getContext(), siteAssignmentMarkers);
+			updateMarkerListIfNewMarkersAdded(assignment.getContext(), siteAssignmentMarkers, assignment);
 		}
 		return siteAssignmentMarkers;
 	}
@@ -4602,7 +4602,7 @@ public class AssignmentServiceImpl
 	 * @param siteId
 	 * @param assignmentMarkers
 	 */
-	private void updateMarkerListIfNewMarkersAdded(String siteId, Set<AssignmentMarker> assignmentMarkers) {
+	private void updateMarkerListIfNewMarkersAdded(String siteId, Set<AssignmentMarker> assignmentMarkers, Assignment assignment) {
 
 		try {
 			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(siteId));
@@ -4626,9 +4626,15 @@ public class AssignmentServiceImpl
 							AssignmentMarker newAssignmentMarker = new AssignmentMarker();
 							newAssignmentMarker.setContext(siteId);
 							newAssignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
+							newAssignmentMarker.setDateCreated(Instant.now());
 							newAssignmentMarker.setMarkerUserId(user.getEid());
+							newAssignmentMarker.setNumberAllocated(0);
+							newAssignmentMarker.setNumberUploaded(0);
+							newAssignmentMarker.setOrderNumber(0);
+							newAssignmentMarker.setQuotaPercentage(new Double(0));
+							newAssignmentMarker.setAssignment(assignment);
 							assignmentMarkers.add(newAssignmentMarker);
-
+							//assignmentRepository.updateAssignmentMarker(newAssignmentMarker); Not working currently
 						}
 					}
 					found = false;
@@ -4819,8 +4825,9 @@ public class AssignmentServiceImpl
 	}
 	
 	@Override
-	public void markerQuotaCalculation(Assignment assignment, AssignmentSubmission submission) {
+	public boolean markerQuotaCalculation(Assignment assignment, AssignmentSubmission submission) {
 
+		Boolean success = false;
 		String assignmentId = assignment.getId();
 		List<AssignmentMarker> asnMrks = assignmentRepository.findMarkersForAssignmentById(assignmentId);
 
@@ -4835,10 +4842,13 @@ public class AssignmentServiceImpl
 
 		try {
 			createAssignmentSubmissionMarker(asnSM);
+			success = true;
 		} catch (PermissionException e) {
 			log.warn("Could not upate submissionMarker for new submission {}, for assignment: {}", submission.getId(),
 					assignment.getId());
 		}
+		
+		return success;
 	}
 
 	private AssignmentMarker getMarkerForSubmissionOfAssignment(List<AssignmentMarker> asnMrks, double totalSubmissions,
@@ -4930,6 +4940,51 @@ public class AssignmentServiceImpl
 						} catch (PermissionException e) {
 							log.warn("Could not upate AssignmentMarkers {} and {}", newMarker.getId(),
 									oldMarker.getId());
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public void quotaCalculationJob() {
+		if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
+			Collection <Assignment> assignments = assignmentRepository.findAllAssignments(true);
+			String message;
+			Event event;
+			for (Assignment assignment : assignments) {
+				updateMarkerListIfNewMarkersAdded(assignment.getContext(), assignment.getMarkers(), assignment);
+				Set<AssignmentSubmission> missingAssignmentSubmissions = new HashSet<>();
+				Set<AssignmentSubmission> submissionSet = assignment.getSubmissions();
+				Set <AssignmentMarker> amSet = assignment.getMarkers();
+				Iterator<AssignmentMarker> markers = amSet.iterator();
+				while (markers.hasNext()) {
+					AssignmentMarker am = markers.next();
+					Set<AssignmentSubmissionMarker> asmSet = am.getSubmissionMarkers();
+					Iterator<AssignmentSubmissionMarker> asmIter = asmSet.iterator();
+					while (asmIter.hasNext()) {
+						AssignmentSubmissionMarker asm = asmIter.next();
+						AssignmentSubmission studentSubmission = asm.getAssignmentSubmission();
+						if (missingAssignmentSubmissions.contains(studentSubmission)) {
+							missingAssignmentSubmissions.remove(studentSubmission);
+						}
+						if (!submissionSet.contains(studentSubmission)) {
+							missingAssignmentSubmissions.add(studentSubmission);
+						}
+					}
+				}
+				if (CollectionUtils.isNotEmpty(missingAssignmentSubmissions)) {
+					Iterator<AssignmentSubmission> asIter = missingAssignmentSubmissions.iterator();
+					Integer submissionTotal = missingAssignmentSubmissions.size();
+					message = "AssignmentMarkerQuotaCalculationJob found: " + submissionTotal + " submissions that weren't assigned to markers";
+					event = eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_QUOTA_CALCULATION, message, false);
+					eventTrackingService.post(event);
+					while (asIter.hasNext()) {
+						AssignmentSubmission as = asIter.next();
+						if (markerQuotaCalculation(assignment, as)) {
+							message = "Submission: " + as + " has been assigned to a marker in assignment: " + assignment;
+							event = eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_QUOTA_CALCULATION, message, false);
+							eventTrackingService.post(event);
 						}
 					}
 				}

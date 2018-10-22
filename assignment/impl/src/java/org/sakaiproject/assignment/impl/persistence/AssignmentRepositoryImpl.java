@@ -55,6 +55,15 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
                 .add(Restrictions.eq("deleted", Boolean.FALSE))
                 .list();
     }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Assignment> findAllAssignments(Boolean isMarker) {
+        return startCriteriaQuery()
+                .add(Restrictions.eq("isMarker", isMarker))
+                .add(Restrictions.eq("deleted", Boolean.FALSE))
+                .list();
+    }
 
     @Override
     @SuppressWarnings("unchecked")

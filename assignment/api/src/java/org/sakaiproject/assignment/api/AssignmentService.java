@@ -776,7 +776,9 @@ public interface AssignmentService extends EntityProducer {
 	
 	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId, String markerId);
 	
-	void markerQuotaCalculation(Assignment assignment, AssignmentSubmission submission);
+	boolean markerQuotaCalculation(Assignment assignment, AssignmentSubmission submission);
 	
 	void reassignSubmissionsNotMarked(AssignmentMarker oldMarker, AssignmentMarker newMarker, String context);
+	
+	public void quotaCalculationJob ();
 }

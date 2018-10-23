@@ -781,4 +781,8 @@ public interface AssignmentService extends EntityProducer {
 	void reassignSubmissionsNotMarked(AssignmentMarker oldMarker, AssignmentMarker newMarker, String context);
 	
 	public void quotaCalculationJob ();
+	
+	public Boolean checkAssignmentMarkingForDeletedUsers(AssignmentMarker marker, Assignment assignment, AssignmentSubmission studentSubmission, Double quota);
+	
+	public void reassignMarkerQuotaForDeletedMarkers(Assignment assignment);
 }

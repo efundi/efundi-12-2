@@ -4629,7 +4629,7 @@ public class AssignmentServiceImpl
 							newAssignmentMarker.setMarkerUserId(user.getEid());
 							newAssignmentMarker.setAssignment(assignment);
 							assignmentMarkers.add(newAssignmentMarker);
-							//assignmentRepository.updateAssignmentMarker(newAssignmentMarker); Not working currently
+							assignmentRepository.updateAssignmentMarker(newAssignmentMarker);
 						}
 					}
 					found = false;
@@ -4955,17 +4955,20 @@ public class AssignmentServiceImpl
 				Iterator<AssignmentMarker> markers = amSet.iterator();
 				while (markers.hasNext()) {
 					AssignmentMarker am = markers.next();
+					Double quota = am.getQuotaPercentage();
 					Set<AssignmentSubmissionMarker> asmSet = am.getSubmissionMarkers();
 					Iterator<AssignmentSubmissionMarker> asmIter = asmSet.iterator();
 					while (asmIter.hasNext()) {
 						AssignmentSubmissionMarker asm = asmIter.next();
 						AssignmentSubmission studentSubmission = asm.getAssignmentSubmission();
-						if (missingAssignmentSubmissions.contains(studentSubmission)) {
-							missingAssignmentSubmissions.remove(studentSubmission);
-						}
-						if (!submissionSet.contains(studentSubmission)) {
-							missingAssignmentSubmissions.add(studentSubmission);
-						}
+//						if (!checkAssignmentMarkingForDeletedUsers(am, assignment, studentSubmission, quota)) {
+							if (missingAssignmentSubmissions.contains(studentSubmission)) {
+								missingAssignmentSubmissions.remove(studentSubmission);
+							}
+							if (!submissionSet.contains(studentSubmission)) {
+								missingAssignmentSubmissions.add(studentSubmission);
+							}
+//						}
 					}
 				}
 				if (CollectionUtils.isNotEmpty(missingAssignmentSubmissions)) {
@@ -4985,5 +4988,32 @@ public class AssignmentServiceImpl
 				}
 			}
 		}
+	}
+	
+	public Boolean checkAssignmentMarkingForDeletedUsers(AssignmentMarker marker, Assignment assignment, AssignmentSubmission studentSubmission, Double quota) {
+		String markerId = marker.getMarkerUserId();
+		String message;
+		Event event;
+		try {
+			if (userDirectoryService.getUserId(markerId) == null) {
+				if (quota > 0) {
+					reassignMarkerQuotaForDeletedMarkers(assignment);
+					marker.setQuotaPercentage(new Double(0));
+					assignmentRepository.updateAssignmentMarker(marker);
+				}
+				markerQuotaCalculation(assignment, studentSubmission);
+				message = "User: " + markerId + " wasn't found in Sakai, but still had marking assigned to them for Assignment: " + assignment + " - Remaining marking was reassigned";
+				event = eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_QUOTA_CALCULATION, message, false);
+				eventTrackingService.post(event);
+				return true;
+			}
+		} catch (UserNotDefinedException e) {
+			log.error("AssignmentServiceImpl assignmentHasMarkingForDeletedUser " + e.getMessage());
+		}
+		return false;
+	}
+	
+	public void reassignMarkerQuotaForDeletedMarkers(Assignment assignment) {
+		
 	}
 }

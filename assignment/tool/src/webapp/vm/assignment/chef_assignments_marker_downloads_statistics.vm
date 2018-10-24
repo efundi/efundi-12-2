@@ -62,7 +62,10 @@
 												<th>Upload</th>
 												<th>Download All</th>
 											#end
-											<th>In/Out/Total</th>
+											<th>New Submissions</th>
+											<th>Uploaded</th>
+											<th>Total</th>
+											<th>Quota</th>
 										</tr>	
 									</thead>
 									<tbody>
@@ -78,7 +81,16 @@
 													<td><a href="" id="downloadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'markerDownload', null, null, null ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downall')</a></td>
 												#end
 												<td>
-													$marker.markerStatsDisplay
+													$marker.newAssignments
+												</td>
+												<td>
+													$marker.numberUploaded
+												</td>
+												<td>
+													$marker.numberAllocated
+												</td>
+												<td>
+													$marker.quotaPercentage %
 												</td>
 											</tr>
 											#set( $counter = $counter + 1 )

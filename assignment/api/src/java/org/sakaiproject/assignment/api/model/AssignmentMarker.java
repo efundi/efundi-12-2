@@ -91,10 +91,10 @@ public class AssignmentMarker {
     private String userDisplayId;
     
     @Transient
-    private String markerStatsDisplay;
+    private String newAssignments;
     
-    public String getMarkerStatsDisplay(){   	        			
-    	this.markerStatsDisplay = (getNumberAllocated() - getNumberDownloaded()) + " / " + getNumberUploaded() + " / " + getNumberAllocated();    	
-		return this.markerStatsDisplay;
+    public String getnewAssignments(){   	        			
+    	this.newAssignments = getNumberAllocated() - getNumberDownloaded()+"";  	
+		return this.newAssignments;
     }	
 }

@@ -16,11 +16,13 @@
 package org.sakaiproject.assignment.impl.persistence;
 
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
@@ -112,8 +114,17 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
             assignment.getSubmissions().remove(submission);
             session.update(assignment);
             session.flush();
-            //markerQuotaCalculation();
         }
+    }
+    
+    @Override
+    @Transactional
+    public void deleteAssignmentMarker(Assignment assignment, AssignmentMarker marker) {
+    	Session session = sessionFactory.getCurrentSession();
+    	session.refresh(assignment);
+        assignment.getMarkers().remove(marker);
+        session.update(assignment);
+        session.flush();
     }
 
     @Override
@@ -307,4 +318,14 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
                 .add(Restrictions.eq("deleted", Boolean.FALSE))
                 .list();
     }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<AssignmentSubmissionMarker> findAssignmentMarkerUnmarkedSubmissions(String assignmentId, String markerId) {
+    	Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AssignmentSubmissionMarker.class);
+		criteria.createAlias("assignmentMarker", "asn");
+		return criteria.add(Restrictions.eq("context", assignmentId))
+				.add(Restrictions.eq("asn.markerUserId", markerId))
+				.add(Restrictions.eq("uploaded", Boolean.FALSE)).list();
+	}
 }

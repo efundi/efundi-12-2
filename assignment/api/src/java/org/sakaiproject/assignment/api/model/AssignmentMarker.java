@@ -68,7 +68,7 @@ public class AssignmentMarker {
     
     @Type(type = "org.sakaiproject.springframework.orm.hibernate.type.InstantType")
     @Column(name = "CREATED_DATE", nullable = false)
-    private Instant dateCreated = Instant.now();
+    private Instant dateCreated;
 
     @Type(type = "org.sakaiproject.springframework.orm.hibernate.type.InstantType")
     @Column(name = "MODIFIED_DATE")

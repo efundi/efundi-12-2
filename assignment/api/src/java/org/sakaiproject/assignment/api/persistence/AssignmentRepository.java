@@ -103,4 +103,8 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
 	public AssignmentSubmissionMarker findSubmissionMarkerForMarkerIdAndSubmissionId(String markerId, String submissionId);
 	
 	public List<Assignment> findAllAssignmentsForMarkerQuotaCalculation();
+	
+	public List<AssignmentSubmissionMarker> findAssignmentMarkerUnmarkedSubmissions(String assignmentId, String markerId);
+	
+	public void deleteAssignmentMarker(Assignment assignment, AssignmentMarker marker);
 }

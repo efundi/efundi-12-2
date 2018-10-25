@@ -1,11 +1,14 @@
 package org.sakaiproject.assignment.impl;
 
+import java.util.Collection;
+
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.sakaiproject.api.app.scheduler.SchedulerManager;
 import org.sakaiproject.assignment.api.AssignmentService;
+import org.sakaiproject.assignment.api.model.Assignment;
 import org.sakaiproject.component.api.ServerConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,6 +30,7 @@ public class AssignmentMarkerQuotaCalculationJob implements Job {
 	public void execute(JobExecutionContext jobInfo) throws JobExecutionException {
 		if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
 			assignmentService.quotaCalculationJob();
+			//assignmentService.reassignMarkerQuotaForDeletedMarkers();
 		}
 	}
 

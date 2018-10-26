@@ -72,9 +72,9 @@
 										## Set static markers
 										#set($counter = 0)
 										#foreach( $marker in $assignment.markers )
-											<tr #if( $counter % 2 == 0) style="background: #fff" #else style="background: #f9f9f9" #end>
+											<tr #if("$!marker.UserRole" == "") style="background: #f2dede" #elseif( $counter % 2 == 0) style="background: #fff" #else style="background: #f9f9f9" #end>
 												<td>$marker.UserDisplayName</td>
-												<td>$marker.UserRole</td>
+												<td>$!marker.UserRole</td>
 												#if (!$!hideMarkerDownloadLinks)
 													<td><a href="#" id="download" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'markerPartialDownload', null, null, null ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downloadall.button.download')</a></td>
 													<td><a href="" id="uploadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'markerUpload', null, null, null ); return false;" title="$!tlang.getString('uploadall.title')">$!tlang.getString('uploadall.button.upload')</a></td>

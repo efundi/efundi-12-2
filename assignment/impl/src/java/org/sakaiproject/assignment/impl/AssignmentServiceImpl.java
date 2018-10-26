@@ -4742,9 +4742,20 @@ public class AssignmentServiceImpl
 						if (securityService.isSuperUser() || currentUserDisplayId.equals(user.getEid())) {
 							assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
 							assignmentMarker.setUserDisplayId(user.getEid());
-							assignmentMarker.setUserRole(realm.getUserRole(user.getId()).getId());
+							String role = "";
+							try {
+								role = realm.getUserRole(user.getId()).getId();
+							} catch (NullPointerException e) {
+								log.warn("AssignmentServiceImpl setMarkersForAssignmentByLoggedInUser " + e.getMessage());
+							}
+							assignmentMarker.setUserRole(role);
 							markersForLoggedInUser.add(assignmentMarker);
 						}
+					} else {
+						assignmentMarker.setUserDisplayName(assignmentMarker.getMarkerUserId() + " ( - )");
+						assignmentMarker.setUserDisplayId(assignmentMarker.getMarkerUserId());
+						assignmentMarker.setUserRole("");
+						markersForLoggedInUser.add(assignmentMarker);
 					}
 				}
 				assignment.setMarkers(markersForLoggedInUser);
@@ -4990,13 +5001,19 @@ public class AssignmentServiceImpl
 	public Boolean checkAssignmentMarkingForDeletedUsers(AssignmentMarker marker, Assignment assignment) {
 		String markerId = marker.getMarkerUserId();
 		try {
+			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(assignment.getContext()));
 			if (userDirectoryService.getUserId(markerId) == null) {
 				String message = "User: " + markerId + " wasn't found in Sakai, but still had marking assigned to them for Assignment: " + assignment + " - Remaining marking will be reassigned";
 				Event event = eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_QUOTA_CALCULATION, message, false);
 				eventTrackingService.post(event);
 				return true;
+			} else if (realm.getUserRole(marker.getMarkerUserId()).getId() != null) {
+				String message = "User: " + markerId + " wasn't found on site " + realm.getId() + ", but still had a database entry for Assignment: " + assignment + " - Removing database entry if marker was inactive";
+				Event event = eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_QUOTA_CALCULATION, message, false);
+				eventTrackingService.post(event);
+				return true;
 			}
-		} catch (UserNotDefinedException e) {
+		} catch (UserNotDefinedException | GroupNotDefinedException e) {
 			log.error("AssignmentServiceImpl assignmentHasMarkingForDeletedUser " + e.getMessage());
 		}
 		return false;
@@ -5050,10 +5067,9 @@ public class AssignmentServiceImpl
 					marker.setQuotaPercentage(newQuotaValue);
 				} else {
 					marker.setQuotaPercentage(new Double(0));
-				}
-				Assignment assignment = marker.getAssignment();
-				if (marker.getQuotaPercentage() == 0 && marker.getNumberUploaded() == 0 && assignment.getCloseDate().isBefore(Instant.now())) {
-					assignmentRepository.deleteAssignmentMarker(assignment, marker);
+					if (marker.getNumberUploaded() == 0) {
+						assignmentRepository.deleteAssignmentMarker(marker);
+					}
 				}
 			}
 		}

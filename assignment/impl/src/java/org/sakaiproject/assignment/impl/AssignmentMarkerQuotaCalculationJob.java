@@ -30,7 +30,7 @@ public class AssignmentMarkerQuotaCalculationJob implements Job {
 	public void execute(JobExecutionContext jobInfo) throws JobExecutionException {
 		if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
 			assignmentService.quotaCalculationJob();
-			//assignmentService.reassignMarkerQuotaForDeletedMarkers();
+			assignmentService.reassignMarkerQuotaForDeletedMarkers();
 		}
 	}
 

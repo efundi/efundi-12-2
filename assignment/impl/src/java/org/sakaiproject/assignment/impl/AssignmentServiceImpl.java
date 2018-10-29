@@ -5000,13 +5000,18 @@ public class AssignmentServiceImpl
 		String markerId = marker.getMarkerUserId();
 		try {
 			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(assignment.getContext()));
-			if (userDirectoryService.getUserId(markerId) == null) {
-				String message = "User: " + markerId + " wasn't found in Sakai, but still had marking assigned to them for Assignment: " + assignment + " - Remaining marking will be reassigned";
-				Event event = eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_QUOTA_CALCULATION, message, false);
-				eventTrackingService.post(event);
-				return true;
-			} else if (realm.getUserRole(marker.getMarkerUserId()).getId() != null) {
-				String message = "User: " + markerId + " wasn't found on site " + realm.getId() + ", but still had a database entry for Assignment: " + assignment + " - Removing database entry if marker was inactive";
+			String userId = null;
+			String role = null;
+			try {
+				userId = userDirectoryService.getUserId(markerId);
+				role = realm.getUserRole(userDirectoryService.getUserId(markerId)).getId();
+			} catch (NullPointerException e) {
+				String message = "";
+				if (userId == null) {
+					message = "User: " + markerId + " wasn't found in Sakai, but still had marking assigned to them for Assignment: " + assignment + " - Remaining marking will be reassigned";
+				} else if (role == null) {
+					message = "User: " + markerId + " wasn't found on site " + realm.getId() + ", but still had a database entry for Assignment: " + assignment + " - Removing database entry if marker was inactive";
+				}
 				Event event = eventTrackingService.newEvent(AssignmentConstants.EVENT_MARKER_QUOTA_CALCULATION, message, false);
 				eventTrackingService.post(event);
 				return true;
@@ -5027,8 +5032,8 @@ public class AssignmentServiceImpl
 					AssignmentMarker am = markers.next();
 					if (checkAssignmentMarkingForDeletedUsers(am, assignment)) {
 						List<AssignmentSubmissionMarker> asmList = assignmentRepository.findAssignmentMarkerUnmarkedSubmissions(assignment.getId(), am.getMarkerUserId());
+						reassignDeletedMarkersQuota(amSet, am);
 						if (CollectionUtils.isNotEmpty(asmList)) {
-							reassignDeletedMarkersQuota(amSet, am);
 							assignmentRepository.updateAssignmentMarker(am);
 							for (AssignmentSubmissionMarker asm : asmList) {
 								AssignmentSubmission submission = asm.getAssignmentSubmission();
@@ -5046,10 +5051,15 @@ public class AssignmentServiceImpl
 	public void reassignDeletedMarkersQuota(Set<AssignmentMarker> assignmentMarkers, AssignmentMarker deletedMarker) {
 		Double reassignQuotaValue = deletedMarker.getQuotaPercentage();
 		Integer reassignMarkerCount = assignmentMarkers.size() - 1;
+		Integer reassignValue = 0;
+		Double value = new Double(0);
+		Double reassignValueRemainder = new Double(0);
+		if (reassignQuotaValue > 0) {
+			reassignValue = (int) (reassignQuotaValue / reassignMarkerCount);
+			value = (double) (reassignValue * reassignMarkerCount);
+			reassignValueRemainder = reassignQuotaValue - value;
+		}
 		if (reassignMarkerCount > 0) {
-			Integer reassignValue = (int) (reassignQuotaValue / reassignMarkerCount);
-			Double value = (double) (reassignValue * reassignMarkerCount);
-			Double reassignValueRemainder = reassignQuotaValue - value;
 			Iterator<AssignmentMarker> markers = assignmentMarkers.iterator();
 			Boolean remainderUsed = false;
 			while (markers.hasNext()) {

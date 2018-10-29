@@ -4739,7 +4739,6 @@ public class AssignmentServiceImpl
 					assignmentMarker = assignmentMarkerSetIter.next();
 					user = userDirectoryService.getUserByEid(assignmentMarker.getMarkerUserId());
 					if (user != null) {
-						if (securityService.isSuperUser() || currentUserDisplayId.equals(user.getEid())) {
 							assignmentMarker.setUserDisplayName(user.getEid() + " (" + user.getDisplayName() + ")");
 							assignmentMarker.setUserDisplayId(user.getEid());
 							String role = "";
@@ -4750,7 +4749,6 @@ public class AssignmentServiceImpl
 							}
 							assignmentMarker.setUserRole(role);
 							markersForLoggedInUser.add(assignmentMarker);
-						}
 					} else {
 						assignmentMarker.setUserDisplayName(assignmentMarker.getMarkerUserId() + " ( - )");
 						assignmentMarker.setUserDisplayId(assignmentMarker.getMarkerUserId());
@@ -4761,7 +4759,7 @@ public class AssignmentServiceImpl
 				assignment.setMarkers(markersForLoggedInUser);
 			} catch (UserNotDefinedException e) {
 				log.error("Could not find user with id = {}, {}", assignmentMarker.getMarkerUserId(), e.getMessage());
-			} catch (GroupNotDefinedException e) {
+			}catch (GroupNotDefinedException e) {
 				log.warn("Cannot get authz group for site = {}, {}", assignment.getContext(), e.getMessage());
 			}
 		}

@@ -18,7 +18,6 @@
 <!-- start: chef_assignments_marker_downloads_statistics.vm  -->
 <div class="portletBody container-fluid">
 	#navBarHREF( $allowAddAssignment $withGrade $allowGradeSubmission $allowAddAssignment $allowRecoverAssignment $allowAllGroups $assignmentscheck $allowUpdateSite $enableViewOption $view )
-
 	<div class="page-header" id="marker_downloads_statistics">
         <h1>
 			$tlang.getString("markerdownstats")
@@ -76,9 +75,15 @@
 												<td>$marker.UserDisplayName</td>
 												<td>$!marker.UserRole</td>
 												#if (!$!hideMarkerDownloadLinks)
+													#if("$!loginUserDispName" == "$!marker.userDisplayId")
 													<td><a href="#" id="download" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'markerPartialDownload', null, null, null ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downloadall.button.download')</a></td>
 													<td><a href="" id="uploadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'markerUpload', null, null, null ); return false;" title="$!tlang.getString('uploadall.title')">$!tlang.getString('uploadall.button.upload')</a></td>
 													<td><a href="" id="downloadAll" onclick="SPNR.insertSpinnerAfter( this, escapeList, null ); ASN.submitForm( 'viewForm$assignmentCount', 'markerDownload', null, null, null ); return false;" title="$!tlang.getString('downall')">$!tlang.getString('downall')</a></td>
+												#else
+													<td></td>
+													<td></td>
+													<td></td>
+												#end
 												#end
 												<td>
 													$marker.newAssignments

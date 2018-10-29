@@ -1102,6 +1102,7 @@ public class AssignmentAction extends PagedResourceActionII {
         // allow marker assignment?
         boolean allowUserMarkerDownloadAndStats = assignmentService.allowUserMarkerDownloadAndStats(contextString);
         context.put("allowUserMarkerDownloadAndStats", Boolean.valueOf(allowUserMarkerDownloadAndStats));
+        context.put("loginUserDispName", userDirectoryService.getCurrentUser().getEid());
         
         // check if assignment marker is enabled?
         boolean isEnabledAssignmentMarker = serverConfigurationService.getBoolean("assignment.useMarker", false);
@@ -4911,6 +4912,7 @@ public class AssignmentAction extends PagedResourceActionII {
         context.put("hasFeedbackText", Boolean.TRUE);
         context.put("hasFeedbackAttachment", Boolean.TRUE);
         context.put("isMarker", Boolean.TRUE);
+       
 
         boolean isDownload = MODE_MARKER_DOWNLOAD.equals(state.getAttribute(STATE_MODE));
         if(isDownload) {

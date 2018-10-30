@@ -6176,9 +6176,7 @@ public class AssignmentAction extends PagedResourceActionII {
                         if (number >= 1) {
                             properties.put(AssignmentConstants.ALLOW_RESUBMIT_NUMBER, String.valueOf(number - 1));
                         }
-                    }
-                    
-                  
+                    }                                 
 
                     // for resubmissions
                     // when resubmit, keep the Returned flag on till the instructor grade again.

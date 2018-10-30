@@ -4570,6 +4570,7 @@ public class AssignmentServiceImpl
 
 	@Override
 	public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment) {
+		reassignMarkerQuotaForDeletedMarkers();
 		Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
 		List<AssignmentMarker> assignmentMarkers = assignmentRepository
 				.findMarkersForAssignmentById(assignment.getId());
@@ -5051,35 +5052,41 @@ public class AssignmentServiceImpl
 	public void reassignDeletedMarkersQuota(Set<AssignmentMarker> assignmentMarkers, AssignmentMarker deletedMarker) {
 		Double reassignQuotaValue = deletedMarker.getQuotaPercentage();
 		Integer reassignMarkerCount = assignmentMarkers.size() - 1;
-		Integer reassignValue = 0;
-		Double value = new Double(0);
+		Float reassignValue = new Float(0);
+		Float value = new Float(0);
 		Double reassignValueRemainder = new Double(0);
-		if (reassignQuotaValue > 0) {
-			reassignValue = (int) (reassignQuotaValue / reassignMarkerCount);
-			value = (double) (reassignValue * reassignMarkerCount);
-			reassignValueRemainder = reassignQuotaValue - value;
-		}
-		if (reassignMarkerCount > 0) {
-			Iterator<AssignmentMarker> markers = assignmentMarkers.iterator();
-			Boolean remainderUsed = false;
-			while (markers.hasNext()) {
-				AssignmentMarker marker = markers.next();
-				if (marker != deletedMarker) {
-					Double newQuotaValue;
-					if (!remainderUsed) {
-						remainderUsed = true;
-						newQuotaValue = marker.getQuotaPercentage() + (new Double(reassignValue)) + reassignValueRemainder;
+		try {
+			if (reassignQuotaValue > 0) {
+				reassignValue = (float) Math.round((reassignQuotaValue / reassignMarkerCount) * 10) / 10;
+				value = (float) (Math.round((reassignValue * reassignMarkerCount)* 10) / 10);
+				reassignValueRemainder = (double) Math.round((reassignQuotaValue - value)* 10) / 10;
+			}
+			if (reassignMarkerCount > 0) {
+				Iterator<AssignmentMarker> markers = assignmentMarkers.iterator();
+				Boolean remainderUsed = false;
+				while (markers.hasNext()) {
+					AssignmentMarker marker = markers.next();
+					if (marker != deletedMarker) {
+						Double newQuotaValue;
+						if (!remainderUsed) {
+							remainderUsed = true;
+							newQuotaValue = marker.getQuotaPercentage() + ((double) Math.round((reassignValue + reassignValueRemainder) * 10) / 10);
+						} else {
+							newQuotaValue = marker.getQuotaPercentage() + ((double) Math.round(reassignValue * 10) / 10);
+						}
+						marker.setQuotaPercentage((double) Math.round(newQuotaValue * 10) / 10);
+						updateAssignmentMarker(marker);
 					} else {
-						newQuotaValue = marker.getQuotaPercentage() + reassignValue;
-					}
-					marker.setQuotaPercentage(newQuotaValue);
-				} else {
-					marker.setQuotaPercentage(new Double(0));
-					if (marker.getNumberUploaded() == 0) {
-						assignmentRepository.deleteAssignmentMarker(marker);
+						marker.setQuotaPercentage(new Double(0));
+						updateAssignmentMarker(marker);
+						if (marker.getNumberUploaded() == 0) {
+							assignmentRepository.deleteAssignmentMarker(marker);
+						}
 					}
 				}
 			}
+		} catch (PermissionException e) {
+			log.error("AssignmentServiceImpl reassignDeletedMarkersQuota updateAssignmentMarker " + e.getMessage());
 		}
 	}
 	

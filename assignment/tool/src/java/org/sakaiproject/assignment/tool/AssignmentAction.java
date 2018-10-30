@@ -6341,7 +6341,7 @@ public class AssignmentAction extends PagedResourceActionII {
                     }
                 }                
                 try {
-					if (a.getIsMarker() && !isMarkerResubmit && !securityService.isUserRoleSwapped()) {
+					if (a.getIsMarker() && !isMarkerResubmit && !securityService.isUserRoleSwapped() && submission.getSubmitted()) {
 						Boolean submissionAssigned = assignmentService.markerQuotaCalculation(a, submission);
 						if (!submissionAssigned) {
 							log.warn("Could not assign submission: {}", submission.getId());

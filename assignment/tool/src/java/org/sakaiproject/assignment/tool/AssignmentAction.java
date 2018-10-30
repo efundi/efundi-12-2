@@ -6021,6 +6021,7 @@ public class AssignmentAction extends PagedResourceActionII {
         String aReference = (String) state.getAttribute(VIEW_SUBMISSION_ASSIGNMENT_REFERENCE);
         Assignment a = getAssignment(aReference, "post_save_submission", state);
 
+        Boolean isMarkerResubmit =  false;
         if (a != null && assignmentService.canSubmit(contextString, a)) {
             ParameterParser params = data.getParameters();
             // retrieve the submission text (as formatted text)
@@ -6142,6 +6143,10 @@ public class AssignmentAction extends PagedResourceActionII {
                     if (submission.getDateSubmitted() == null || !submission.getSubmitted()) {
                         isPreviousSubmissionTime = false;
                     }
+                    
+                    if (a.getIsMarker()) {
+                    	isMarkerResubmit = checkForResubmissionForMarkerAllocation(submission, properties.get(AssignmentConstants.ALLOW_RESUBMIT_NUMBER) != null);
+                    }
 
                     if (a.getIsGroup()) {
                         if (StringUtils.isNotBlank(original_group_id) && !StringUtils.equals(original_group_id, group_id)) {
@@ -6172,6 +6177,8 @@ public class AssignmentAction extends PagedResourceActionII {
                             properties.put(AssignmentConstants.ALLOW_RESUBMIT_NUMBER, String.valueOf(number - 1));
                         }
                     }
+                    
+                  
 
                     // for resubmissions
                     // when resubmit, keep the Returned flag on till the instructor grade again.
@@ -6335,12 +6342,17 @@ public class AssignmentAction extends PagedResourceActionII {
                         assignmentService.postReviewableSubmissionAttachments(submission);
                     }
                 }                
-                if (a.getIsMarker() && !checkForResubmissionForMarkerAllocation(submission, properties.get(AssignmentConstants.ALLOW_RESUBMIT_NUMBER) != null, params.getString("submitterIdInstructor"))) {
-    				Boolean submissionAssigned = assignmentService.markerQuotaCalculation(a, submission);
-    				if (!submissionAssigned) {
-    					log.warn("Could not assign submission: {}", submission.getId());
-    				}
-    				}
+                try {
+					if (a.getIsMarker() && !isMarkerResubmit && !securityService.isUserRoleSwapped()) {
+						Boolean submissionAssigned = assignmentService.markerQuotaCalculation(a, submission);
+						if (!submissionAssigned) {
+							log.warn("Could not assign submission: {}", submission.getId());
+						}
+						}
+				} catch (IdUnusedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
 
             if (state.getAttribute(STATE_MESSAGE) == null) {
@@ -6350,9 +6362,9 @@ public class AssignmentAction extends PagedResourceActionII {
     } // post_save_submission
     //We want to ignore a resubmission as sakai does change the assignment content info in the db already.
 	private boolean checkForResubmissionForMarkerAllocation(AssignmentSubmission submission,
-			Boolean resubmissionProperty, String instructorSubmitter) {
+			Boolean resubmissionProperty) {
 		if (submission.getSubmitted() && (submission.getDateSubmitted() != null || submission.getSubmitted())
-				&& resubmissionProperty && instructorSubmitter == null) {
+				&& resubmissionProperty) {
 			return true;
 		} else {
 			return false;

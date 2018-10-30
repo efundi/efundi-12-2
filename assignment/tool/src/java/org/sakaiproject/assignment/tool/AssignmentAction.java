@@ -6335,7 +6335,7 @@ public class AssignmentAction extends PagedResourceActionII {
                         assignmentService.postReviewableSubmissionAttachments(submission);
                     }
                 }                
-                if (a.getIsMarker()){
+                if (a.getIsMarker() && !checkForResubmissionForMarkerAllocation(submission, properties.get(AssignmentConstants.ALLOW_RESUBMIT_NUMBER) != null, params.getString("submitterIdInstructor"))) {
     				Boolean submissionAssigned = assignmentService.markerQuotaCalculation(a, submission);
     				if (!submissionAssigned) {
     					log.warn("Could not assign submission: {}", submission.getId());
@@ -6348,6 +6348,17 @@ public class AssignmentAction extends PagedResourceActionII {
             }
         }
     } // post_save_submission
+    //We want to ignore a resubmission as sakai does change the assignment content info in the db already.
+	private boolean checkForResubmissionForMarkerAllocation(AssignmentSubmission submission,
+			Boolean resubmissionProperty, String instructorSubmitter) {
+		if (submission.getSubmitted() && (submission.getDateSubmitted() != null || submission.getSubmitted())
+				&& resubmissionProperty && instructorSubmitter == null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 
     /**
      * Takes the inline submission, prepares it as an attachment to the submission and queues the attachment with the content review service

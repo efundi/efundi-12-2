@@ -9022,12 +9022,12 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 	} // doUpdate_participant
 	
 	//NAM-43
-	private Set<String> testMarkersBeingChanged(List<Participant> participants, ParameterParser params, String maintainRoleString)
-	{		
-		// create list of all partcipants that have been 'Charles Bronson-ed'
+	private Set<String> testMarkersBeingChanged(List<Participant> participants, ParameterParser params,
+			String maintainRoleString) {
 		Set<String> removedParticipantIds = new HashSet();
 		Set<String> deactivatedParticipants = new HashSet();
 		Set<String> markerRoledParticipants = new HashSet();
+		// create list of all partcipants being removed
 		if (params.getStrings("selectedUser") != null) {
 			List removals = new ArrayList(Arrays.asList(params.getStrings("selectedUser")));
 			for (int i = 0; i < removals.size(); i++) {
@@ -9036,11 +9036,10 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 			}
 		}
 		// create list of all participants that have been deactivated
-		for(Object statusParticipant : participants ) {
-			String activeGrantId = ((Participant)statusParticipant).getEid();
+		for (Participant statusParticipant : participants) {
+			String activeGrantId = statusParticipant.getUniqname();
 			String activeGrantField = "activeGrant" + activeGrantId;
-		
-			if (params.getString(activeGrantField) != null) { 
+			if (params.getString(activeGrantField) != null) {
 				boolean activeStatus = params.getString(activeGrantField).equalsIgnoreCase("true") ? true : false;
 				if (activeStatus == false) {
 					deactivatedParticipants.add(activeGrantId);
@@ -9048,26 +9047,22 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 			}
 		}
 		// create list of all participants that have role changes
-		for(Object roleParticipant : participants ) {
-			String id = ((Participant)roleParticipant).getEid();
+		for (Object roleParticipant : participants) {
+			String id = ((Participant) roleParticipant).getUniqname();
 			String roleId = "role" + id;
-			String newRole = params.getString(roleId);			 
-			if ((deactivatedParticipants.contains(id)==false) && ((Participant)roleParticipant).isActive() != false) { // skip any that are not already inactive or are not  candidates for deactivation
-				 if (removedParticipantIds.contains(id) == false) {
-					if (newRole != null){
-						if (!newRole.equals(maintainRoleString)) {
-							markerRoledParticipants.add(roleId+":"+id); // we need the roleID and the userID in the set.
-						}								
-					}
+			String newRole = params.getString(roleId);
+			if (newRole != null) {
+				if (!newRole.equals(((Participant) roleParticipant).getRole())) {
+					markerRoledParticipants.add(roleId + ":" + id); // we need the roleID and the userID in the set.
 				}
-			}	
+			}
 		}
-		
+
 		Set<String> markersAffected = new HashSet();
 		markersAffected.addAll(removedParticipantIds);
 		markersAffected.addAll(deactivatedParticipants);
 		markersAffected.addAll(markerRoledParticipants);
-		
+
 		return markersAffected;
 	}
 

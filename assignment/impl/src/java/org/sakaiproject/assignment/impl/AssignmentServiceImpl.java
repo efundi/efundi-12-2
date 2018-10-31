@@ -4675,7 +4675,7 @@ public class AssignmentServiceImpl
 		Set<String> blockedChanges = new HashSet<String>();
 		try {
 			AuthzGroup realm = authzGroupService.getAuthzGroup(siteService.siteReference(siteId));
-			Set<String> allowedMarkers = getMarkerEidsSetForSite(siteId); // gets markers with marking for this site.
+			Set<String> allowedMarkers = getMarkersSetForSite(siteId); // gets markers with marking for this site.
 			Set<String> allowedMarkerRoles = realm.getRolesIsAllowed(SECURE_ASSIGNMENT_MARKER); // gets all roles with permission
 
 			for (String user : markersBeingAffected) {
@@ -4700,14 +4700,19 @@ public class AssignmentServiceImpl
 		return blockedChanges;
 	}
 	
-	private Set<String> getMarkerEidsSetForSite(String contextString) {
- 		Collection<Assignment> asnCollection = getAssignmentsForContext(contextString);
+	private Set<String> getMarkersSetForSite(String contextString) {
+		Collection<Assignment> asnCollection = getAssignmentsForContext(contextString);
 		Set<String> userIds = new HashSet<String>();
 		for (Assignment assignmentObj : asnCollection) {
 			Set<AssignmentMarker> asnMrks = assignmentObj.getMarkers();
 			for (AssignmentMarker asnMarker : asnMrks) {
-				String id = asnMarker.getMarkerUserId();
-				userIds.add(id);
+				String id;
+				try {
+					id = userDirectoryService.getUserId(asnMarker.getMarkerUserId());
+					userIds.add(id);
+				} catch (UserNotDefinedException e) {
+					log.warn("User not defined: {}", asnMarker.getMarkerUserId(), e.getMessage());
+				}
 			}
 		}
 		return userIds;

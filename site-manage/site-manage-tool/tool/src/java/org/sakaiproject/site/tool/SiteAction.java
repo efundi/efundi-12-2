@@ -8793,21 +8793,17 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 					return;
 				}
 
-				
 				//NAM-43				
-				if (ServerConfigurationService.getBoolean("assignment.useMarker", false)) 
-			     {
+				if (ServerConfigurationService.getBoolean("assignment.useMarker", false)) {
 					AssignmentService assignmentService = ComponentManager.get(AssignmentService.class);
-					Set<String> markersBeingAffected = testMarkersBeingChanged(participants, params, maintainRoleString);
-					markersWithMarking =  assignmentService.checkParticipantsForMarking(s.getId(), markersBeingAffected);
-					
-					if (markersWithMarking.size() > 0)
-			    	 {
-			    		 log.error("Could not remove user from realm due to marking assignment");
-			    		 addAlert(state, rb.getFormattedMessage("sitegen.siteinfolist.marker"));		    		 
-			    		 
-			    	 }
-			     }
+					Set<String> markersBeingAffected = testMarkersBeingChanged(participants, params);
+					markersWithMarking = assignmentService.checkParticipantsForMarking(s.getId(), markersBeingAffected);
+
+					if (markersWithMarking.size() > 0) {
+						log.error("Could not remove user from realm due to marking assignment");
+						addAlert(state, rb.getFormattedMessage("sitegen.siteinfolist.marker"));
+					}
+				}
 				// SAK23029 - proposed changes do not leave site w/o maintainers; proceed with any allowed updates
 			
 				// list of roles being added or removed
@@ -9022,8 +9018,7 @@ private Map<String,List> getTools(SessionState state, String type, Site site) {
 	} // doUpdate_participant
 	
 	//NAM-43
-	private Set<String> testMarkersBeingChanged(List<Participant> participants, ParameterParser params,
-			String maintainRoleString) {
+	private Set<String> testMarkersBeingChanged(List<Participant> participants, ParameterParser params) {
 		Set<String> removedParticipantIds = new HashSet();
 		Set<String> deactivatedParticipants = new HashSet();
 		Set<String> markerRoledParticipants = new HashSet();

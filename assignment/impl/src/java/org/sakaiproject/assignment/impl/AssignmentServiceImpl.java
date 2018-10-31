@@ -5040,9 +5040,9 @@ public class AssignmentServiceImpl
 						List<AssignmentSubmissionMarker> asmList = assignmentRepository.findAssignmentMarkerUnmarkedSubmissions(assignment.getId(), am.getMarkerUserId());
 						reassignDeletedMarkersQuota(amSet, am);
 						if (CollectionUtils.isNotEmpty(asmList)) {
-							assignmentRepository.updateAssignmentMarker(am);
 							for (AssignmentSubmissionMarker asm : asmList) {
 								AssignmentSubmission submission = asm.getAssignmentSubmission();
+								//assignmentRepository.deleteAssignmentSubmissionMarker(asm);
 								markerQuotaCalculation(assignment, submission);
 							}
 						}
@@ -5063,7 +5063,7 @@ public class AssignmentServiceImpl
 		try {
 			if (reassignQuotaValue > 0) {
 				reassignValue = (float) Math.round((reassignQuotaValue / reassignMarkerCount) * 10) / 10;
-				value = (float) (Math.round((reassignValue * reassignMarkerCount)* 10) / 10);
+				value = reassignValue * reassignMarkerCount;
 				reassignValueRemainder = (double) Math.round((reassignQuotaValue - value)* 10) / 10;
 			}
 			if (reassignMarkerCount > 0) {

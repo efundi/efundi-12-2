@@ -120,16 +120,23 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
     @Override
     @Transactional
     public void deleteAssignmentMarker(AssignmentMarker marker) {
-    	try {
 	    	Session session = sessionFactory.getCurrentSession();
 	    	Assignment assignment = marker.getAssignment();
 	    	session.refresh(assignment);
 	    	assignment.getMarkers().remove(marker);
 	    	session.update(assignment);
 	        session.flush();
-    	} catch (Exception e) {
-    		e.getMessage();
-    	}
+    }
+    
+    @Override
+    @Transactional
+    public void deleteAssignmentSubmissionMarker(AssignmentSubmissionMarker submissionMarker) {
+	    	Session session = sessionFactory.getCurrentSession();
+	    	AssignmentMarker assignmentMarker = submissionMarker.getAssignmentMarker();
+	    	session.refresh(assignmentMarker);
+	    	assignmentMarker.getSubmissionMarkers().remove(submissionMarker);
+	    	session.update(assignmentMarker);
+	        session.flush();
     }
 
     @Override

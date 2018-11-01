@@ -4570,7 +4570,6 @@ public class AssignmentServiceImpl
 
 	@Override
 	public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment) {
-		reassignMarkerQuotaForDeletedMarkers();
 		Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
 		List<AssignmentMarker> assignmentMarkers = assignmentRepository
 				.findMarkersForAssignmentById(assignment.getId());
@@ -4708,8 +4707,10 @@ public class AssignmentServiceImpl
 			for (AssignmentMarker asnMarker : asnMrks) {
 				String id;
 				try {
-					id = userDirectoryService.getUserId(asnMarker.getMarkerUserId());
-					userIds.add(id);
+					if (asnMarker.getNumberAllocated() > 0) {
+						id = userDirectoryService.getUserId(asnMarker.getMarkerUserId());
+						userIds.add(id);
+					}
 				} catch (UserNotDefinedException e) {
 					log.warn("User not defined: {}", asnMarker.getMarkerUserId(), e.getMessage());
 				}
@@ -5042,6 +5043,7 @@ public class AssignmentServiceImpl
 						if (CollectionUtils.isNotEmpty(asmList)) {
 							for (AssignmentSubmissionMarker asm : asmList) {
 								AssignmentSubmission submission = asm.getAssignmentSubmission();
+								//Phase 2 - Development
 								//assignmentRepository.deleteAssignmentSubmissionMarker(asm);
 								markerQuotaCalculation(assignment, submission);
 							}

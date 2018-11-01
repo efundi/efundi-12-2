@@ -117,14 +117,18 @@ ASN.disableButtons = function()
 {
 	document.getElementsByName("post")[0].disabled = true;
 	document.getElementsByName("preview")[0].disabled = true;
-	document.getElementsByName("save")[0].disabled = true;
+	if (document.getElementsByName("save").length > 0) {
+		document.getElementsByName("save")[0].disabled = true;
+	}
 };
 
 ASN.enableButtons = function()
 {
 	document.getElementsByName("post")[0].disabled = false;
 	document.getElementsByName("preview")[0].disabled = false;
-	document.getElementsByName("save")[0].disabled = false;
+	if (document.getElementsByName("save").length > 0) {
+		document.getElementsByName("save")[0].disabled = false;
+	}
 };
 
 ASN.getSelect = function(selectBox) {

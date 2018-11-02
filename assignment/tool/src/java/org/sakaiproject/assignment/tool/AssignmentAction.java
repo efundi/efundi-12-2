@@ -454,7 +454,6 @@ public class AssignmentAction extends PagedResourceActionII {
      */
     private static final String ENABLE_REVIEW_SERVICE = "enable_review_service";
     private static final String EXPORT_ASSIGNMENT_ID = "export_assignment_id";
-
     private static final String MARKER_PARTIAL_DOWNLOAD_FLAG = "marker_partial_download_flag";
     /**
      * ***************** instructor's new assignment ******************************
@@ -6368,7 +6367,6 @@ public class AssignmentAction extends PagedResourceActionII {
 			return false;
 		}
 	}
-	
 
     /**
      * Takes the inline submission, prepares it as an attachment to the submission and queues the attachment with the content review service
@@ -7065,9 +7063,7 @@ public class AssignmentAction extends PagedResourceActionII {
         } 
 
         Boolean isMarker = false;
-        
         String value = params.getString("new_assignment_submission_type");
-        
         state.setAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE, Integer.parseInt(params.getString("new_assignment_submission_type")));
         
         if (params.getString("allowMarkerToggle") != null) {
@@ -7078,7 +7074,6 @@ public class AssignmentAction extends PagedResourceActionII {
               
 		if (serverConfigurationService.getBoolean("assignment.useMarker", false) && Assignment.SubmissionType.PDF_ONLY_SUBMISSION == Assignment.SubmissionType.values()[(Integer) state.getAttribute(NEW_ASSIGNMENT_SUBMISSION_TYPE)]
 				&& isMarker )  {
-
 			if (state.getAttribute(NEW_ASSIGNMENT_MARKERS) != null) {
 				Set<AssignmentMarker> siteAssignmentMarkers = new HashSet<AssignmentMarker>();
 				Set<AssignmentMarkerHistory> markerHistorySet = new HashSet<AssignmentMarkerHistory>();
@@ -7815,7 +7810,6 @@ public class AssignmentAction extends PagedResourceActionII {
             
             //Add isMarker value
             boolean isMarker = Boolean.valueOf((Boolean) state.getAttribute(NEW_ASSIGNMENT_USE_MARKER));
-
             String submitReviewRepo = (String) state.getAttribute(NEW_ASSIGNMENT_REVIEW_SERVICE_SUBMIT_RADIO);
             String generateOriginalityReport = (String) state.getAttribute(NEW_ASSIGNMENT_REVIEW_SERVICE_REPORT_RADIO);
             boolean checkTurnitin = "true".equalsIgnoreCase((String) state.getAttribute(NEW_ASSIGNMENT_REVIEW_SERVICE_CHECK_TURNITIN));
@@ -7992,7 +7986,6 @@ public class AssignmentAction extends PagedResourceActionII {
                             	assignmentService.updateAssignmentMarker(marker);
                             } catch (Exception e) {
                                 log.warn(".post_save_assignment: Error saving AssignmentMarkers for site with id {}", siteId);
-//                                addAlert(state, rb.getFormattedMessage("XXX", siteId));
                             }
         				}
     				}    				
@@ -8006,7 +7999,6 @@ public class AssignmentAction extends PagedResourceActionII {
     	                    	assignmentService.createAssignmentMarkerHistory(markerHistory);
     	                    } catch (Exception e) {
     	                        log.warn(".post_save_assignment: Error saving AssignmentMarkerHistory for site with id {}", siteId);
-//    	                        addAlert(state, rb.getFormattedMessage("XXX", siteId));
     	                    }
         				}
     				}    				
@@ -10439,7 +10431,6 @@ public class AssignmentAction extends PagedResourceActionII {
             	// go to the marker downloads statistics view
                 doMarkerDownStats(data);
             }
-
         }
     }
 
@@ -13767,8 +13758,7 @@ public class AssignmentAction extends PagedResourceActionII {
 						if (releaseGrades && graded) {
 							// update grade in gradebook
 							if (associateGradebookAssignment != null) {
-								integrateGradebook(state, aReference, associateGradebookAssignment, null, null, null,
-										-1, null, sReference, "update", -1);
+								integrateGradebook(state, aReference, associateGradebookAssignment, null, null, null, -1, null, sReference, "update", -1);
 							}
 						}
 
@@ -13787,8 +13777,6 @@ public class AssignmentAction extends PagedResourceActionII {
 									submissionMarker.setUploaded(Boolean.TRUE);
 									assignmentService.updateAssignmentSubmissionMarker(submissionMarker,
 											AssignmentConstants.EVENT_MARKER_ASSIGNMENT_UPLOAD);
-									
-
 								}
 							}
 						}

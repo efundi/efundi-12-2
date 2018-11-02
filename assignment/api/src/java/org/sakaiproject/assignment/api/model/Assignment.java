@@ -241,7 +241,7 @@ public class Assignment {
     private String peerAssessmentInstructions;
 
     @Column(name = "CONTENT_REVIEW")
-    private Boolean contentReview = Boolean.FALSE;    
+    private Boolean contentReview = Boolean.FALSE;
 
     @Column(name = "IS_MARKER")
     private Boolean isMarker = Boolean.FALSE;

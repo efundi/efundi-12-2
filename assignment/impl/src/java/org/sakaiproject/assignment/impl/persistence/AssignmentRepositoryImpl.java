@@ -80,7 +80,6 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
         if (!existsAssignment(assignment.getId())) {
             assignment.setDateCreated(Instant.now());
             sessionFactory.getCurrentSession().persist(assignment);
-            //markerQuotaCalculation();
         }
     }
 
@@ -145,7 +144,6 @@ public class AssignmentRepositoryImpl extends BasicSerializableRepository<Assign
         Assignment assignment = findOne(assignmentId);
         assignment.setDeleted(Boolean.TRUE);
         update(assignment);
-        //markerQuotaCalculation();
     }
 
     @Override

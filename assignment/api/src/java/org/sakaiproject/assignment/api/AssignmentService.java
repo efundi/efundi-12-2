@@ -485,7 +485,7 @@ public interface AssignmentService extends EntityProducer {
      * @return List over all the submissions for an Assignment.
      */
     public Set<AssignmentSubmission> getSubmissions(Assignment assignment);
-    
+
     /**
      * @param assignmentId
      * @return
@@ -759,32 +759,32 @@ public interface AssignmentService extends EntityProducer {
 	public Set<AssignmentMarker> getMarkersForAssignment(Assignment assignment);
 
     public Boolean allowRemoveUserWithRoleIfMarkingUsed(String contextString, String role);
-    
+
     public Set<String> checkParticipantsForMarking(String siteId, Set<String> markersBeingAffected);
-         
+
     public void setMarkersForAssignmentByLoggedInUser(Assignment assignment);
 
 	void updateAssignmentMarker(AssignmentMarker assignmentMarker) throws PermissionException;
 
 	void createAssignmentMarkerHistory(AssignmentMarkerHistory assignmentMarkerHistory) throws PermissionException;
-	
+
 	void createAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker) throws PermissionException;
-	
+
 	void updateAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker, String submissionEvent) throws PermissionException;	
 
 	public AssignmentSubmissionMarker findSubmissionMarkerForMarkerIdAndSubmissionId(String markerId, String submissionId);
-	
+
 	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId, String markerId);
-	
+
 	boolean markerQuotaCalculation(Assignment assignment, AssignmentSubmission submission);
-	
+
 	void reassignSubmissionsNotMarked(AssignmentMarker oldMarker, AssignmentMarker newMarker, String context);
-	
+
 	public void quotaCalculationJob ();
-	
+
 	public Boolean checkAssignmentMarkingForDeletedUsers(AssignmentMarker marker, Assignment assignment);
-	
+
 	public void reassignMarkerQuotaForDeletedMarkers();
-	
+
 	public Collection<Assignment> findAllAssignmentsForMarkerQuotaCalculation();
 }

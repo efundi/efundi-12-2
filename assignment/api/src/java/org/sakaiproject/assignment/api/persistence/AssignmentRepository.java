@@ -87,11 +87,11 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
 	void createAssignmentMarker(AssignmentMarker assignmentMarker);
 
 	void updateAssignmentMarker(AssignmentMarker assignmentMarker);
-	
+
 	AssignmentMarker findAssignmentMarker(String id);
-	
+
 	public List<AssignmentMarker> findMarkersForAssignmentById(String assignmentId);
-	
+
 	void createAssignmentMarkerHistory(AssignmentMarkerHistory assignmentMarkerHistory);
 
 	void createAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker);
@@ -99,14 +99,14 @@ public interface AssignmentRepository extends SerializableRepository<Assignment,
 	void updateAssignmentSubmissionMarker(AssignmentSubmissionMarker assignmentSubmissionMarker);	
 
 	public List<AssignmentSubmissionMarker> findSubmissionMarkersByIdAndAssignmentId(String assignmentId, String markerId);
-	
+
 	public AssignmentSubmissionMarker findSubmissionMarkerForMarkerIdAndSubmissionId(String markerId, String submissionId);
-	
+
 	public List<Assignment> findAllAssignmentsForMarkerQuotaCalculation();
-	
+
 	public List<AssignmentSubmissionMarker> findAssignmentMarkerUnmarkedSubmissions(String assignmentId, String markerId);
-	
+
 	public void deleteAssignmentMarker(AssignmentMarker marker);
-	
+
 	public void deleteAssignmentSubmissionMarker(AssignmentSubmissionMarker submissionMarker);
 }

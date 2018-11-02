@@ -21,12 +21,6 @@ public class AssignmentMarkerQuotaCalculationJob implements Job {
 	private ServerConfigurationService serverConfigurationService;
 	private SchedulerManager schedulerManager;
 
-//	// Matches the bean id
-//	final static String BEAN_ID = AssignmentMarkerQuotaCalculationJob.class.getName();
-//
-//	// Matches the jobName
-//	final static String JOB_NAME = "Assignment Marker Quota Calculation Job";
-
 	public void execute(JobExecutionContext jobInfo) throws JobExecutionException {
 		if (serverConfigurationService.getBoolean("assignment.useMarker", false)) {
 			assignmentService.quotaCalculationJob();
@@ -40,19 +34,7 @@ public class AssignmentMarkerQuotaCalculationJob implements Job {
 		if (scheduler == null) {
 			log.error("Scheduler is down!");
 			return;
-		}		
-//		try {
-//			JobBuilder jobBuilder = JobBuilder.newJob(AssignmentMarkerQuotaCalculationJob.class);
-//			JobDetail jobDetail = jobBuilder.withIdentity(JOB_NAME, Scheduler.DEFAULT_GROUP).requestRecovery()
-//					.storeDurably().build();		
-//			
-//			Trigger trigger = TriggerBuilder.newTrigger().withIdentity("Asn Quota Calc Hourly Trigger", Scheduler.DEFAULT_GROUP)
-//					.withSchedule(CronScheduleBuilder.cronSchedule(serverConfigurationService.getString("assignment.marker.quota.calc.cron.expression", "0 0 * ? * * *"))).forJob(jobDetail.getKey())
-//					.build();		
-//			scheduler.scheduleJob(jobDetail, trigger);
-//		} catch (SchedulerException e) {
-//			log.error("AssignmentMarkerQuotaCalculationJob could not be scheduled.", e);
-//		}		
+		}				
 	}
 	
 	public AssignmentService getAssignmentService() {

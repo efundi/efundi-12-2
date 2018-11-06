@@ -7,16 +7,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for InvalidParameter complex type.
+ * <p>Java class for resetService complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="InvalidParameter">
+ * &lt;complexType name="resetService">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="message" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="contextInfo" type="{http://nwu.ac.za/wsdl/StudentAcademicRegistration}ContextInfo" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -26,35 +26,35 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "InvalidParameter", propOrder = {
-    "message"
+@XmlType(name = "resetService", propOrder = {
+    "contextInfo"
 })
-public class InvalidParameter {
+public class ResetService {
 
-    protected String message;
+    protected ContextInfo contextInfo;
 
     /**
-     * Gets the value of the message property.
+     * Gets the value of the contextInfo property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link ContextInfo }
      *     
      */
-    public String getMessage() {
-        return message;
+    public ContextInfo getContextInfo() {
+        return contextInfo;
     }
 
     /**
-     * Sets the value of the message property.
+     * Sets the value of the contextInfo property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link ContextInfo }
      *     
      */
-    public void setMessage(String value) {
-        this.message = value;
+    public void setContextInfo(ContextInfo value) {
+        this.contextInfo = value;
     }
 
 }

@@ -1,156 +1,89 @@
-/**
- * AcademicPeriodInfo.java
- *
- * This file was auto-generated from WSDL
- * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
- */
 
 package za.ac.nwu.wsdl.StudentAcademicRegistration;
 
-public class AcademicPeriodInfo  implements java.io.Serializable {
-    private java.lang.String acadPeriodtTypeKey;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
-    private java.lang.String acadPeriodValue;
 
-    public AcademicPeriodInfo() {
-    }
+/**
+ * <p>Java class for AcademicPeriodInfo complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="AcademicPeriodInfo">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="acadPeriodtTypeKey" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="acadPeriodValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "AcademicPeriodInfo", propOrder = {
+    "acadPeriodtTypeKey",
+    "acadPeriodValue"
+})
+public class AcademicPeriodInfo {
 
-    public AcademicPeriodInfo(
-           java.lang.String acadPeriodtTypeKey,
-           java.lang.String acadPeriodValue) {
-           this.acadPeriodtTypeKey = acadPeriodtTypeKey;
-           this.acadPeriodValue = acadPeriodValue;
-    }
-
+    protected String acadPeriodtTypeKey;
+    @XmlElement(required = true)
+    protected String acadPeriodValue;
 
     /**
-     * Gets the acadPeriodtTypeKey value for this AcademicPeriodInfo.
+     * Gets the value of the acadPeriodtTypeKey property.
      * 
-     * @return acadPeriodtTypeKey
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getAcadPeriodtTypeKey() {
+    public String getAcadPeriodtTypeKey() {
         return acadPeriodtTypeKey;
     }
 
-
     /**
-     * Sets the acadPeriodtTypeKey value for this AcademicPeriodInfo.
+     * Sets the value of the acadPeriodtTypeKey property.
      * 
-     * @param acadPeriodtTypeKey
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setAcadPeriodtTypeKey(java.lang.String acadPeriodtTypeKey) {
-        this.acadPeriodtTypeKey = acadPeriodtTypeKey;
+    public void setAcadPeriodtTypeKey(String value) {
+        this.acadPeriodtTypeKey = value;
     }
 
-
     /**
-     * Gets the acadPeriodValue value for this AcademicPeriodInfo.
+     * Gets the value of the acadPeriodValue property.
      * 
-     * @return acadPeriodValue
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getAcadPeriodValue() {
+    public String getAcadPeriodValue() {
         return acadPeriodValue;
     }
 
-
     /**
-     * Sets the acadPeriodValue value for this AcademicPeriodInfo.
+     * Sets the value of the acadPeriodValue property.
      * 
-     * @param acadPeriodValue
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setAcadPeriodValue(java.lang.String acadPeriodValue) {
-        this.acadPeriodValue = acadPeriodValue;
-    }
-
-    private java.lang.Object __equalsCalc = null;
-    public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof AcademicPeriodInfo)) return false;
-        AcademicPeriodInfo other = (AcademicPeriodInfo) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
-        if (__equalsCalc != null) {
-            return (__equalsCalc == obj);
-        }
-        __equalsCalc = obj;
-        boolean _equals;
-        _equals = true && 
-            ((this.acadPeriodtTypeKey==null && other.getAcadPeriodtTypeKey()==null) || 
-             (this.acadPeriodtTypeKey!=null &&
-              this.acadPeriodtTypeKey.equals(other.getAcadPeriodtTypeKey()))) &&
-            ((this.acadPeriodValue==null && other.getAcadPeriodValue()==null) || 
-             (this.acadPeriodValue!=null &&
-              this.acadPeriodValue.equals(other.getAcadPeriodValue())));
-        __equalsCalc = null;
-        return _equals;
-    }
-
-    private boolean __hashCodeCalc = false;
-    public synchronized int hashCode() {
-        if (__hashCodeCalc) {
-            return 0;
-        }
-        __hashCodeCalc = true;
-        int _hashCode = 1;
-        if (getAcadPeriodtTypeKey() != null) {
-            _hashCode += getAcadPeriodtTypeKey().hashCode();
-        }
-        if (getAcadPeriodValue() != null) {
-            _hashCode += getAcadPeriodValue().hashCode();
-        }
-        __hashCodeCalc = false;
-        return _hashCode;
-    }
-
-    // Type metadata
-    private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(AcademicPeriodInfo.class, true);
-
-    static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://nwu.ac.za/wsdl/StudentAcademicRegistration", "AcademicPeriodInfo"));
-        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("acadPeriodtTypeKey");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "acadPeriodtTypeKey"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("acadPeriodValue");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "acadPeriodValue"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-    }
-
-    /**
-     * Return type metadata object
-     */
-    public static org.apache.axis.description.TypeDesc getTypeDesc() {
-        return typeDesc;
-    }
-
-    /**
-     * Get Custom Serializer
-     */
-    public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
-    }
-
-    /**
-     * Get Custom Deserializer
-     */
-    public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+    public void setAcadPeriodValue(String value) {
+        this.acadPeriodValue = value;
     }
 
 }

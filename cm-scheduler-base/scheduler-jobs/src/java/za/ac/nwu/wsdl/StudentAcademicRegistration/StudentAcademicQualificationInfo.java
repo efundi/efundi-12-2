@@ -1,800 +1,888 @@
-/**
- * StudentAcademicQualificationInfo.java
- *
- * This file was auto-generated from WSDL
- * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
- */
 
 package za.ac.nwu.wsdl.StudentAcademicRegistration;
 
-public class StudentAcademicQualificationInfo  implements java.io.Serializable {
-    private za.ac.nwu.wsdl.StudentAcademicRegistration.AcademicPeriodInfo academicPeriod;
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.XMLGregorianCalendar;
 
-    private int academicYears;
 
-    private int historicYears;
+/**
+ * <p>Java class for studentAcademicQualificationInfo complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="studentAcademicQualificationInfo">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="academicPeriod" type="{http://nwu.ac.za/wsdl/StudentAcademicRegistration}AcademicPeriodInfo"/>
+ *         &lt;element name="academicYears" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="conditionalRegistration" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="historicYears" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="legacyKeys">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;sequence>
+ *                   &lt;element name="entry" maxOccurs="unbounded" minOccurs="0">
+ *                     &lt;complexType>
+ *                       &lt;complexContent>
+ *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                           &lt;sequence>
+ *                             &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *                             &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+ *                           &lt;/sequence>
+ *                         &lt;/restriction>
+ *                       &lt;/complexContent>
+ *                     &lt;/complexType>
+ *                   &lt;/element>
+ *                 &lt;/sequence>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *         &lt;element name="mainQualification" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="program" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="programDesc" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="programMethodOfDeliveryTypeKey" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="programOrgUnitNumber" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="programPresentationCategoryTypeKey" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="programSite" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="qualification" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="qualificationDesc" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="qualificationDiscontinue" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="qualificationDiscontinueDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
+ *         &lt;element name="qualificationDiscontinueReasonTypeKey" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="qualificationFaculty" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="qualificationMethodOfDeliveryTypeKey" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="qualificationPresentationCategoryTypeKey" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="qualificationRegistrationDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
+ *         &lt;element name="qualificationResultTypeKey" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="qualificationSite" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="qualificationStartDate" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
+ *         &lt;element name="studyTypeTypeKey" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="univNumber" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "studentAcademicQualificationInfo", propOrder = {
+    "academicPeriod",
+    "academicYears",
+    "conditionalRegistration",
+    "historicYears",
+    "legacyKeys",
+    "mainQualification",
+    "program",
+    "programDesc",
+    "programMethodOfDeliveryTypeKey",
+    "programOrgUnitNumber",
+    "programPresentationCategoryTypeKey",
+    "programSite",
+    "qualification",
+    "qualificationDesc",
+    "qualificationDiscontinue",
+    "qualificationDiscontinueDate",
+    "qualificationDiscontinueReasonTypeKey",
+    "qualificationFaculty",
+    "qualificationMethodOfDeliveryTypeKey",
+    "qualificationPresentationCategoryTypeKey",
+    "qualificationRegistrationDate",
+    "qualificationResultTypeKey",
+    "qualificationSite",
+    "qualificationStartDate",
+    "studyTypeTypeKey",
+    "univNumber"
+})
+@XmlSeeAlso({
+    StudentAcademicRegistrationInfo.class
+})
+public class StudentAcademicQualificationInfo {
 
-    private boolean mainQualification;
-
-    private java.lang.String program;
-
-    private java.lang.String programDesc;
-
-    private java.lang.String programMethodOfDeliveryTypeKey;
-
-    private java.lang.String programPresentationCategoryTypeKey;
-
-    private java.lang.String qualification;
-
-    private java.lang.String qualificationDesc;
-
-    private java.util.Calendar qualificationDiscontinueDate;
-
-    private java.lang.String qualificationDiscontinueReasonTypeKey;
-
-    private java.lang.String qualificationFaculty;
-
-    private java.lang.String qualificationMethodOfDeliveryTypeKey;
-
-    private java.lang.String qualificationPresentationCategoryTypeKey;
-
-    private java.util.Calendar qualificationRegistrationDate;
-
-    private java.lang.String qualificationResultTypeKey;
-
-    private java.lang.String qualificationSite;
-
-    private java.util.Calendar qualificationStartDate;
-
-    private java.lang.String univNumber;
-
-    public StudentAcademicQualificationInfo() {
-    }
-
-    public StudentAcademicQualificationInfo(
-           za.ac.nwu.wsdl.StudentAcademicRegistration.AcademicPeriodInfo academicPeriod,
-           int academicYears,
-           int historicYears,
-           boolean mainQualification,
-           java.lang.String program,
-           java.lang.String programDesc,
-           java.lang.String programMethodOfDeliveryTypeKey,
-           java.lang.String programPresentationCategoryTypeKey,
-           java.lang.String qualification,
-           java.lang.String qualificationDesc,
-           java.util.Calendar qualificationDiscontinueDate,
-           java.lang.String qualificationDiscontinueReasonTypeKey,
-           java.lang.String qualificationFaculty,
-           java.lang.String qualificationMethodOfDeliveryTypeKey,
-           java.lang.String qualificationPresentationCategoryTypeKey,
-           java.util.Calendar qualificationRegistrationDate,
-           java.lang.String qualificationResultTypeKey,
-           java.lang.String qualificationSite,
-           java.util.Calendar qualificationStartDate,
-           java.lang.String univNumber) {
-           this.academicPeriod = academicPeriod;
-           this.academicYears = academicYears;
-           this.historicYears = historicYears;
-           this.mainQualification = mainQualification;
-           this.program = program;
-           this.programDesc = programDesc;
-           this.programMethodOfDeliveryTypeKey = programMethodOfDeliveryTypeKey;
-           this.programPresentationCategoryTypeKey = programPresentationCategoryTypeKey;
-           this.qualification = qualification;
-           this.qualificationDesc = qualificationDesc;
-           this.qualificationDiscontinueDate = qualificationDiscontinueDate;
-           this.qualificationDiscontinueReasonTypeKey = qualificationDiscontinueReasonTypeKey;
-           this.qualificationFaculty = qualificationFaculty;
-           this.qualificationMethodOfDeliveryTypeKey = qualificationMethodOfDeliveryTypeKey;
-           this.qualificationPresentationCategoryTypeKey = qualificationPresentationCategoryTypeKey;
-           this.qualificationRegistrationDate = qualificationRegistrationDate;
-           this.qualificationResultTypeKey = qualificationResultTypeKey;
-           this.qualificationSite = qualificationSite;
-           this.qualificationStartDate = qualificationStartDate;
-           this.univNumber = univNumber;
-    }
-
+    @XmlElement(required = true)
+    protected AcademicPeriodInfo academicPeriod;
+    protected int academicYears;
+    protected boolean conditionalRegistration;
+    protected int historicYears;
+    @XmlElement(required = true)
+    protected StudentAcademicQualificationInfo.LegacyKeys legacyKeys;
+    protected boolean mainQualification;
+    @XmlElement(required = true)
+    protected String program;
+    @XmlElement(required = true)
+    protected String programDesc;
+    protected String programMethodOfDeliveryTypeKey;
+    protected String programOrgUnitNumber;
+    protected String programPresentationCategoryTypeKey;
+    protected String programSite;
+    @XmlElement(required = true)
+    protected String qualification;
+    @XmlElement(required = true)
+    protected String qualificationDesc;
+    protected boolean qualificationDiscontinue;
+    @XmlSchemaType(name = "dateTime")
+    protected XMLGregorianCalendar qualificationDiscontinueDate;
+    protected String qualificationDiscontinueReasonTypeKey;
+    protected String qualificationFaculty;
+    protected String qualificationMethodOfDeliveryTypeKey;
+    protected String qualificationPresentationCategoryTypeKey;
+    @XmlElement(required = true)
+    @XmlSchemaType(name = "dateTime")
+    protected XMLGregorianCalendar qualificationRegistrationDate;
+    protected String qualificationResultTypeKey;
+    protected String qualificationSite;
+    @XmlElement(required = true)
+    @XmlSchemaType(name = "dateTime")
+    protected XMLGregorianCalendar qualificationStartDate;
+    protected String studyTypeTypeKey;
+    @XmlElement(required = true)
+    protected String univNumber;
 
     /**
-     * Gets the academicPeriod value for this StudentAcademicQualificationInfo.
+     * Gets the value of the academicPeriod property.
      * 
-     * @return academicPeriod
+     * @return
+     *     possible object is
+     *     {@link AcademicPeriodInfo }
+     *     
      */
-    public za.ac.nwu.wsdl.StudentAcademicRegistration.AcademicPeriodInfo getAcademicPeriod() {
+    public AcademicPeriodInfo getAcademicPeriod() {
         return academicPeriod;
     }
 
-
     /**
-     * Sets the academicPeriod value for this StudentAcademicQualificationInfo.
+     * Sets the value of the academicPeriod property.
      * 
-     * @param academicPeriod
+     * @param value
+     *     allowed object is
+     *     {@link AcademicPeriodInfo }
+     *     
      */
-    public void setAcademicPeriod(za.ac.nwu.wsdl.StudentAcademicRegistration.AcademicPeriodInfo academicPeriod) {
-        this.academicPeriod = academicPeriod;
+    public void setAcademicPeriod(AcademicPeriodInfo value) {
+        this.academicPeriod = value;
     }
 
-
     /**
-     * Gets the academicYears value for this StudentAcademicQualificationInfo.
+     * Gets the value of the academicYears property.
      * 
-     * @return academicYears
      */
     public int getAcademicYears() {
         return academicYears;
     }
 
-
     /**
-     * Sets the academicYears value for this StudentAcademicQualificationInfo.
+     * Sets the value of the academicYears property.
      * 
-     * @param academicYears
      */
-    public void setAcademicYears(int academicYears) {
-        this.academicYears = academicYears;
+    public void setAcademicYears(int value) {
+        this.academicYears = value;
     }
 
+    /**
+     * Gets the value of the conditionalRegistration property.
+     * 
+     */
+    public boolean isConditionalRegistration() {
+        return conditionalRegistration;
+    }
 
     /**
-     * Gets the historicYears value for this StudentAcademicQualificationInfo.
+     * Sets the value of the conditionalRegistration property.
      * 
-     * @return historicYears
+     */
+    public void setConditionalRegistration(boolean value) {
+        this.conditionalRegistration = value;
+    }
+
+    /**
+     * Gets the value of the historicYears property.
+     * 
      */
     public int getHistoricYears() {
         return historicYears;
     }
 
-
     /**
-     * Sets the historicYears value for this StudentAcademicQualificationInfo.
+     * Sets the value of the historicYears property.
      * 
-     * @param historicYears
      */
-    public void setHistoricYears(int historicYears) {
-        this.historicYears = historicYears;
+    public void setHistoricYears(int value) {
+        this.historicYears = value;
     }
 
+    /**
+     * Gets the value of the legacyKeys property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link StudentAcademicQualificationInfo.LegacyKeys }
+     *     
+     */
+    public StudentAcademicQualificationInfo.LegacyKeys getLegacyKeys() {
+        return legacyKeys;
+    }
 
     /**
-     * Gets the mainQualification value for this StudentAcademicQualificationInfo.
+     * Sets the value of the legacyKeys property.
      * 
-     * @return mainQualification
+     * @param value
+     *     allowed object is
+     *     {@link StudentAcademicQualificationInfo.LegacyKeys }
+     *     
+     */
+    public void setLegacyKeys(StudentAcademicQualificationInfo.LegacyKeys value) {
+        this.legacyKeys = value;
+    }
+
+    /**
+     * Gets the value of the mainQualification property.
+     * 
      */
     public boolean isMainQualification() {
         return mainQualification;
     }
 
-
     /**
-     * Sets the mainQualification value for this StudentAcademicQualificationInfo.
+     * Sets the value of the mainQualification property.
      * 
-     * @param mainQualification
      */
-    public void setMainQualification(boolean mainQualification) {
-        this.mainQualification = mainQualification;
+    public void setMainQualification(boolean value) {
+        this.mainQualification = value;
     }
 
-
     /**
-     * Gets the program value for this StudentAcademicQualificationInfo.
+     * Gets the value of the program property.
      * 
-     * @return program
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getProgram() {
+    public String getProgram() {
         return program;
     }
 
-
     /**
-     * Sets the program value for this StudentAcademicQualificationInfo.
+     * Sets the value of the program property.
      * 
-     * @param program
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setProgram(java.lang.String program) {
-        this.program = program;
+    public void setProgram(String value) {
+        this.program = value;
     }
 
-
     /**
-     * Gets the programDesc value for this StudentAcademicQualificationInfo.
+     * Gets the value of the programDesc property.
      * 
-     * @return programDesc
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getProgramDesc() {
+    public String getProgramDesc() {
         return programDesc;
     }
 
-
     /**
-     * Sets the programDesc value for this StudentAcademicQualificationInfo.
+     * Sets the value of the programDesc property.
      * 
-     * @param programDesc
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setProgramDesc(java.lang.String programDesc) {
-        this.programDesc = programDesc;
+    public void setProgramDesc(String value) {
+        this.programDesc = value;
     }
 
-
     /**
-     * Gets the programMethodOfDeliveryTypeKey value for this StudentAcademicQualificationInfo.
+     * Gets the value of the programMethodOfDeliveryTypeKey property.
      * 
-     * @return programMethodOfDeliveryTypeKey
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getProgramMethodOfDeliveryTypeKey() {
+    public String getProgramMethodOfDeliveryTypeKey() {
         return programMethodOfDeliveryTypeKey;
     }
 
-
     /**
-     * Sets the programMethodOfDeliveryTypeKey value for this StudentAcademicQualificationInfo.
+     * Sets the value of the programMethodOfDeliveryTypeKey property.
      * 
-     * @param programMethodOfDeliveryTypeKey
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setProgramMethodOfDeliveryTypeKey(java.lang.String programMethodOfDeliveryTypeKey) {
-        this.programMethodOfDeliveryTypeKey = programMethodOfDeliveryTypeKey;
+    public void setProgramMethodOfDeliveryTypeKey(String value) {
+        this.programMethodOfDeliveryTypeKey = value;
     }
 
+    /**
+     * Gets the value of the programOrgUnitNumber property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getProgramOrgUnitNumber() {
+        return programOrgUnitNumber;
+    }
 
     /**
-     * Gets the programPresentationCategoryTypeKey value for this StudentAcademicQualificationInfo.
+     * Sets the value of the programOrgUnitNumber property.
      * 
-     * @return programPresentationCategoryTypeKey
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getProgramPresentationCategoryTypeKey() {
+    public void setProgramOrgUnitNumber(String value) {
+        this.programOrgUnitNumber = value;
+    }
+
+    /**
+     * Gets the value of the programPresentationCategoryTypeKey property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getProgramPresentationCategoryTypeKey() {
         return programPresentationCategoryTypeKey;
     }
 
-
     /**
-     * Sets the programPresentationCategoryTypeKey value for this StudentAcademicQualificationInfo.
+     * Sets the value of the programPresentationCategoryTypeKey property.
      * 
-     * @param programPresentationCategoryTypeKey
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setProgramPresentationCategoryTypeKey(java.lang.String programPresentationCategoryTypeKey) {
-        this.programPresentationCategoryTypeKey = programPresentationCategoryTypeKey;
+    public void setProgramPresentationCategoryTypeKey(String value) {
+        this.programPresentationCategoryTypeKey = value;
     }
 
+    /**
+     * Gets the value of the programSite property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getProgramSite() {
+        return programSite;
+    }
 
     /**
-     * Gets the qualification value for this StudentAcademicQualificationInfo.
+     * Sets the value of the programSite property.
      * 
-     * @return qualification
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getQualification() {
+    public void setProgramSite(String value) {
+        this.programSite = value;
+    }
+
+    /**
+     * Gets the value of the qualification property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getQualification() {
         return qualification;
     }
 
-
     /**
-     * Sets the qualification value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualification property.
      * 
-     * @param qualification
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setQualification(java.lang.String qualification) {
-        this.qualification = qualification;
+    public void setQualification(String value) {
+        this.qualification = value;
     }
 
-
     /**
-     * Gets the qualificationDesc value for this StudentAcademicQualificationInfo.
+     * Gets the value of the qualificationDesc property.
      * 
-     * @return qualificationDesc
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getQualificationDesc() {
+    public String getQualificationDesc() {
         return qualificationDesc;
     }
 
-
     /**
-     * Sets the qualificationDesc value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualificationDesc property.
      * 
-     * @param qualificationDesc
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setQualificationDesc(java.lang.String qualificationDesc) {
-        this.qualificationDesc = qualificationDesc;
+    public void setQualificationDesc(String value) {
+        this.qualificationDesc = value;
     }
 
+    /**
+     * Gets the value of the qualificationDiscontinue property.
+     * 
+     */
+    public boolean isQualificationDiscontinue() {
+        return qualificationDiscontinue;
+    }
 
     /**
-     * Gets the qualificationDiscontinueDate value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualificationDiscontinue property.
      * 
-     * @return qualificationDiscontinueDate
      */
-    public java.util.Calendar getQualificationDiscontinueDate() {
+    public void setQualificationDiscontinue(boolean value) {
+        this.qualificationDiscontinue = value;
+    }
+
+    /**
+     * Gets the value of the qualificationDiscontinueDate property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link XMLGregorianCalendar }
+     *     
+     */
+    public XMLGregorianCalendar getQualificationDiscontinueDate() {
         return qualificationDiscontinueDate;
     }
 
-
     /**
-     * Sets the qualificationDiscontinueDate value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualificationDiscontinueDate property.
      * 
-     * @param qualificationDiscontinueDate
+     * @param value
+     *     allowed object is
+     *     {@link XMLGregorianCalendar }
+     *     
      */
-    public void setQualificationDiscontinueDate(java.util.Calendar qualificationDiscontinueDate) {
-        this.qualificationDiscontinueDate = qualificationDiscontinueDate;
+    public void setQualificationDiscontinueDate(XMLGregorianCalendar value) {
+        this.qualificationDiscontinueDate = value;
     }
 
-
     /**
-     * Gets the qualificationDiscontinueReasonTypeKey value for this StudentAcademicQualificationInfo.
+     * Gets the value of the qualificationDiscontinueReasonTypeKey property.
      * 
-     * @return qualificationDiscontinueReasonTypeKey
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getQualificationDiscontinueReasonTypeKey() {
+    public String getQualificationDiscontinueReasonTypeKey() {
         return qualificationDiscontinueReasonTypeKey;
     }
 
-
     /**
-     * Sets the qualificationDiscontinueReasonTypeKey value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualificationDiscontinueReasonTypeKey property.
      * 
-     * @param qualificationDiscontinueReasonTypeKey
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setQualificationDiscontinueReasonTypeKey(java.lang.String qualificationDiscontinueReasonTypeKey) {
-        this.qualificationDiscontinueReasonTypeKey = qualificationDiscontinueReasonTypeKey;
+    public void setQualificationDiscontinueReasonTypeKey(String value) {
+        this.qualificationDiscontinueReasonTypeKey = value;
     }
 
-
     /**
-     * Gets the qualificationFaculty value for this StudentAcademicQualificationInfo.
+     * Gets the value of the qualificationFaculty property.
      * 
-     * @return qualificationFaculty
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getQualificationFaculty() {
+    public String getQualificationFaculty() {
         return qualificationFaculty;
     }
 
-
     /**
-     * Sets the qualificationFaculty value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualificationFaculty property.
      * 
-     * @param qualificationFaculty
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setQualificationFaculty(java.lang.String qualificationFaculty) {
-        this.qualificationFaculty = qualificationFaculty;
+    public void setQualificationFaculty(String value) {
+        this.qualificationFaculty = value;
     }
 
-
     /**
-     * Gets the qualificationMethodOfDeliveryTypeKey value for this StudentAcademicQualificationInfo.
+     * Gets the value of the qualificationMethodOfDeliveryTypeKey property.
      * 
-     * @return qualificationMethodOfDeliveryTypeKey
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getQualificationMethodOfDeliveryTypeKey() {
+    public String getQualificationMethodOfDeliveryTypeKey() {
         return qualificationMethodOfDeliveryTypeKey;
     }
 
-
     /**
-     * Sets the qualificationMethodOfDeliveryTypeKey value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualificationMethodOfDeliveryTypeKey property.
      * 
-     * @param qualificationMethodOfDeliveryTypeKey
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setQualificationMethodOfDeliveryTypeKey(java.lang.String qualificationMethodOfDeliveryTypeKey) {
-        this.qualificationMethodOfDeliveryTypeKey = qualificationMethodOfDeliveryTypeKey;
+    public void setQualificationMethodOfDeliveryTypeKey(String value) {
+        this.qualificationMethodOfDeliveryTypeKey = value;
     }
 
-
     /**
-     * Gets the qualificationPresentationCategoryTypeKey value for this StudentAcademicQualificationInfo.
+     * Gets the value of the qualificationPresentationCategoryTypeKey property.
      * 
-     * @return qualificationPresentationCategoryTypeKey
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getQualificationPresentationCategoryTypeKey() {
+    public String getQualificationPresentationCategoryTypeKey() {
         return qualificationPresentationCategoryTypeKey;
     }
 
-
     /**
-     * Sets the qualificationPresentationCategoryTypeKey value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualificationPresentationCategoryTypeKey property.
      * 
-     * @param qualificationPresentationCategoryTypeKey
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setQualificationPresentationCategoryTypeKey(java.lang.String qualificationPresentationCategoryTypeKey) {
-        this.qualificationPresentationCategoryTypeKey = qualificationPresentationCategoryTypeKey;
+    public void setQualificationPresentationCategoryTypeKey(String value) {
+        this.qualificationPresentationCategoryTypeKey = value;
     }
 
-
     /**
-     * Gets the qualificationRegistrationDate value for this StudentAcademicQualificationInfo.
+     * Gets the value of the qualificationRegistrationDate property.
      * 
-     * @return qualificationRegistrationDate
+     * @return
+     *     possible object is
+     *     {@link XMLGregorianCalendar }
+     *     
      */
-    public java.util.Calendar getQualificationRegistrationDate() {
+    public XMLGregorianCalendar getQualificationRegistrationDate() {
         return qualificationRegistrationDate;
     }
 
-
     /**
-     * Sets the qualificationRegistrationDate value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualificationRegistrationDate property.
      * 
-     * @param qualificationRegistrationDate
+     * @param value
+     *     allowed object is
+     *     {@link XMLGregorianCalendar }
+     *     
      */
-    public void setQualificationRegistrationDate(java.util.Calendar qualificationRegistrationDate) {
-        this.qualificationRegistrationDate = qualificationRegistrationDate;
+    public void setQualificationRegistrationDate(XMLGregorianCalendar value) {
+        this.qualificationRegistrationDate = value;
     }
 
-
     /**
-     * Gets the qualificationResultTypeKey value for this StudentAcademicQualificationInfo.
+     * Gets the value of the qualificationResultTypeKey property.
      * 
-     * @return qualificationResultTypeKey
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getQualificationResultTypeKey() {
+    public String getQualificationResultTypeKey() {
         return qualificationResultTypeKey;
     }
 
-
     /**
-     * Sets the qualificationResultTypeKey value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualificationResultTypeKey property.
      * 
-     * @param qualificationResultTypeKey
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setQualificationResultTypeKey(java.lang.String qualificationResultTypeKey) {
-        this.qualificationResultTypeKey = qualificationResultTypeKey;
+    public void setQualificationResultTypeKey(String value) {
+        this.qualificationResultTypeKey = value;
     }
 
-
     /**
-     * Gets the qualificationSite value for this StudentAcademicQualificationInfo.
+     * Gets the value of the qualificationSite property.
      * 
-     * @return qualificationSite
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getQualificationSite() {
+    public String getQualificationSite() {
         return qualificationSite;
     }
 
-
     /**
-     * Sets the qualificationSite value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualificationSite property.
      * 
-     * @param qualificationSite
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setQualificationSite(java.lang.String qualificationSite) {
-        this.qualificationSite = qualificationSite;
+    public void setQualificationSite(String value) {
+        this.qualificationSite = value;
     }
 
-
     /**
-     * Gets the qualificationStartDate value for this StudentAcademicQualificationInfo.
+     * Gets the value of the qualificationStartDate property.
      * 
-     * @return qualificationStartDate
+     * @return
+     *     possible object is
+     *     {@link XMLGregorianCalendar }
+     *     
      */
-    public java.util.Calendar getQualificationStartDate() {
+    public XMLGregorianCalendar getQualificationStartDate() {
         return qualificationStartDate;
     }
 
-
     /**
-     * Sets the qualificationStartDate value for this StudentAcademicQualificationInfo.
+     * Sets the value of the qualificationStartDate property.
      * 
-     * @param qualificationStartDate
+     * @param value
+     *     allowed object is
+     *     {@link XMLGregorianCalendar }
+     *     
      */
-    public void setQualificationStartDate(java.util.Calendar qualificationStartDate) {
-        this.qualificationStartDate = qualificationStartDate;
+    public void setQualificationStartDate(XMLGregorianCalendar value) {
+        this.qualificationStartDate = value;
     }
 
+    /**
+     * Gets the value of the studyTypeTypeKey property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getStudyTypeTypeKey() {
+        return studyTypeTypeKey;
+    }
 
     /**
-     * Gets the univNumber value for this StudentAcademicQualificationInfo.
+     * Sets the value of the studyTypeTypeKey property.
      * 
-     * @return univNumber
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public java.lang.String getUnivNumber() {
+    public void setStudyTypeTypeKey(String value) {
+        this.studyTypeTypeKey = value;
+    }
+
+    /**
+     * Gets the value of the univNumber property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getUnivNumber() {
         return univNumber;
     }
 
-
     /**
-     * Sets the univNumber value for this StudentAcademicQualificationInfo.
+     * Sets the value of the univNumber property.
      * 
-     * @param univNumber
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setUnivNumber(java.lang.String univNumber) {
-        this.univNumber = univNumber;
+    public void setUnivNumber(String value) {
+        this.univNumber = value;
     }
 
-    private java.lang.Object __equalsCalc = null;
-    public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof StudentAcademicQualificationInfo)) return false;
-        StudentAcademicQualificationInfo other = (StudentAcademicQualificationInfo) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
-        if (__equalsCalc != null) {
-            return (__equalsCalc == obj);
-        }
-        __equalsCalc = obj;
-        boolean _equals;
-        _equals = true && 
-            ((this.academicPeriod==null && other.getAcademicPeriod()==null) || 
-             (this.academicPeriod!=null &&
-              this.academicPeriod.equals(other.getAcademicPeriod()))) &&
-            this.academicYears == other.getAcademicYears() &&
-            this.historicYears == other.getHistoricYears() &&
-            this.mainQualification == other.isMainQualification() &&
-            ((this.program==null && other.getProgram()==null) || 
-             (this.program!=null &&
-              this.program.equals(other.getProgram()))) &&
-            ((this.programDesc==null && other.getProgramDesc()==null) || 
-             (this.programDesc!=null &&
-              this.programDesc.equals(other.getProgramDesc()))) &&
-            ((this.programMethodOfDeliveryTypeKey==null && other.getProgramMethodOfDeliveryTypeKey()==null) || 
-             (this.programMethodOfDeliveryTypeKey!=null &&
-              this.programMethodOfDeliveryTypeKey.equals(other.getProgramMethodOfDeliveryTypeKey()))) &&
-            ((this.programPresentationCategoryTypeKey==null && other.getProgramPresentationCategoryTypeKey()==null) || 
-             (this.programPresentationCategoryTypeKey!=null &&
-              this.programPresentationCategoryTypeKey.equals(other.getProgramPresentationCategoryTypeKey()))) &&
-            ((this.qualification==null && other.getQualification()==null) || 
-             (this.qualification!=null &&
-              this.qualification.equals(other.getQualification()))) &&
-            ((this.qualificationDesc==null && other.getQualificationDesc()==null) || 
-             (this.qualificationDesc!=null &&
-              this.qualificationDesc.equals(other.getQualificationDesc()))) &&
-            ((this.qualificationDiscontinueDate==null && other.getQualificationDiscontinueDate()==null) || 
-             (this.qualificationDiscontinueDate!=null &&
-              this.qualificationDiscontinueDate.equals(other.getQualificationDiscontinueDate()))) &&
-            ((this.qualificationDiscontinueReasonTypeKey==null && other.getQualificationDiscontinueReasonTypeKey()==null) || 
-             (this.qualificationDiscontinueReasonTypeKey!=null &&
-              this.qualificationDiscontinueReasonTypeKey.equals(other.getQualificationDiscontinueReasonTypeKey()))) &&
-            ((this.qualificationFaculty==null && other.getQualificationFaculty()==null) || 
-             (this.qualificationFaculty!=null &&
-              this.qualificationFaculty.equals(other.getQualificationFaculty()))) &&
-            ((this.qualificationMethodOfDeliveryTypeKey==null && other.getQualificationMethodOfDeliveryTypeKey()==null) || 
-             (this.qualificationMethodOfDeliveryTypeKey!=null &&
-              this.qualificationMethodOfDeliveryTypeKey.equals(other.getQualificationMethodOfDeliveryTypeKey()))) &&
-            ((this.qualificationPresentationCategoryTypeKey==null && other.getQualificationPresentationCategoryTypeKey()==null) || 
-             (this.qualificationPresentationCategoryTypeKey!=null &&
-              this.qualificationPresentationCategoryTypeKey.equals(other.getQualificationPresentationCategoryTypeKey()))) &&
-            ((this.qualificationRegistrationDate==null && other.getQualificationRegistrationDate()==null) || 
-             (this.qualificationRegistrationDate!=null &&
-              this.qualificationRegistrationDate.equals(other.getQualificationRegistrationDate()))) &&
-            ((this.qualificationResultTypeKey==null && other.getQualificationResultTypeKey()==null) || 
-             (this.qualificationResultTypeKey!=null &&
-              this.qualificationResultTypeKey.equals(other.getQualificationResultTypeKey()))) &&
-            ((this.qualificationSite==null && other.getQualificationSite()==null) || 
-             (this.qualificationSite!=null &&
-              this.qualificationSite.equals(other.getQualificationSite()))) &&
-            ((this.qualificationStartDate==null && other.getQualificationStartDate()==null) || 
-             (this.qualificationStartDate!=null &&
-              this.qualificationStartDate.equals(other.getQualificationStartDate()))) &&
-            ((this.univNumber==null && other.getUnivNumber()==null) || 
-             (this.univNumber!=null &&
-              this.univNumber.equals(other.getUnivNumber())));
-        __equalsCalc = null;
-        return _equals;
-    }
-
-    private boolean __hashCodeCalc = false;
-    public synchronized int hashCode() {
-        if (__hashCodeCalc) {
-            return 0;
-        }
-        __hashCodeCalc = true;
-        int _hashCode = 1;
-        if (getAcademicPeriod() != null) {
-            _hashCode += getAcademicPeriod().hashCode();
-        }
-        _hashCode += getAcademicYears();
-        _hashCode += getHistoricYears();
-        _hashCode += (isMainQualification() ? Boolean.TRUE : Boolean.FALSE).hashCode();
-        if (getProgram() != null) {
-            _hashCode += getProgram().hashCode();
-        }
-        if (getProgramDesc() != null) {
-            _hashCode += getProgramDesc().hashCode();
-        }
-        if (getProgramMethodOfDeliveryTypeKey() != null) {
-            _hashCode += getProgramMethodOfDeliveryTypeKey().hashCode();
-        }
-        if (getProgramPresentationCategoryTypeKey() != null) {
-            _hashCode += getProgramPresentationCategoryTypeKey().hashCode();
-        }
-        if (getQualification() != null) {
-            _hashCode += getQualification().hashCode();
-        }
-        if (getQualificationDesc() != null) {
-            _hashCode += getQualificationDesc().hashCode();
-        }
-        if (getQualificationDiscontinueDate() != null) {
-            _hashCode += getQualificationDiscontinueDate().hashCode();
-        }
-        if (getQualificationDiscontinueReasonTypeKey() != null) {
-            _hashCode += getQualificationDiscontinueReasonTypeKey().hashCode();
-        }
-        if (getQualificationFaculty() != null) {
-            _hashCode += getQualificationFaculty().hashCode();
-        }
-        if (getQualificationMethodOfDeliveryTypeKey() != null) {
-            _hashCode += getQualificationMethodOfDeliveryTypeKey().hashCode();
-        }
-        if (getQualificationPresentationCategoryTypeKey() != null) {
-            _hashCode += getQualificationPresentationCategoryTypeKey().hashCode();
-        }
-        if (getQualificationRegistrationDate() != null) {
-            _hashCode += getQualificationRegistrationDate().hashCode();
-        }
-        if (getQualificationResultTypeKey() != null) {
-            _hashCode += getQualificationResultTypeKey().hashCode();
-        }
-        if (getQualificationSite() != null) {
-            _hashCode += getQualificationSite().hashCode();
-        }
-        if (getQualificationStartDate() != null) {
-            _hashCode += getQualificationStartDate().hashCode();
-        }
-        if (getUnivNumber() != null) {
-            _hashCode += getUnivNumber().hashCode();
-        }
-        __hashCodeCalc = false;
-        return _hashCode;
-    }
-
-    // Type metadata
-    private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(StudentAcademicQualificationInfo.class, true);
-
-    static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://nwu.ac.za/wsdl/StudentAcademicRegistration", "studentAcademicQualificationInfo"));
-        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("academicPeriod");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "academicPeriod"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://nwu.ac.za/wsdl/StudentAcademicRegistration", "AcademicPeriodInfo"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("academicYears");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "academicYears"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("historicYears");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "historicYears"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("mainQualification");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "mainQualification"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("program");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "program"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("programDesc");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "programDesc"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("programMethodOfDeliveryTypeKey");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "programMethodOfDeliveryTypeKey"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("programPresentationCategoryTypeKey");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "programPresentationCategoryTypeKey"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("qualification");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "qualification"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("qualificationDesc");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "qualificationDesc"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("qualificationDiscontinueDate");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "qualificationDiscontinueDate"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("qualificationDiscontinueReasonTypeKey");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "qualificationDiscontinueReasonTypeKey"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("qualificationFaculty");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "qualificationFaculty"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("qualificationMethodOfDeliveryTypeKey");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "qualificationMethodOfDeliveryTypeKey"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("qualificationPresentationCategoryTypeKey");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "qualificationPresentationCategoryTypeKey"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("qualificationRegistrationDate");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "qualificationRegistrationDate"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("qualificationResultTypeKey");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "qualificationResultTypeKey"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("qualificationSite");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "qualificationSite"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setMinOccurs(0);
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("qualificationStartDate");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "qualificationStartDate"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("univNumber");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "univNumber"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-    }
 
     /**
-     * Return type metadata object
+     * <p>Java class for anonymous complex type.
+     * 
+     * <p>The following schema fragment specifies the expected content contained within this class.
+     * 
+     * <pre>
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;sequence>
+     *         &lt;element name="entry" maxOccurs="unbounded" minOccurs="0">
+     *           &lt;complexType>
+     *             &lt;complexContent>
+     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *                 &lt;sequence>
+     *                   &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+     *                   &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+     *                 &lt;/sequence>
+     *               &lt;/restriction>
+     *             &lt;/complexContent>
+     *           &lt;/complexType>
+     *         &lt;/element>
+     *       &lt;/sequence>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
+     * </pre>
+     * 
+     * 
      */
-    public static org.apache.axis.description.TypeDesc getTypeDesc() {
-        return typeDesc;
-    }
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+        "entry"
+    })
+    public static class LegacyKeys {
 
-    /**
-     * Get Custom Serializer
-     */
-    public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
-    }
+        protected List<StudentAcademicQualificationInfo.LegacyKeys.Entry> entry;
 
-    /**
-     * Get Custom Deserializer
-     */
-    public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+        /**
+         * Gets the value of the entry property.
+         * 
+         * <p>
+         * This accessor method returns a reference to the live list,
+         * not a snapshot. Therefore any modification you make to the
+         * returned list will be present inside the JAXB object.
+         * This is why there is not a <CODE>set</CODE> method for the entry property.
+         * 
+         * <p>
+         * For example, to add a new item, do as follows:
+         * <pre>
+         *    getEntry().add(newItem);
+         * </pre>
+         * 
+         * 
+         * <p>
+         * Objects of the following type(s) are allowed in the list
+         * {@link StudentAcademicQualificationInfo.LegacyKeys.Entry }
+         * 
+         * 
+         */
+        public List<StudentAcademicQualificationInfo.LegacyKeys.Entry> getEntry() {
+            if (entry == null) {
+                entry = new ArrayList<StudentAcademicQualificationInfo.LegacyKeys.Entry>();
+            }
+            return this.entry;
+        }
+
+
+        /**
+         * <p>Java class for anonymous complex type.
+         * 
+         * <p>The following schema fragment specifies the expected content contained within this class.
+         * 
+         * <pre>
+         * &lt;complexType>
+         *   &lt;complexContent>
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+         *       &lt;sequence>
+         *         &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+         *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
+         *       &lt;/sequence>
+         *     &lt;/restriction>
+         *   &lt;/complexContent>
+         * &lt;/complexType>
+         * </pre>
+         * 
+         * 
+         */
+        @XmlAccessorType(XmlAccessType.FIELD)
+        @XmlType(name = "", propOrder = {
+            "key",
+            "value"
+        })
+        public static class Entry {
+
+            protected String key;
+            protected Integer value;
+
+            /**
+             * Gets the value of the key property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link String }
+             *     
+             */
+            public String getKey() {
+                return key;
+            }
+
+            /**
+             * Sets the value of the key property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link String }
+             *     
+             */
+            public void setKey(String value) {
+                this.key = value;
+            }
+
+            /**
+             * Gets the value of the value property.
+             * 
+             * @return
+             *     possible object is
+             *     {@link Integer }
+             *     
+             */
+            public Integer getValue() {
+                return value;
+            }
+
+            /**
+             * Sets the value of the value property.
+             * 
+             * @param value
+             *     allowed object is
+             *     {@link Integer }
+             *     
+             */
+            public void setValue(Integer value) {
+                this.value = value;
+            }
+
+        }
+
     }
 
 }

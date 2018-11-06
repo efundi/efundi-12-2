@@ -1,5 +1,6 @@
 package za.ac.nwu.sql;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.ws.BindingProvider;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.sakaiproject.component.api.ServerConfigurationService;
@@ -23,9 +26,14 @@ import za.ac.nwu.model.Module;
 import za.ac.nwu.model.Status;
 import za.ac.nwu.model.Student;
 import za.ac.nwu.wsdl.StudentAcademicRegistration.AcademicPeriodInfo;
-import za.ac.nwu.wsdl.StudentAcademicRegistration.ContextInfo;
+import za.ac.nwu.wsdl.StudentAcademicRegistration.DoesNotExistException;
+import za.ac.nwu.wsdl.StudentAcademicRegistration.InvalidParameterException;
+import za.ac.nwu.wsdl.StudentAcademicRegistration.MissingParameterException;
 import za.ac.nwu.wsdl.StudentAcademicRegistration.ModuleOfferingSearchCriteriaInfo;
-import za.ac.nwu.wsdl.StudentAcademicRegistration.StudentAcademicRegistrationServiceProxy;
+import za.ac.nwu.wsdl.StudentAcademicRegistration.OperationFailedException;
+import za.ac.nwu.wsdl.StudentAcademicRegistration.PermissionDeniedException;
+import za.ac.nwu.wsdl.StudentAcademicRegistration.StudentAcademicRegistrationService;
+import za.ac.nwu.wsdl.StudentAcademicRegistration.StudentAcademicRegistrationService_Service;
 
 public class DataManager {
 
@@ -366,19 +374,13 @@ public class DataManager {
         searchCriteria.setModuleNumber(module.getModuleNumber());       
         searchCriteria.setModuleSite(module.getCampus().getNumber());
         searchCriteria.setMethodOfDeliveryTypeKey(module.getMethodOfDeliveryCode());
-        searchCriteria.setModeOfDeliveryTypeKey(module.getPresentationCategoryCode());
-        ServerConfigurationService serverConfigurationService = connectionManager.getServerConfigurationService(); 
-        
-        String webserviceUrl = serverConfigurationService
-                .getString("ws.student.url", "http://workflowprd.nwu.ac.za/sapi-vss-v4/StudentAcademicRegistrationService/StudentAcademicRegistrationService?wsdl");
+        searchCriteria.setModeOfDeliveryTypeKey(module.getPresentationCategoryCode());        
 		try {
-			StudentAcademicRegistrationServiceProxy proxy = new StudentAcademicRegistrationServiceProxy(webserviceUrl);   		        
-			String[] studentUserNames = proxy.getStudentAcademicRegistrationByModuleOffering(searchCriteria, new ContextInfo("s1", "s1", calendar, null));
-	        
-	        for (int j = 0; j < studentUserNames.length; j++) {
-	        	String studentUserName = studentUserNames[j];
+	        List<String> studentUserNames = getRegisteredStudentsForModule(searchCriteria);
+	        for (int j = 0; j < studentUserNames.size(); j++) {
+	        	String studentUserName = studentUserNames.get(j);
 	        	students.add(new Student(studentUserName));
-			}        
+			}
 		} catch (Exception e) {
             LOG.error("Exception occured when trying to request the list of active students from StudentAcademicRegistrationByModuleOffering.", e);
 		} 
@@ -547,7 +549,6 @@ public class DataManager {
 			throws Exception {
 
 		LOG.info("Performing getUsers (subject=" + subject + ")");   
-        Calendar calendar = Calendar.getInstance();
 		List<String> students = new ArrayList<String>();
 		ModuleOfferingSearchCriteriaInfo searchCriteria = new ModuleOfferingSearchCriteriaInfo();
 
@@ -563,23 +564,34 @@ public class DataManager {
 		int indexOf = newValue.indexOf("-");
 		searchCriteria.setMethodOfDeliveryTypeKey("vss.code.ENROLCAT." + newValue.substring(0, indexOf));
 		searchCriteria.setModeOfDeliveryTypeKey("vss.code.PRESENTCAT." + newValue.substring(indexOf + 1));
-		ServerConfigurationService serverConfigurationService = connectionManager.getServerConfigurationService();
-
-		String webserviceUrl = serverConfigurationService.getString("ws.student.url",
-				"http://workflowprd.nwu.ac.za/sapi-vss-v4/StudentAcademicRegistrationService/StudentAcademicRegistrationService?wsdl");
+		
 		try {
-			StudentAcademicRegistrationServiceProxy proxy = new StudentAcademicRegistrationServiceProxy(webserviceUrl);
-			String[] studentUserNames = proxy.getStudentAcademicRegistrationByModuleOffering(searchCriteria,
-					new ContextInfo("s1", "s1", calendar, null));
-			for (int j = 0; j < studentUserNames.length; j++) {
-				students.add(studentUserNames[j]);
+	        List<String> studentUserNames = getRegisteredStudentsForModule(searchCriteria);	        
+	        for (int j = 0; j < studentUserNames.size(); j++) {
+				students.add(studentUserNames.get(j));
 			}
-
 		} catch (Exception e) {
 			LOG.error(
 					"Exception occured when trying to request the list of active students from StudentAcademicRegistrationByModuleOffering.",
 					e);
 		}
 		return students;
+	}
+
+	private List<String> getRegisteredStudentsForModule(ModuleOfferingSearchCriteriaInfo searchCriteria) throws MalformedURLException, DoesNotExistException,
+			InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+		ServerConfigurationService serverConfigurationService = connectionManager.getServerConfigurationService();
+		URL wsdlURL = new URL(serverConfigurationService
+		        .getString("ws.student.url", "http://workflowprd.nwu.ac.za/sapi-vss-v5/StudentAcademicRegistrationService/StudentAcademicRegistrationService?wsdl"));
+		StudentAcademicRegistrationService_Service service = new StudentAcademicRegistrationService_Service(wsdlURL);
+		StudentAcademicRegistrationService port = service.getStudentAcademicRegistrationServicePort();        
+
+		((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY, serverConfigurationService
+		        .getString("nwu.context.info.username", "sapiappreadprod"));
+		((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, serverConfigurationService
+		        .getString("nwu.context.info.password", "5p@ssw0rd4pr0dr"));
+
+		List<String> studentUserNames = port.getStudentAcademicRegistrationByModuleOffering(searchCriteria, null);
+		return studentUserNames;
 	}
 }

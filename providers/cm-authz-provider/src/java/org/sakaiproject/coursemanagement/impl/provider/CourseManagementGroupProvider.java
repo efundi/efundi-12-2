@@ -310,6 +310,22 @@ public class CourseManagementGroupProvider implements GroupProvider {
 		this.cmService = cmService;
 	}
 
+	public void setSiteService(SiteService siteService) {
+		this.siteService = siteService;
+	}
+
+	public void setToolManager(ToolManager toolManager) {
+		this.toolManager = toolManager;
+	}
+
+	public void setAuthzGroupService(AuthzGroupService authzGroupService) {
+		this.authzGroupService = authzGroupService;
+	}
+
+	public void setSessionManager(SessionManager sessionManager) {
+		this.sessionManager = sessionManager;
+	}
+
 	public void setRoleResolvers(List<RoleResolver> roleResolvers) {
 		this.roleResolvers = roleResolvers;
 	}

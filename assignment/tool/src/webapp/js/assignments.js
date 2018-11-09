@@ -99,10 +99,15 @@ ASN.enableMarkingTool = function() {
 		document.getElementById('pdfMarkerSettings').style.display = 'block';
 		document.getElementById('new_assignment_group_submit').checked = false;
 		document.getElementById('new_assignment_group_submit').disabled  = true;
+		document.getElementById('new_assignment_use_peer_assessment').checked = false;
+		document.getElementById('new_assignment_use_peer_assessment').disabled  = true;
 		document.getElementById('$name_noAdditionalOptionsName').checked = true;
+		ASN.toggleAddOptions('none');
 	} else {
 		document.getElementById('pdfMarkerSettings').style.display = 'none';
+		document.getElementById('$name_noAdditionalOptionsName').checked = true;
 		document.getElementById('new_assignment_group_submit').disabled  = false;
+		document.getElementById('new_assignment_use_peer_assessment').disabled  = false;
 		ASN.enableButtons();
 	}
 };

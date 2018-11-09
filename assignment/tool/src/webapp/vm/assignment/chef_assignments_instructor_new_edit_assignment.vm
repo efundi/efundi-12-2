@@ -629,7 +629,7 @@
 				$tlang.getString("gen.submissionType")
 			</label>
 			<div class="col-sm-6">
-				<select name="$name_SubmissionType" id="subType" onchange="switchAssignmentSubmissionType();" class="assignment-submission-type" #if($!markerEnabled) class="disabled" disabled="disabled" #end>
+				<select name="$name_SubmissionType" id="subType" onchange="ASN.enableMarkingTool(); switchAssignmentSubmissionType();" class="assignment-submission-type" #if($!markerEnabled) class="disabled" disabled="disabled" #end>
 				#foreach ($i in [1..$!value_totalSubmissionTypes])
 					#if ($i == $value_SubmissionType)
 						<option value="$i" selected="selected">$submissionTypeTable.get($i)</option>

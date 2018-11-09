@@ -15,7 +15,6 @@ import org.sakaiproject.coursemanagement.api.CourseManagementService;
 import org.sakaiproject.coursemanagement.api.Membership;
 import org.sakaiproject.coursemanagement.api.exception.IdNotFoundException;
 import org.sakaiproject.tool.api.SessionManager;
-import org.sakaiproject.user.api.UserDirectoryService;
 
 import za.ac.nwu.model.Lecturer;
 import za.ac.nwu.model.Module;
@@ -35,9 +34,7 @@ public class RemoveLecturersJob implements Job {
     private CourseManagementAdministration cmAdmin;
 
     private CourseManagementService cmService;
-
-    private UserDirectoryService userDirectoryService;
-
+    
     private ServerConfigurationService serverConfigurationService;
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -155,10 +152,6 @@ public class RemoveLecturersJob implements Job {
 
     public void setCmService(CourseManagementService cmService) {
         this.cmService = cmService;
-    }
-
-    public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
-        this.userDirectoryService = userDirectoryService;
     }
 
     public void setServerConfigurationService(ServerConfigurationService serverConfigurationService) {

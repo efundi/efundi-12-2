@@ -15,7 +15,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.Member;
-import org.sakaiproject.authz.api.SecurityService;
 import org.sakaiproject.component.api.ServerConfigurationService;
 import org.sakaiproject.exception.IdUnusedException;
 import org.sakaiproject.exception.PermissionException;
@@ -43,7 +42,6 @@ public class LinkStudentsToSiteJob implements Job {
 	private SiteService siteService;
 	private AuthzGroupService authzGroupService;
 	private SessionManager sessionManager;
-    private SecurityService securityService;
 	private ServerConfigurationService serverConfigurationService;
 	private String iniFilePath;
 	private String userRole;
@@ -59,7 +57,6 @@ public class LinkStudentsToSiteJob implements Job {
 		return user;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void mapSite(String subject, String siteTitle, String campus)
 			throws Exception {
 
@@ -201,10 +198,6 @@ public class LinkStudentsToSiteJob implements Job {
 	public void setSessionManager(SessionManager sessionManager) {
 		this.sessionManager = sessionManager;
 	}
-
-    public void setSecurityService(SecurityService securityService) {
-        this.securityService = securityService;
-    }
 
 	public void setServerConfigurationService(
 			ServerConfigurationService serverConfigurationService) {

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.Job;
@@ -78,6 +79,9 @@ public class StudentCourseChangeJob implements Job {
         boolean foundStudent = false;
         for (Module module : modules) {
             try {
+            	if(CollectionUtils.isEmpty(module.getLinkedStudents())) {
+            		continue;
+            	}
                 Set<Membership> memberships = cmService.getSectionMemberships(module
                         .getCourseOfferingReference());
                 log.info("Retrieved Section Memberships with id "

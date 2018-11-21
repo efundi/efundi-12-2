@@ -6,7 +6,6 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
@@ -18,9 +17,6 @@ import javax.xml.ws.ResponseWrapper;
  * 
  */
 @WebService(name = "StudentAcademicRegistrationService", targetNamespace = "http://nwu.ac.za/wsdl/StudentAcademicRegistration")
-@XmlSeeAlso({
-    ObjectFactory.class
-})
 public interface StudentAcademicRegistrationService {
 
 

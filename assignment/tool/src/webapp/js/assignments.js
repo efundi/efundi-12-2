@@ -976,7 +976,13 @@ ASN.submitForm = function( formID, option, submissionID, view, focusId )
         // If an option was given, apply it to the element
         if( option !== null )
         {
-            var optionElement = form.elements.namedItem("option")
+        	var optionElement;
+        	if (option === "markerPartialDownload" || option === "markerDownload") {
+        		optionElement = form.elements.namedItem("option");
+        	} else {
+        		optionElement = document.getElementById( "option" );
+        	}
+            
             if( optionElement !== null )
             {
                 optionElement.value = option;

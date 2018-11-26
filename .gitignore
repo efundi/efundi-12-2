@@ -1,3 +1,13 @@
 target/
 .settings/
 .project
+.idea
+.classpath
+*.iml
+*.swp
+*.orig
+*.rej
+.directory
+.sass-cache
+.metadata
+velocity.log

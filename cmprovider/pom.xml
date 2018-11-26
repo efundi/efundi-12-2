@@ -83,6 +83,13 @@
         <includes>
           <include>*.properties</include>
         </includes>
+      </resource> 
+      <resource>
+      	<directory>${basedir}/src/java</directory>
+        <includes>
+        	<include>**/*.properties</include>
+        </includes>
+        <filtering>false</filtering>
       </resource>
     </resources>
   </build>

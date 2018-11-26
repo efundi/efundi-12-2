@@ -118,6 +118,9 @@
                 <module>web</module>
                 <module>webjars</module>
                 <module>webservices</module>
+                <module>cm-scheduler-base</module>
+                <module>blogwow</module>
+                <module>scorm</module>
             </modules>
         </profile>
         <profile>

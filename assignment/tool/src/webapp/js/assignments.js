@@ -977,7 +977,7 @@ ASN.submitForm = function( formID, option, submissionID, view, focusId )
         if( option !== null )
         {
         	var optionElement;
-        	if (option === "markerPartialDownload" || option === "markerDownload") {
+        	if (option === "markerPartialDownload" || option === "markerDownload" || option === "markerUpload") {
         		optionElement = form.elements.namedItem("option");
         	} else {
         		optionElement = document.getElementById( "option" );

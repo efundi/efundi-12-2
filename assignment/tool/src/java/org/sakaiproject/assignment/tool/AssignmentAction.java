@@ -6340,12 +6340,17 @@ public class AssignmentAction extends PagedResourceActionII {
                     }
                 }                
                 try {
-					if (a.getIsMarker() && !isMarkerResubmit && !securityService.isUserRoleSwapped() && submission.getSubmitted()) {
-						Boolean submissionAssigned = assignmentService.markerQuotaCalculation(a, submission);
+					if (a.getIsMarker() && !securityService.isUserRoleSwapped() && submission.getSubmitted()) {
+						Boolean submissionAssigned = false;
+						if (!isMarkerResubmit) {
+							submissionAssigned = assignmentService.markerQuotaCalculation(a, submission);
+						} else {
+							submissionAssigned = assignmentService.markerUpdateResubmission(a, submission);
+						}
 						if (!submissionAssigned) {
 							log.warn("Could not assign submission: {}", submission.getId());
 						}
-						}
+					}
 				} catch (IdUnusedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

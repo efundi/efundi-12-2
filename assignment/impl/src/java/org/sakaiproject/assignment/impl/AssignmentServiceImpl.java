@@ -4731,4 +4731,61 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 	public Collection<Assignment> findAllAssignmentsForMarkerQuotaCalculation() {
 		return assignmentRepository.findAllAssignmentsForMarkerQuotaCalculation();
 	}
+
+	@SuppressWarnings("unlikely-arg-type")
+	@Override
+	public boolean markerUpdateResubmission(Assignment assignment, AssignmentSubmission submission) {
+
+		Boolean result = false;
+		AssignmentSubmissionMarker asSM = null;
+		Set<AssignmentMarker> assignmentMarkers = getMarkersForAssignment(assignment);
+		Iterator<AssignmentMarker> asI;
+		try {
+			asI = assignmentMarkers.iterator();
+		} catch (NullPointerException npe) {
+			asI = assignmentMarkers.iterator();
+		}
+		while (asI.hasNext()) {
+			AssignmentMarker assignmentMarker = (AssignmentMarker) asI.next();
+			Set<AssignmentSubmissionMarker> assignmentMarkersSubmissions = assignmentMarker.getSubmissionMarkers();
+			Iterator<AssignmentSubmissionMarker> subI = assignmentMarkersSubmissions.iterator();
+			while (subI.hasNext()) {
+				AssignmentSubmissionMarker assignmentSubmissionMarker = (AssignmentSubmissionMarker) subI.next();
+				if (assignmentSubmissionMarker.getAssignmentSubmission().getId().equals(submission.getId())) {
+					asSM = assignmentSubmissionMarker;
+					result = true;
+				}
+				if (result) {
+					break;
+				}
+			}
+			if (result) {
+				break;
+			}
+		}
+
+		if (result) {
+			Boolean downloaded = asSM.getDownloaded();
+			if (downloaded) {
+				asSM.setDownloaded(false);
+			}
+			try {
+				updateAssignmentSubmissionMarker(asSM, "EVENT_MARKER_ASSIGNMENT_RESUBMISSION");
+			} catch (PermissionException e) {
+				log.error("AssignmentServiceImpl markerUpdateResubmission - updateAssignmentSubmissionMarker " + e.getMessage());
+			}
+			if (downloaded) {
+				AssignmentMarker curMarker = asSM.getAssignmentMarker();
+				int downloads = curMarker.getNumberDownloaded() - 1;
+				curMarker.setNumberDownloaded(downloads);
+				try {
+					updateAssignmentMarker(curMarker);
+				} catch (PermissionException e) {
+					log.error("AssignmentServiceImpl markerUpdateResubmission - updateAssignmentMarker " + e.getMessage());
+				}
+			}
+		}
+		return result;
+	}
 }
+

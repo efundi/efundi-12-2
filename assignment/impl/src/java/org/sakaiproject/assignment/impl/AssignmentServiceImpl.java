@@ -4739,12 +4739,8 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		Boolean result = false;
 		AssignmentSubmissionMarker asSM = null;
 		Set<AssignmentMarker> assignmentMarkers = getMarkersForAssignment(assignment);
-		Iterator<AssignmentMarker> asI;
-		try {
-			asI = assignmentMarkers.iterator();
-		} catch (NullPointerException npe) {
-			asI = assignmentMarkers.iterator();
-		}
+		Iterator<AssignmentMarker> asI = assignmentMarkers.iterator();
+
 		while (asI.hasNext()) {
 			AssignmentMarker assignmentMarker = (AssignmentMarker) asI.next();
 			Set<AssignmentSubmissionMarker> assignmentMarkersSubmissions = assignmentMarker.getSubmissionMarkers();

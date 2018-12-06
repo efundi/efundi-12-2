@@ -61,6 +61,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.hibernate.Hibernate;
 import org.sakaiproject.announcement.api.AnnouncementChannel;
 import org.sakaiproject.announcement.api.AnnouncementService;
 import org.sakaiproject.assignment.api.AssignmentConstants;
@@ -4739,9 +4740,10 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		AssignmentSubmissionMarker asSM = null;
 		Set<AssignmentMarker> assignmentMarkers = getMarkersForAssignment(assignment);
 		Iterator<AssignmentMarker> asI = assignmentMarkers.iterator();
-
+		
 		while (asI.hasNext()) {
 			AssignmentMarker assignmentMarker = (AssignmentMarker) asI.next();
+			Hibernate.initialize(assignmentMarker.getSubmissionMarkers());
 			Set<AssignmentSubmissionMarker> assignmentMarkersSubmissions = assignmentMarker.getSubmissionMarkers();
 			Iterator<AssignmentSubmissionMarker> subI = assignmentMarkersSubmissions.iterator();
 			while (subI.hasNext()) {
@@ -4770,16 +4772,14 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 					log.error("AssignmentServiceImpl markerUpdateResubmission - updateAssignmentSubmissionMarker "
 							+ e.getMessage());
 				}
-				if (downloaded) {
-					AssignmentMarker curMarker = asSM.getAssignmentMarker();
-					int downloads = curMarker.getNumberDownloaded() - 1;
-					curMarker.setNumberDownloaded(downloads);
-					try {
-						updateAssignmentMarker(curMarker);
-					} catch (PermissionException e) {
-						log.error("AssignmentServiceImpl markerUpdateResubmission - updateAssignmentMarker "
-								+ e.getMessage());
-					}
+				AssignmentMarker curMarker = asSM.getAssignmentMarker();
+				int downloads = curMarker.getNumberDownloaded() - 1;
+				curMarker.setNumberDownloaded(downloads);
+				try {
+					updateAssignmentMarker(curMarker);
+				} catch (PermissionException e) {
+					log.error("AssignmentServiceImpl markerUpdateResubmission - updateAssignmentMarker "
+							+ e.getMessage());
 				}
 			}
 		}

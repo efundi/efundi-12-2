@@ -4732,7 +4732,6 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 		return assignmentRepository.findAllAssignmentsForMarkerQuotaCalculation();
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public boolean markerUpdateResubmission(Assignment assignment, AssignmentSubmission submission) {
 
@@ -4764,20 +4763,23 @@ public class AssignmentServiceImpl implements AssignmentService, EntityTransferr
 			Boolean downloaded = asSM.getDownloaded();
 			if (downloaded) {
 				asSM.setDownloaded(false);
-			}
-			try {
-				updateAssignmentSubmissionMarker(asSM, "EVENT_MARKER_ASSIGNMENT_RESUBMISSION");
-			} catch (PermissionException e) {
-				log.error("AssignmentServiceImpl markerUpdateResubmission - updateAssignmentSubmissionMarker " + e.getMessage());
-			}
-			if (downloaded) {
-				AssignmentMarker curMarker = asSM.getAssignmentMarker();
-				int downloads = curMarker.getNumberDownloaded() - 1;
-				curMarker.setNumberDownloaded(downloads);
+
 				try {
-					updateAssignmentMarker(curMarker);
+					updateAssignmentSubmissionMarker(asSM, "EVENT_MARKER_ASSIGNMENT_RESUBMISSION");
 				} catch (PermissionException e) {
-					log.error("AssignmentServiceImpl markerUpdateResubmission - updateAssignmentMarker " + e.getMessage());
+					log.error("AssignmentServiceImpl markerUpdateResubmission - updateAssignmentSubmissionMarker "
+							+ e.getMessage());
+				}
+				if (downloaded) {
+					AssignmentMarker curMarker = asSM.getAssignmentMarker();
+					int downloads = curMarker.getNumberDownloaded() - 1;
+					curMarker.setNumberDownloaded(downloads);
+					try {
+						updateAssignmentMarker(curMarker);
+					} catch (PermissionException e) {
+						log.error("AssignmentServiceImpl markerUpdateResubmission - updateAssignmentMarker "
+								+ e.getMessage());
+					}
 				}
 			}
 		}

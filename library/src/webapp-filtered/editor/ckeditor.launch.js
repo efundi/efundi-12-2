@@ -322,7 +322,7 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
 
       });
 
-     CKEDITOR.config.stylesSet = 'nwu-style: http://v-sakai-dev-lnx2.nwu.ac.za/access/content/public/styles.js';
+     //CKEDITOR.config.stylesSet = 'nwu-style: http://v-sakai-dev-lnx2.nwu.ac.za/access/content/public/styles.js';
 }
 
 sakai.editor.launch = sakai.editor.editors.ckeditor.launch;

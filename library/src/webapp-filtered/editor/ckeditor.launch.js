@@ -113,16 +113,16 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
         
         // SAK-31829, SAK-33279 Disable functionality in table plugin
         //https://docs.ckeditor.com/#!/guide/dev_disallowed_content-section-how-to-allow-everything-except...
-        allowedContent: {
-            $1: {
+        //allowedContent: {
+          //  $1: {
                 // Use the ability to specify elements as an object.
-                elements: CKEDITOR.dtd,
-                attributes: true,
-                styles: true,
-                classes: true
-            }
-        },
-        disallowedContent: 'table[cellspacing,cellpadding,border]',
+            //    elements: CKEDITOR.dtd,
+              //  attributes: true,
+               // styles: true,
+               // classes: true
+          //  }
+      //  },
+      //  disallowedContent: 'table[cellspacing,cellpadding,border]',
 
         language: language + (country ? '-' + country.toLowerCase() : ''),
         // This is used for uploading by the autorecorder plugin.
@@ -321,6 +321,8 @@ sakai.editor.editors.ckeditor.launch = function(targetId, config, w, h) {
           }
 
       });
+
+     CKEDITOR.config.stylesSet = 'nwu-style: http://v-sakai-dev-lnx2.nwu.ac.za/access/content/public/styles.js';
 }
 
 sakai.editor.launch = sakai.editor.editors.ckeditor.launch;

@@ -42,9 +42,16 @@ $(document).ready(function() {
         	type : "GET",
 		    url : contextPath + "/becomeUser", //see "switchUserProcessingFilter" in securityContext.xml, using CAS's switch user filter
 			data : data,
-		    success: function(data){		
+		    success: function(result){	
 		    	
-		    	$("#activeUser").val(data);
+		    	$("#activeUser").val(result.userDisplayName);
+		    	if($("#becomeUserDiv") !== null){
+			    	if(result.isAdminUser){		    		
+			    		$("#becomeUserDiv").show();
+			    	} else {
+			    		$("#becomeUserDiv").hide();
+			    	}
+		    	}		    	
 		    	$("#usernameId").val('');
 		    	clearAll();
 		    },

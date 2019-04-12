@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <!DOCTYPE html>
 <html>
@@ -27,13 +30,15 @@
 
 		<div class="row">
 			<div class="col-sm-3 offset-sm-7">
-				<div class="input-group mb-3">
-					<input type="text" class="form-control" placeholder="Username"
-						aria-label="Username" aria-describedby="basic-addon2" id="usernameId">
-					<div class="input-group-append">
-						<button class="btn btn-secondary" type="button" id="becomeUserBtnId">Become User</button>
-					</div>	      			 		 
-				</div>
+				<c:if test="${isAdminUser}">
+					<div id="becomeUserDiv" class="input-group mb-3">
+						<input type="text" class="form-control" placeholder="Username"
+							aria-label="Username" aria-describedby="basic-addon2" id="usernameId">
+						<div class="input-group-append">
+							<button class="btn btn-secondary" type="button" id="becomeUserBtnId">Become User</button>
+						</div>		 
+					</div>
+				</c:if>
 			</div>
 			<div class="">
 				<button class="btn btn-secondary mr-2" type="button" id="saveBtnId">Save</button>

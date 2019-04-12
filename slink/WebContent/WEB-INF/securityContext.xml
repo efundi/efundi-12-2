@@ -27,6 +27,11 @@
 	<bean id="casFilter"
 		class="org.springframework.security.cas.web.CasAuthenticationFilter">
 		<property name="authenticationManager" ref="authenticationManager" />
+		<!-- property name="authenticationFailureHandler">
+            <bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+                <property name="defaultFailureUrl" value="/casfailed.jsp"/>
+            </bean>
+        </property -->
 	</bean>
 
 	<bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter" />

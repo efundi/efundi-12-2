@@ -19,6 +19,7 @@
 	<bean id="sLinkService" class="edu.nwu.sakaistudentlink.services.SLinkServiceImpl">
 		<property name="moduleSearch" ref="moduleSearch" />
 		<property name="moduleLink" ref="moduleLink" />
+		<property name="settingsProperties" ref="settingsProperties" />
 	</bean>	
 	
 	<bean id="moduleSearch" class="edu.nwu.sakaistudentlink.services.ModuleSearch" scope="singleton">

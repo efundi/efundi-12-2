@@ -17,6 +17,8 @@ public class SLinkServiceImpl implements SLinkService {
 
 	private ModuleLink moduleLink;
 
+	private SettingsProperties settingsProperties;
+
 	@Override
 	public List<ModuleOffering> searchModules(Map<SearchCriteria, String> criteria, String username) throws IntegrationException {
 		List<ModuleOffering> modules = null;
@@ -51,6 +53,11 @@ public class SLinkServiceImpl implements SLinkService {
 	@Autowired
 	public void setModuleLink(ModuleLink moduleLink) {
 		this.moduleLink = moduleLink;
+	}
+
+	@Autowired
+	public void setSettingsProperties(SettingsProperties settingsProperties) {
+		this.settingsProperties = settingsProperties;
 	}
 
 	@Override
@@ -88,4 +95,16 @@ public class SLinkServiceImpl implements SLinkService {
 		}
 	}
 
+	@Override
+	public boolean isAdminUser(String loginUserName) {
+		String userNames = settingsProperties.getProperty("admin.users", "");
+		if (StringUtils.isNotBlank(userNames)) {
+			for (String userName : userNames.split(",")) {
+				if (StringUtils.isNotBlank(userName) && userName.equals(loginUserName)) {					
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

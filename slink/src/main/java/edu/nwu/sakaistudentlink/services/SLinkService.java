@@ -18,4 +18,6 @@ public interface SLinkService {
 	public Map<String, String> getPresentCatMap(List<ModuleOffering> modules);
 
 	public void save(List<ModuleOffering> linkedModules, List<ModuleOffering> unlinkedModules, HashMap<SearchCriteria, String> searchCriteria) throws IntegrationException;
+
+	public boolean isAdminUser(String loginUserName);
 }

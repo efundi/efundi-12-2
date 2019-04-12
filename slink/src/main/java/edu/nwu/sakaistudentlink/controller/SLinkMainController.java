@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.nwu.sakaistudentlink.services.BecomeUserObject;
 import edu.nwu.sakaistudentlink.services.IntegrationException;
 import edu.nwu.sakaistudentlink.services.ModuleOffering;
 import edu.nwu.sakaistudentlink.services.SLinkService;
@@ -57,15 +58,29 @@ public class SLinkMainController {
 
 		InetOrgPerson principal = (InetOrgPerson) auth.getPrincipal();
 		slinkDataMap.put("activeUser", principal.getInitials() + " " + principal.getSn() + " (" + principal.getUsername() + ")");
+		
+		if(sLinkService.isAdminUser(principal.getUsername())) {
+			slinkDataMap.put("isAdminUser", Boolean.TRUE);
+		}		
 
 		return new ModelAndView("slinkMain", slinkDataMap);
 	}
 
 	@RequestMapping(value = "/getUserDetail", method = RequestMethod.GET)
-	public @ResponseBody String becomeUser(HttpSession session) throws IntegrationException {
+	public @ResponseBody BecomeUserObject becomeUser(HttpSession session) throws IntegrationException {
+
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		InetOrgPerson principal = (InetOrgPerson) auth.getPrincipal();
-		return principal.getInitials() + " " + principal.getSn() + " (" + principal.getUsername() + ")";
+		
+		BecomeUserObject becomeUserObject = new BecomeUserObject();
+		becomeUserObject.setUserDisplayName(principal.getInitials() + " " + principal.getSn() + " (" + principal.getUsername() + ")");
+
+		if(sLinkService.isAdminUser(principal.getUsername())) {
+			becomeUserObject.setIsAdminUser(Boolean.TRUE);
+		} else {
+			becomeUserObject.setIsAdminUser(Boolean.FALSE);
+		}
+		return becomeUserObject;
 	}
 
 	@RequestMapping(value = "/searchCourses", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

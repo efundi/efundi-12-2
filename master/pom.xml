@@ -56,7 +56,7 @@
     <sakai.opencsv.version>2.3</sakai.opencsv.version>
     <sakai.servletapi.version>2.4</sakai.servletapi.version>
     <sakai.groovy.version>2.4.13</sakai.groovy.version>
-    <sakai.simple-xml.version>2.6.4</sakai.simple-xml.version>
+    <sakai.simple-xml.version>2.7.1</sakai.simple-xml.version>
     <sakai.spring.groupId>org.springframework</sakai.spring.groupId>
     <sakai.spring.artifactId>spring-core</sakai.spring.artifactId>
     <sakai.spring.version>4.3.14.RELEASE</sakai.spring.version>
